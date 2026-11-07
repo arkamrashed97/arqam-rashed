@@ -1,25 +1,27 @@
-# Arqam Rashed — Portfolio 2026 (v2.0 Dual-Edition Architecture)
+# Arqam Rashed — Portfolio 2026 (Dual-Edition Synchronized Architecture)
 
 Bilingual (English / Arabic RTL) creative engineering portfolio for **Arqam Rashed**, Full-Stack Architect & Creative Developer in Luxor, Egypt.
 
-Live Deployment: **https://arkamrashed97.github.io/arqam-rashed/**
+Live Production Domain: **https://arqamrashed.com**  
+GitHub Pages Mirror: **https://arkamrashed97.github.io/arqam-rashed/**
 
 ---
 
-## Dual-Edition Repository Structure
+## Primary Modular Project & Synchronized Single-File Build
 
-This repository ships **two synchronized editions** of the portfolio:
+This repository maintains **two strictly synchronized editions** (see [`AGENTS.md`](./AGENTS.md)):
 
-1. **Modular GitHub Pages Deployment (Repository Root)**
-   - [`index.html`](./index.html) — Clean, semantic HTML shell (~539 lines).
+1. **MAIN PROJECT — Modular Root Architecture (Primary Source of Truth)**
+   - [`index.html`](./index.html) — Semantic HTML shell with automatic content-hashed CSS `<link>` tags and ES module `<script type="importmap">` (`?v=<hash>`) so browsers always load fresh modular assets.
    - [`css/`](./css/) — 13 modular CSS stylesheets (`base.css`, `chrome.css`, `lang-gate.css`, `typography.css`, `act1.css`..`act5.css`, `footer.css`, `responsive.css`, `components.css`, `modal-actions.css`).
    - [`js/`](./js/) — 29 ES modules organized into `core/`, `gl/`, `i18n/`, `audio/`, and `features/`.
+   - [`functions/`](./functions/) — Cloudflare Pages Functions (`functions/api/leaderboard.js` backed by Supabase).
    - [`assets/img/`](./assets/img/) — Extracted project textures (`project-sequoia.jpg`, `project-arko.svg`, `project-rt.jpg`).
-   - [`assets/docs/`](./assets/docs/) — Static downloadable CV (`Arqam-Rashed-CV.pdf`) and contact card (`Arqam-Rashed.vcf`).
-   - [`assets/audio/`](./assets/audio/) — 22 natural, non-musical ElevenLabs MP3 soundscapes and interactive micro-cues.
-2. **Self-Contained Single-File Edition ([`single-file/index.html`](./single-file/index.html))**
-   - Built automatically from the modular source via [`tools/build-single.mjs`](./tools/build-single.mjs) (`esbuild`).
-   - Inlines all 13 CSS stylesheets, all 29 JS ES modules, project textures, and `.vcf` data URI into a single portable file while keeping audio and PDF assets linked cleanly.
+   - [`assets/docs/`](./assets/docs/) — Static downloadable CV (`Arqam-Rashed-CV.pdf`) and contact card (`Arqam-Rashed.vcf` with `me@arqamrashed.com`).
+   - [`assets/audio/`](./assets/audio/) — 39 natural, loudness-balanced ElevenLabs MP3 soundscapes, onboarding cues, per-act physical touch cues, and fishing game SFX.
+2. **Secondary Portable Single-File Edition ([`single-file/index.html`](./single-file/index.html))**
+   - Generated automatically from the main modular source via `npm run build` ([`tools/build-single.mjs`](./tools/build-single.mjs)).
+   - Never edited directly; always rebuilt in lockstep with the main modular project on every change.
 
 ---
 

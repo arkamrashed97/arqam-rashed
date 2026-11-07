@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import * as esbuild from 'esbuild';
 
@@ -15,12 +16,69 @@ function toDataUri(relPath, mime) {
   return `data:${mime};base64,${buf.toString('base64')}`;
 }
 
+function listFilesRecursive(dir, baseDir = dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listFilesRecursive(full, baseDir));
+    } else if (entry.isFile()) {
+      files.push(path.relative(baseDir, full).replace(/\\/g, '/'));
+    }
+  }
+  return files.sort();
+}
+
 async function buildSingleFile() {
   const htmlPath = path.join(ROOT, 'index.html');
-  let html = fs.readFileSync(htmlPath, 'utf8');
+  let rootHtml = fs.readFileSync(htmlPath, 'utf8');
+
+  // 0. Compute a content hash across all modular CSS and JS files so the MAIN modular
+  //    project (index.html + css/ + js/) always busts stale browser caches in lockstep
+  //    with single-file/index.html.
+  const allCssRel = listFilesRecursive(path.join(ROOT, 'css')).map((f) => `css/${f}`);
+  const allJsRel = listFilesRecursive(path.join(ROOT, 'js')).map((f) => `js/${f}`);
+  const hash = crypto.createHash('sha256');
+  for (const rel of [...allCssRel, ...allJsRel]) {
+    hash.update(rel);
+    hash.update(fs.readFileSync(path.join(ROOT, rel)));
+  }
+  const vTag = hash.digest('hex').slice(0, 8);
+
+  // Update <link rel="stylesheet" href="css/...?v=..."> in root index.html
+  rootHtml = rootHtml.replace(
+    /<link\s+rel="stylesheet"\s+href="(css\/[^"?]+)(?:\?v=[^"]*)?"\s*>/g,
+    `<link rel="stylesheet" href="$1?v=${vTag}">`
+  );
+
+  // Update <script type="importmap"> in root index.html so every modular ES import gets ?v=${vTag}
+  const importMapEntries = {
+    three: 'https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js',
+    'three/addons/': 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/'
+  };
+  for (const jsRel of allJsRel) {
+    importMapEntries[`./${jsRel}`] = `./${jsRel}?v=${vTag}`;
+  }
+  const importMapJson = JSON.stringify({ imports: importMapEntries }, null, 2);
+  rootHtml = rootHtml.replace(
+    /<script type="importmap">[\s\S]*?<\/script>/,
+    `<script type="importmap">\n${importMapJson}\n</script>`
+  );
+
+  // Update <script type="module" src="js/main.js?v=..."> in root index.html
+  rootHtml = rootHtml.replace(
+    /<script type="module" src="js\/main\.js(?:\?v=[^"]*)?"><\/script>/,
+    `<script type="module" src="js/main.js?v=${vTag}"></script>`
+  );
+
+  // Write the updated cache-busted modular root index.html back to disk
+  fs.writeFileSync(htmlPath, rootHtml, 'utf8');
+
+  let html = rootHtml;
 
   // 1. Collect all linked CSS files in order and minify via esbuild
-  const cssRegex = /<link\s+rel="stylesheet"\s+href="(css\/[^"]+)"\s*>/g;
+  const cssRegex = /<link\s+rel="stylesheet"\s+href="(css\/[^"?]+)(?:\?v=[^"]*)?"\s*>/g;
   const cssFiles = [];
   let match = cssRegex.exec(html);
   while (match !== null) {
@@ -109,9 +167,20 @@ async function buildSingleFile() {
     );
   }
 
-  // 5. Inline the bundled JS module in place of <script type="module" src="js/main.js"></script>
+  // 5. Inline the bundled JS module in place of <script type="module" src="js/main.js..."></script>
+  //    and keep single-file importmap clean (only external three.js).
+  const singleImportMap = JSON.stringify({
+    imports: {
+      three: 'https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js',
+      'three/addons/': 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/'
+    }
+  }, null, 2);
   html = html.replace(
-    '<script type="module" src="js/main.js"></script>',
+    /<script type="importmap">[\s\S]*?<\/script>/,
+    `<script type="importmap">\n${singleImportMap}\n</script>`
+  );
+  html = html.replace(
+    /<script type="module" src="js\/main\.js(?:\?v=[^"]*)?"><\/script>/,
     () => `<script type="module">\n${bundledJs}\n</script>`
   );
 
