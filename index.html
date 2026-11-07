@@ -65,14 +65,25 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
-html{background:var(--bg);scrollbar-color:var(--accent) var(--bg)}
+html{
+  background:var(--bg);
+  scrollbar-color:var(--accent) var(--bg);
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden !important;
+  position:relative;
+}
 body{
   margin:0;
   background:var(--bg);
   color:var(--ink);
   font-family:var(--body);
   font-weight:400;
-  overflow-x:hidden;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden !important;
+  position:relative;
+  touch-action:pan-y pinch-zoom;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
@@ -899,7 +910,25 @@ html[dir="rtl"] .act-nav a{padding-left:0;padding-right:14px}
   .project{flex-basis:70vw}
 }
 @media (max-width:900px){
-  :root{--hud-h:58px;--pad:5vw}
+  :root{--hud-h:58px;--pad:4.5vw}
+  html,body{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+    position:relative;
+  }
+  .grain{
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+  }
+  .hero-bottom::before{
+    inset:-22px 0 -16px !important;
+  }
+  .act, .hud, .work-pin, .work-track, .project, .panels, .contact-grid, .footer-grid, .inquiry-container{
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
   .hud{grid-template-columns:1fr auto;min-height:var(--hud-h);padding:8px 16px}
   .hud__act{display:none}
   .hud__brand span{display:none}
@@ -1148,6 +1177,65 @@ body.no-js .project__img{opacity:.92!important}
 }
 .vcard-btn__meta{color:var(--muted);font-size:8.5px}
 
+
+/* Act V: Direct Transmission & Inquiry Form */
+.act-5{
+  min-height:90svh;padding:12vh var(--pad) 10vh;
+  display:flex;flex-direction:column;gap:5vh;
+  background:radial-gradient(circle at 80% 20%,rgba(56,239,125,.07),transparent 50%),var(--bg);
+  border-top:1px solid var(--line);
+}
+.act-5__head{display:grid;gap:16px;max-width:720px}
+.act-5 h2{
+  font-family:var(--display);font-size:clamp(46px,9vw,96px);line-height:.88;
+  letter-spacing:-.04em;text-transform:uppercase;color:var(--ink);
+}
+.act-5 h2 span{color:var(--accent)}
+.inquiry-intro{font-size:clamp(15px,1.2vw,19px);line-height:1.65;color:var(--muted);max-width:48ch}
+.inquiry-container{width:min(780px,100%);margin-top:2vh}
+.inquiry-form{
+  display:grid;gap:20px;padding:clamp(20px,3.5vw,36px);
+  background:color-mix(in srgb,var(--bg) 86%,transparent);
+  border:1px solid var(--line);
+}
+.form-row--split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:680px){.form-row--split{grid-template-columns:1fr}}
+.form-group{display:grid;gap:8px}
+.form-group label{
+  font:400 9.5px/1.3 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);
+}
+.form-group label .req{color:var(--accent)}
+.form-group input, .form-group select, .form-group textarea{
+  width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line);
+  padding:12px 14px;color:var(--ink);font-family:var(--body);font-size:14px;
+  border-radius:0;outline:none;transition:border-color .2s,background .2s;
+  box-sizing:border-box;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus{
+  border-color:var(--accent);background:rgba(255,255,255,.06);
+}
+.form-group select{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8A90' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+}
+html[dir="rtl"] .form-group select{background-position:left 14px center}
+.form-group select option{background:#070708;color:#E2E2E5}
+.form-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.cta--submit{border-color:var(--accent);background:var(--accent);color:#070708;font-weight:700}
+.cta--submit:hover{background:var(--accent-strong);color:#070708}
+.form-feedback{
+  padding:14px 18px;border:1px solid var(--line);font:400 12px/1.5 var(--mono);
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.form-feedback.is-success{
+  border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);
+}
+.form-feedback.is-error{
+  border-color:#FF3B00;color:#FF3B00;background:rgba(255,59,0,.1);
+}
+
 </style>
 </head>
 <body class="is-booting">
@@ -1247,6 +1335,7 @@ body.no-js .project__img{opacity:.92!important}
   <a href="#work" data-act-link="1"><span>02</span><span>WORK</span></a>
   <a href="#architecture" data-act-link="2"><span>03</span><span>SYSTEM</span></a>
   <a href="#contact" data-act-link="3"><span>04</span><span>SIGNAL</span></a>
+  <a href="#inquiry" data-act-link="4"><span>05</span><span>INQUIRY</span></a>
 </nav>
 
 <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursor-label"></span></div>
@@ -1474,6 +1563,59 @@ body.no-js .project__img{opacity:.92!important}
     </div>
   </div>
 </section>
+
+<section id="inquiry" class="act act-5" aria-labelledby="inquiry-title">
+  <div class="act-5__head">
+    <div class="kicker" id="inquiry-kicker">ACT V / DIRECT TRANSMISSION & INQUIRY</div>
+    <h2 id="inquiry-title">START A<br><span>PROJECT.</span></h2>
+    <p class="inquiry-intro" id="inquiry-intro">Have a vision for an enterprise booking engine, native Windows automation, or an end-to-end retail system? Send the constraints, stack, and goals. Direct engineer response within 24 hours.</p>
+  </div>
+
+  <div class="inquiry-container">
+    <form id="inquiry-form" class="inquiry-form" novalidate>
+      <div class="form-row form-row--split">
+        <div class="form-group">
+          <label for="form-name" id="label-name">YOUR NAME / الاسم <span class="req">*</span></label>
+          <input type="text" id="form-name" name="name" required placeholder="Arqam Rashed" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="form-email" id="label-email">YOUR EMAIL / البريد الإلكتروني <span class="req">*</span></label>
+          <input type="email" id="form-email" name="email" required placeholder="contact@company.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="form-domain" id="label-domain">SYSTEM DOMAIN / مجال المشروع</label>
+        <select id="form-domain" name="domain">
+          <option value="Tourism & Booking Platforms">Tourism & Booking Platforms / إدارة وحجوزات سياحية</option>
+          <option value="Native Windows Automation">Native Windows Desktop Automation / أتمتة سطح المكتب ويندوز</option>
+          <option value="Retail & Inventory ERP">Retail & Inventory ERP / أنظمة مخازن وتجارة</option>
+          <option value="Mobile App (Flutter / Dart)">Mobile Application / تطبيقات الموبايل (Flutter / Dart)</option>
+          <option value="Enterprise Architecture & Python">Enterprise Architecture & Python / معمارية برمجية مخصصة</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="form-message" id="label-message">PROJECT BRIEF & TIMELINE / تفاصيل المشروع والمدة <span class="req">*</span></label>
+        <textarea id="form-message" name="message" rows="4" required placeholder="Describe technical scope, deadlines, and key requirements..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="cta cta--submit" id="form-submit-btn">
+          <span id="submit-btn-text">TRANSMIT INQUIRY</span>
+          <span class="cta__arrow" aria-hidden="true">↗</span>
+        </button>
+        <a href="https://wa.me/201016843477?text=Hello%20Arqam,%20I%20would%20like%20to%20discuss%20a%20project%20with%20you" target="_blank" rel="noopener noreferrer" class="cta cta--wa" id="form-wa-btn">
+          <span id="wa-btn-text">DIRECT WHATSAPP</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div id="form-feedback" class="form-feedback" aria-live="polite" hidden></div>
+    </form>
+  </div>
+</section>
+
 </main>
 
 <footer class="site-footer">
@@ -1511,7 +1653,8 @@ body.no-js .project__img{opacity:.92!important}
   <a href="#act-1" data-act-link="0" class="is-active"><span>01 / CORE</span></a>
   <a href="#work" data-act-link="1"><span>02 / WORK</span></a>
   <a href="#architecture" data-act-link="2"><span>03 / SYSTEM</span></a>
-  <a href="#contact" data-act-link="3"><span>04 / SIGNAL</span></a>
+  <a href="#contact" data-act-link="3"><span>04 / SIG</span></a>
+  <a href="#inquiry" data-act-link="4"><span>05 / INQ</span></a>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.1/dist/ScrollTrigger.min.js"></script>
@@ -1637,7 +1780,9 @@ const PALETTE_STOPS = [
   { m: 1.72, bg: 'F2EFE9', ink: '111111', accent: 'FF3B00', strong: 'B82800', muted: '6B665E', line: '111111', la: 0.16 },
   { m: 2.00, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: '8AA2B8', line: 'E8F7FF', la: 0.18 },
   { m: 2.72, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: '8AA2B8', line: 'E8F7FF', la: 0.18 },
-  { m: 3.00, bg: '9E442C', ink: 'F8EEE2', accent: 'FFD9A8', strong: 'FFE7C9', muted: 'EFD9C6', line: 'F8EEE2', la: 0.30 }
+  { m: 3.00, bg: '14100E', ink: 'FDFBF7', accent: 'FF8A2A', strong: 'FFA654', muted: 'C2B3A4', line: 'FDFBF7', la: 0.18 },
+  { m: 3.72, bg: '14100E', ink: 'FDFBF7', accent: 'FF8A2A', strong: 'FFA654', muted: 'C2B3A4', line: 'FDFBF7', la: 0.18 },
+  { m: 4.00, bg: '080B10', ink: 'F0F6FC', accent: '38EF7D', strong: '00E5FF', muted: '8B949E', line: '30363D', la: 0.20 }
 ];
 
 const hexToRgb = (hex) => {
@@ -1743,7 +1888,7 @@ const refs = {
   mediaEls: $$('.project__media')
 };
 
-const ACT_NAME_KEYS = ['actName0', 'actName1', 'actName2', 'actName3'];
+const ACT_NAME_KEYS = ['actName0', 'actName1', 'actName2', 'actName3', 'actName4'];
 let lenis = null;
 let scrollEngineStarted = false;
 /* Scroll engine */
@@ -1824,6 +1969,8 @@ function measureLayout() {
   layout.act2 = $('#work').offsetTop;
   layout.act3 = Math.round($('#architecture').getBoundingClientRect().top + window.scrollY);
   layout.act4 = Math.round($('#contact').getBoundingClientRect().top + window.scrollY);
+  const inq = $('#inquiry');
+  if (inq) layout.act5 = Math.round(inq.getBoundingClientRect().top + window.scrollY);
   layout.max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
   state.scrollMax = layout.max;
 }
@@ -1834,10 +1981,12 @@ function computeActMix() {
   const m1 = smoothstep(layout.act2 - vh * 0.92, layout.act2 - vh * 0.18, y);
   const m2 = smoothstep(layout.act3 - vh * 0.9, layout.act3 - vh * 0.16, y);
   const m3 = smoothstep(layout.act4 - vh * 0.9, layout.act4 - vh * 0.16, y);
+  const m4 = layout.act5 ? smoothstep(layout.act5 - vh * 0.9, layout.act5 - vh * 0.16, y) : 0;
   state.m1 = m1;
   state.m2 = m2;
   state.m3 = m3;
-  return clamp(m1 + m2 + m3, 0, 3);
+  state.m4 = m4;
+  return clamp(m1 + m2 + m3 + m4, 0, 4);
 }
 
 function scrollToTarget(target) {
@@ -2275,7 +2424,7 @@ function updateHUD(now) {
     if (refs.wave) refs.wave.setAttribute('points', points.join(' '));
   }
 
-  const actIndex = clamp(Math.round(state.actMix), 0, 3);
+  const actIndex = clamp(Math.round(state.actMix), 0, 4);
   if (actIndex !== hudStats.lastAct) {
     hudStats.lastAct = actIndex;
     if (refs.hudActNum) refs.hudActNum.textContent = '0' + (actIndex + 1);
@@ -2283,7 +2432,7 @@ function updateHUD(now) {
     refs.actLinks.forEach((a) => {
       a.classList.toggle('is-active', Number(a.dataset.actLink) === actIndex);
     });
-    document.body.classList.toggle('act-4-on', actIndex === 3);
+    document.body.classList.toggle('act-4-on', actIndex >= 3);
   }
 }
 
@@ -2295,7 +2444,7 @@ window.addEventListener('arqam:lang', () => {
   renderCopyLabel();
   renderDomain();
   if (refs.hudActName) {
-    refs.hudActName.textContent = langText(ACT_NAME_KEYS[clamp(Math.round(state.actMix), 0, 3)]);
+    refs.hudActName.textContent = langText(ACT_NAME_KEYS[clamp(Math.round(state.actMix), 0, 4)]);
   }
   if (document.body.classList.contains('cursor-hover')) {
     const hovered = document.querySelector('[data-cursor]:hover');
@@ -3742,6 +3891,18 @@ init().catch((err) => {
       actName1: 'SWISS EDITORIAL',
       actName2: 'SPATIAL SYSTEM',
       actName3: 'SINGULARITY',
+      actName4: 'DIRECT INQUIRY',
+      navInquiry: 'INQUIRY',
+      mobileInquiry: '05 / INQ',
+      inquiryKicker: 'ACT V / DIRECT TRANSMISSION & INQUIRY',
+      inquiryTitle: 'START A<br><span>PROJECT.</span>',
+      inquiryIntro: 'Have a vision for an enterprise booking engine, native Windows automation, or an end-to-end retail system? Send the constraints, stack, and goals. Direct engineer response within 24 hours.',
+      labelName: 'YOUR NAME <span class="req">*</span>',
+      labelEmail: 'YOUR EMAIL <span class="req">*</span>',
+      labelDomain: 'SYSTEM DOMAIN',
+      labelMessage: 'PROJECT BRIEF & TIMELINE <span class="req">*</span>',
+      submitBtnText: 'TRANSMIT INQUIRY',
+      waBtnText: 'DIRECT WHATSAPP',
       heroTopLeft: 'FULL-STACK ARCHITECT / CREATIVE DEVELOPER',
       heroTopRight: '<b>LUXOR, EGYPT</b> / 25.6872 N, 32.6396 E',
       heroAside1: 'PORTFOLIO / 2026',
@@ -3872,6 +4033,18 @@ init().catch((err) => {
       actName1: 'الدقة السويسرية',
       actName2: 'المعمارية المكانية',
       actName3: 'نقطة التفرد',
+      actName4: 'بدء مشروع جديد',
+      navInquiry: 'بدء مشروع',
+      mobileInquiry: '05 / مشروع',
+      inquiryKicker: 'الفصل الخامس / بدء مشروع والتواصل المباشر',
+      inquiryTitle: 'ابدأ<br><span>مشروعك الآن.</span>',
+      inquiryIntro: 'هل لديك رؤية لمنصة حجوزات سياحية، أداة أتمتة ويندوز متقدمة، أو نظام إدارة مخازن وعيادات؟ أرسل نطاق عملك، التقنيات المطلوبة والمدة المتوقعة. سأرد عليك مباشرة كمهندس مسؤول خلال 24 ساعة.',
+      labelName: 'الاسم الكريم <span class="req">*</span>',
+      labelEmail: 'البريد الإلكتروني <span class="req">*</span>',
+      labelDomain: 'مجال النظام أو المشروع',
+      labelMessage: 'تفاصيل المتطلبات والمدة الزمنية <span class="req">*</span>',
+      submitBtnText: 'إرسال طلب المشروع ↗',
+      waBtnText: 'محادثة واتساب فورية ↗',
       heroTopLeft: 'مهندس معماري للبرمجيات / مطوّر تجارب إبداعية',
       heroTopRight: '<b>الأقصر، مصر</b> / 25.6872° شمالاً، 32.6396° شرقاً',
       heroAside1: 'سجل الأعمال / 2026',
@@ -3990,6 +4163,7 @@ init().catch((err) => {
     { sel: '.act-nav a[data-act-link="1"] span:nth-child(2)', key: 'navWork' },
     { sel: '.act-nav a[data-act-link="2"] span:nth-child(2)', key: 'navSystem' },
     { sel: '.act-nav a[data-act-link="3"] span:nth-child(2)', key: 'navSignal' },
+    { sel: '.act-nav a[data-act-link="4"] span:nth-child(2)', key: 'navInquiry' },
     { sel: '#hud-act-name', key: 'actName0' },
     { sel: '.hero-top > span:first-child', key: 'heroTopLeft' },
     { sel: '.hero-top__right', key: 'heroTopRight', html: true },
@@ -4083,7 +4257,17 @@ init().catch((err) => {
     { sel: '.mobile-nav a[data-act-link="0"] span', key: 'mobileCore' },
     { sel: '.mobile-nav a[data-act-link="1"] span', key: 'mobileWork' },
     { sel: '.mobile-nav a[data-act-link="2"] span', key: 'mobileSystem' },
-    { sel: '.mobile-nav a[data-act-link="3"] span', key: 'mobileSignal' }
+    { sel: '.mobile-nav a[data-act-link="3"] span', key: 'mobileSignal' },
+    { sel: '.mobile-nav a[data-act-link="4"] span', key: 'mobileInquiry' },
+    { sel: '#inquiry-kicker', key: 'inquiryKicker' },
+    { sel: '#inquiry-title', key: 'inquiryTitle', html: true },
+    { sel: '#inquiry-intro', key: 'inquiryIntro' },
+    { sel: '#label-name', key: 'labelName', html: true },
+    { sel: '#label-email', key: 'labelEmail', html: true },
+    { sel: '#label-domain', key: 'labelDomain' },
+    { sel: '#label-message', key: 'labelMessage', html: true },
+    { sel: '#submit-btn-text', key: 'submitBtnText' },
+    { sel: '#wa-btn-text', key: 'waBtnText' }
   ];
 
   var CURSOR_AR = {
@@ -4205,7 +4389,7 @@ init().catch((err) => {
       try { window.__ARQAM_RUN_INTRO(); } catch (e) {}
     }
     if (window.__ARQAM_AUDIO) {
-      window.__ARQAM_AUDIO.playTactile(620, 0.08, 0.12);
+      window.__ARQAM_AUDIO.enable();
     }
 
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -4214,7 +4398,7 @@ init().catch((err) => {
       gate.classList.add('is-dismissed');
       gate.style.display = 'none';
       gate.setAttribute('aria-hidden', 'true');
-      if (gate.contains(document.activeElement)) document.activeElement.blur();
+      if (gate.parentNode) gate.parentNode.removeChild(gate);
     }, reduced ? 0 : 320);
   }
 
@@ -4302,315 +4486,194 @@ init().catch((err) => {
 
 <script>
 /* ==========================================================================
-   ARQAM RASHED - NATURAL AMBIENT AUDIO ENGINE & INTERACTIVE FEATURES
-   Physical acoustic modeling: procedural pink noise wind, grounding sub-bass
-   chords, spatial crystalline resonance, zero-harshness micro-haptic clicks.
+   ARQAM RASHED - HIGH-FIDELITY ORGANIC AUDIO ENGINE V2 & INTERACTION SYSTEM
+   Pure acoustic presence: ElevenLabs natural field recordings per section.
+   Zero synthetic oscillators / zero radio hum. Instant 1-tap toggle.
+   5 Distinct Section Button Sounds (Sandstone, Bamboo, Crystal, Water, Haptic).
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  class NaturalAudioEngine {
+  class AudioEngineV2 {
     constructor() {
-      this.ctx = null;
-      this.masterGain = null;
-      this.ambientGain = null;
-      this.sfxGain = null;
       this.enabled = false;
-      this.windFilter = null;
-      this.rootOsc = null;
-      this.fifthOsc = null;
-      this.octaveOsc = null;
-      this.chordGain = null;
-      this.chordFilter = null;
-      this.lastAct = -1;
-      this.layers = null;
-      this.clickAudio = null;
-      this.filesLoaded = false;
-    }
-
-    initAudioFiles() {
-      if (this.filesLoaded) return;
-      this.filesLoaded = true;
-      const sources = {
-        0: './assets/audio/act1-desert-wind.mp3',
-        1: './assets/audio/act2-kinetic-chime.mp3',
-        2: './assets/audio/act3-crystal-resonance.mp3',
-        3: './assets/audio/act4-gravitational-calm.mp3'
-      };
-      this.layers = {};
-      for (const [key, src] of Object.entries(sources)) {
-        try {
-          const audio = new Audio(src);
-          audio.loop = true;
-          audio.volume = 0;
-          audio.preload = 'auto';
-          this.layers[key] = audio;
-        } catch (e) {}
-      }
-      try {
-        this.clickAudio = new Audio('./assets/audio/ui-click.mp3');
-        this.clickAudio.volume = 0.22;
-        this.clickAudio.preload = 'auto';
-      } catch (e) {}
-    }
-
-    fadeAudio(audio, targetVol, durationSec, onComplete) {
-      if (!audio) return;
-      const startVol = audio.volume;
-      const diff = targetVol - startVol;
-      const steps = 18;
-      const stepTime = (durationSec * 1000) / steps;
-      let step = 0;
-      clearInterval(audio._fadeInterval);
-      audio._fadeInterval = setInterval(() => {
-        step++;
-        audio.volume = Math.max(0, Math.min(1, startVol + diff * (step / steps)));
-        if (step >= steps) {
-          clearInterval(audio._fadeInterval);
-          if (onComplete) onComplete();
-        }
-      }, stepTime);
+      this.currentAct = -1;
+      this.ambientTracks = {};
+      this.btnSounds = {};
+      this.fadeIntervals = {};
+      this.targetVols = { 0: 0.38, 1: 0.35, 2: 0.34, 3: 0.36, 4: 0.35 };
+      this.initialized = false;
     }
 
     init() {
-      if (this.ctx) return;
+      if (this.initialized) return;
+      this.initialized = true;
+
+      const ambientSources = {
+        0: './assets/audio/act1-luxor-wind.mp3',
+        1: './assets/audio/act2-kinetic-garden.mp3',
+        2: './assets/audio/act3-crystal-resonance.mp3',
+        3: './assets/audio/act4-twilight-calm.mp3',
+        4: './assets/audio/act5-dialogue-presence.mp3'
+      };
+
+      const btnSources = {
+        0: './assets/audio/btn-act1.mp3',
+        1: './assets/audio/btn-act2.mp3',
+        2: './assets/audio/btn-act3.mp3',
+        3: './assets/audio/btn-act4.mp3',
+        4: './assets/audio/btn-act5.mp3'
+      };
+
+      for (const [act, src] of Object.entries(ambientSources)) {
+        try {
+          const a = new Audio(src);
+          a.loop = true;
+          a.volume = 0;
+          a.preload = 'auto';
+          this.ambientTracks[act] = a;
+        } catch (e) {}
+      }
+
+      for (const [act, src] of Object.entries(btnSources)) {
+        try {
+          const a = new Audio(src);
+          a.preload = 'auto';
+          a.volume = 0.35;
+          this.btnSounds[act] = a;
+        } catch (e) {}
+      }
+
+      this.setupButtonDelegation();
+    }
+
+    fade(audio, targetVol, durationMs = 1200, onDone) {
+      if (!audio) return;
+      const key = audio.src;
+      if (this.fadeIntervals[key]) clearInterval(this.fadeIntervals[key]);
+
+      const startVol = audio.volume;
+      const diff = targetVol - startVol;
+      const steps = 22;
+      const intervalMs = Math.max(16, durationMs / steps);
+      let step = 0;
+
+      this.fadeIntervals[key] = setInterval(() => {
+        step++;
+        const current = startVol + diff * (step / steps);
+        audio.volume = Math.max(0, Math.min(1, current));
+        if (step >= steps) {
+          clearInterval(this.fadeIntervals[key]);
+          delete this.fadeIntervals[key];
+          if (targetVol <= 0.001) {
+            audio.pause();
+          }
+          if (onDone) onDone();
+        }
+      }, intervalMs);
+    }
+
+    playBtn(act = 0) {
+      if (!this.enabled) return;
+      const sound = this.btnSounds[act] || this.btnSounds[0];
+      if (!sound) return;
       try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        this.ctx = new AudioCtx();
-
-        // Master gain with 0-pop ramping
-        this.masterGain = this.ctx.createGain();
-        this.masterGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-        this.masterGain.connect(this.ctx.destination);
-
-        this.ambientGain = this.ctx.createGain();
-        this.ambientGain.gain.setValueAtTime(0.75, this.ctx.currentTime);
-        this.ambientGain.connect(this.masterGain);
-
-        this.sfxGain = this.ctx.createGain();
-        this.sfxGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
-        this.sfxGain.connect(this.masterGain);
-
-        this.buildAtmosphere();
-      } catch (err) {
-        console.warn('Audio context init deferred', err);
-      }
+        const clone = sound.cloneNode();
+        clone.volume = 0.32;
+        clone.play().catch(() => {});
+      } catch (e) {}
     }
 
-    buildAtmosphere() {
-      if (!this.ctx) return;
-      // 1. Organic Pink Noise Generator (Luxor sandstone night wind simulation)
-      const bufferSize = this.ctx.sampleRate * 2;
-      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        b0 = 0.99886 * b0 + white * 0.0555179;
-        b1 = 0.99332 * b1 + white * 0.0750759;
-        b2 = 0.96900 * b2 + white * 0.1538520;
-        b3 = 0.86650 * b3 + white * 0.3104856;
-        b4 = 0.55000 * b4 + white * 0.5329522;
-        b5 = -0.7616 * b5 - white * 0.0168980;
-        output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.018;
-        b6 = white * 0.115926;
-      }
-
-      const noiseSource = this.ctx.createBufferSource();
-      noiseSource.buffer = noiseBuffer;
-      noiseSource.loop = true;
-
-      this.windFilter = this.ctx.createBiquadFilter();
-      this.windFilter.type = 'bandpass';
-      this.windFilter.frequency.setValueAtTime(220, this.ctx.currentTime);
-      this.windFilter.Q.setValueAtTime(1.2, this.ctx.currentTime);
-
-      noiseSource.connect(this.windFilter);
-      this.windFilter.connect(this.ambientGain);
-      noiseSource.start();
-
-      // 2. Harmonic Resonant Chord (Grounding 55Hz fundamental, peaceful, non-intrusive)
-      this.rootOsc = this.ctx.createOscillator();
-      this.rootOsc.type = 'sine';
-      this.rootOsc.frequency.setValueAtTime(55, this.ctx.currentTime); // A1
-
-      this.fifthOsc = this.ctx.createOscillator();
-      this.fifthOsc.type = 'sine';
-      this.fifthOsc.frequency.setValueAtTime(82.5, this.ctx.currentTime); // E2
-
-      this.octaveOsc = this.ctx.createOscillator();
-      this.octaveOsc.type = 'sine';
-      this.octaveOsc.frequency.setValueAtTime(110, this.ctx.currentTime); // A2
-
-      this.chordFilter = this.ctx.createBiquadFilter();
-      this.chordFilter.type = 'lowpass';
-      this.chordFilter.frequency.setValueAtTime(280, this.ctx.currentTime);
-
-      this.chordGain = this.ctx.createGain();
-      this.chordGain.gain.setValueAtTime(0.16, this.ctx.currentTime);
-
-      this.rootOsc.connect(this.chordFilter);
-      this.fifthOsc.connect(this.chordFilter);
-      this.octaveOsc.connect(this.chordFilter);
-      this.chordFilter.connect(this.chordGain);
-      this.chordGain.connect(this.ambientGain);
-
-      this.rootOsc.start();
-      this.fifthOsc.start();
-      this.octaveOsc.start();
+    playTactile(freq, decay, vol) {
+      this.playBtn(this.currentAct >= 0 ? this.currentAct : 0);
     }
 
-    onTick(actMix, velocity) {
-      if (!this.ctx || !this.enabled) return;
-      const now = this.ctx.currentTime;
-      // Determine dominant act
-      let dominant = 0;
-      if (actMix.m3 > 0.45) dominant = 3;
-      else if (actMix.m2 > 0.45) dominant = 2;
-      else if (actMix.m1 > 0.45) dominant = 1;
+    playChime(note) {
+      this.playBtn(2); // crystal resonance chime
+    }
 
-      if (dominant !== this.lastAct) {
-        this.lastAct = dominant;
-        this.setAct(dominant);
-      }
+    setupButtonDelegation() {
+      document.addEventListener('click', (e) => {
+        if (!this.enabled) return;
+        const target = e.target.closest('button, a, .cluster, .lang-option, input[type="submit"]');
+        if (!target) return;
+        let act = 0;
+        if (target.closest('.act-5') || target.closest('#inquiry')) act = 4;
+        else if (target.closest('.act-4') || target.closest('#contact')) act = 3;
+        else if (target.closest('.act-3') || target.closest('#architecture')) act = 2;
+        else if (target.closest('.act-2') || target.closest('#work')) act = 1;
+        else act = 0;
 
-      // Dynamic wind sweep driven by scroll speed
-      if (this.windFilter) {
-        const velMod = Math.min(Math.abs(velocity || 0) * 12, 180);
-        const baseFreq = dominant === 0 ? 220 : dominant === 1 ? 340 : dominant === 2 ? 180 : 130;
-        this.windFilter.frequency.setTargetAtTime(baseFreq + velMod, now, 0.25);
-      }
+        this.playBtn(act);
+      }, true);
     }
 
     setAct(actIndex) {
-      if (this.layers && this.enabled) {
-        Object.keys(this.layers).forEach((k) => {
-          const layer = this.layers[k];
-          if (!layer) return;
-          if (parseInt(k, 10) === actIndex) {
-            if (layer.paused) layer.play().catch(() => {});
-            this.fadeAudio(layer, 0.45, 1.4);
-          } else {
-            this.fadeAudio(layer, 0, 1.4, () => {
-              if (parseInt(k, 10) !== actIndex) layer.pause();
-            });
+      if (actIndex === this.currentAct) return;
+      this.currentAct = actIndex;
+      if (!this.enabled) return;
+
+      for (const [k, audio] of Object.entries(this.ambientTracks)) {
+        const actNum = parseInt(k, 10);
+        if (actNum === actIndex) {
+          if (audio.paused) {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
           }
-        });
-      }
-      if (!this.ctx) return;
-      const now = this.ctx.currentTime;
-      if (actIndex === 0) {
-        // Act I: Ancient monolith sandstone resonance
-        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(55, now, 0.5);
-        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(82.5, now, 0.5);
-        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.18, now, 0.5);
-        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(280, now, 0.5);
-      } else if (actIndex === 1) {
-        // Act II: Kinetic editorial warm breeze
-        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(73.42, now, 0.5);
-        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(110, now, 0.5);
-        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.12, now, 0.5);
-        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(360, now, 0.5);
-      } else if (actIndex === 2) {
-        // Act III: Spatial glass crystalline focus chord (216Hz - 324Hz)
-        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(108, now, 0.5);
-        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(162, now, 0.5);
-        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.22, now, 0.5);
-        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(540, now, 0.5);
-      } else if (actIndex === 3) {
-        // Act IV: Deep gravitational calm
-        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(43.65, now, 0.5);
-        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(65.41, now, 0.5);
-        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.15, now, 0.5);
-        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(220, now, 0.5);
+          const maxVol = this.targetVols[actNum] || 0.36;
+          this.fade(audio, maxVol, 1400);
+        } else {
+          this.fade(audio, 0, 1200);
+        }
       }
     }
 
-    playTactile(freq = 520, decay = 0.06, volume = 0.08) {
-      if (this.clickAudio && this.enabled) {
-        try {
-          const clickClone = this.clickAudio.cloneNode();
-          clickClone.volume = 0.22;
-          clickClone.play().catch(() => {});
-        } catch (e) {}
+    onTick(actMix, velocity) {
+      if (!this.enabled) return;
+      let dominant = 0;
+      if (actMix.m4 > 0.45) dominant = 4;
+      else if (actMix.m3 > 0.45) dominant = 3;
+      else if (actMix.m2 > 0.45) dominant = 2;
+      else if (actMix.m1 > 0.45) dominant = 1;
+
+      if (dominant !== this.currentAct) {
+        this.setAct(dominant);
       }
-      if (!this.ctx || !this.enabled) return;
-      try {
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        osc.frequency.exponentialRampToValueAtTime(freq * 0.45, now + decay);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, now);
-
-        gain.gain.setValueAtTime(volume, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.sfxGain);
-
-        osc.start(now);
-        osc.stop(now + decay);
-      } catch (e) {}
     }
 
-    playChime(note = 660) {
-      if (!this.ctx || !this.enabled) return;
+    enable() {
+      this.init();
+      this.enabled = true;
       try {
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(note, now);
-        osc.frequency.exponentialRampToValueAtTime(note * 0.98, now + 0.35);
-
-        gain.gain.setValueAtTime(0.06, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-
-        osc.connect(gain);
-        gain.connect(this.sfxGain);
-
-        osc.start(now);
-        osc.stop(now + 0.35);
+        localStorage.setItem('arqam-sound', 'on');
       } catch (e) {}
+      this.updateUI();
+
+      const act = this.currentAct >= 0 ? this.currentAct : 0;
+      this.currentAct = -1;
+      this.setAct(act);
+      this.playBtn(act);
+    }
+
+    disable() {
+      this.enabled = false;
+      try {
+        localStorage.setItem('arqam-sound', 'off');
+      } catch (e) {}
+      this.updateUI();
+
+      for (const audio of Object.values(this.ambientTracks)) {
+        this.fade(audio, 0, 600);
+      }
     }
 
     toggle() {
-      this.init();
-      this.initAudioFiles();
-      if (this.ctx && this.ctx.state === 'suspended') {
-        this.ctx.resume();
+      if (this.enabled) {
+        this.disable();
+      } else {
+        this.enable();
       }
-      this.enabled = !this.enabled;
-      if (this.masterGain && this.ctx) {
-        const now = this.ctx.currentTime;
-        if (this.enabled) {
-          this.masterGain.gain.cancelScheduledValues(now);
-          this.masterGain.gain.linearRampToValueAtTime(0.55, now + 1.2);
-          this.playTactile(680, 0.08, 0.14);
-        } else {
-          this.masterGain.gain.cancelScheduledValues(now);
-          this.masterGain.gain.linearRampToValueAtTime(0.0001, now + 0.7);
-          if (this.layers) {
-            Object.values(this.layers).forEach(layer => {
-              this.fadeAudio(layer, 0, 0.8, () => layer.pause());
-            });
-          }
-        }
-      }
-      try {
-        localStorage.setItem('arqam-sound', this.enabled ? 'on' : 'off');
-      } catch (e) {}
-      this.updateUI();
       return this.enabled;
     }
 
@@ -4622,14 +4685,14 @@ init().catch((err) => {
       const label = document.getElementById('sound-toggle-text');
       if (label) {
         const isAr = document.documentElement.lang === 'ar';
-        label.textContent = this.enabled 
+        label.textContent = this.enabled
           ? (isAr ? 'الصوت: يعمل' : 'AMBIENT: ON')
           : (isAr ? 'الصوت: صامت' : 'AMBIENT: OFF');
       }
     }
   }
 
-  const audio = new NaturalAudioEngine();
+  const audio = new AudioEngineV2();
   window.__ARQAM_AUDIO = audio;
 
   const soundBtn = document.getElementById('sound-toggle');
@@ -4640,11 +4703,10 @@ init().catch((err) => {
     });
   }
 
-  // Restore sound preference if previously enabled by user
   try {
     if (localStorage.getItem('arqam-sound') === 'on') {
       const autoResume = () => {
-        audio.toggle();
+        audio.enable();
         window.removeEventListener('pointerdown', autoResume);
         window.removeEventListener('keydown', autoResume);
       };
@@ -4894,6 +4956,88 @@ init().catch((err) => {
   });
 
 })();
+
+  /* ==========================================================================
+     ACT V: INQUIRY FORM SUBMISSION & DIRECT WHATSAPP INTEGRATION
+     ========================================================================== */
+  const inquiryForm = document.getElementById('inquiry-form');
+  const inquiryFeedback = document.getElementById('form-feedback');
+  const inquirySubmitBtn = document.getElementById('form-submit-btn');
+
+  if (inquiryForm) {
+    inquiryForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const isAr = document.documentElement.lang === 'ar';
+
+      const nameInput = document.getElementById('form-name');
+      const emailInput = document.getElementById('form-email');
+      const domainInput = document.getElementById('form-domain');
+      const messageInput = document.getElementById('form-message');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const domain = domainInput ? domainInput.value : '';
+      const message = messageInput ? messageInput.value.trim() : '';
+
+      if (!name || !email || !message) {
+        if (inquiryFeedback) {
+          inquiryFeedback.hidden = false;
+          inquiryFeedback.className = 'form-feedback is-error';
+          inquiryFeedback.textContent = isAr 
+            ? 'يرجى ملء جميع الحقول المطلوبة (الاسم، البريد، وتفاصيل المشروع).'
+            : 'Please fill in all required fields (Name, Email, and Brief).';
+        }
+        return;
+      }
+
+      if (inquirySubmitBtn) {
+        inquirySubmitBtn.disabled = true;
+        inquirySubmitBtn.style.opacity = '0.7';
+      }
+      if (inquiryFeedback) {
+        inquiryFeedback.hidden = false;
+        inquiryFeedback.className = 'form-feedback';
+        inquiryFeedback.textContent = isAr ? 'جاري إرسال الطلب...' : 'Transmitting inquiry...';
+      }
+
+      try {
+        const response = await fetch('https://formspree.io/f/xovqkrga', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            _replyto: email,
+            email: email,
+            domain: domain,
+            message: message,
+            _subject: `New Project Inquiry from ${name} [${domain}]`
+          })
+        });
+
+        if (response.ok) {
+          inquiryFeedback.className = 'form-feedback is-success';
+          inquiryFeedback.textContent = isAr
+            ? 'تم إرسال طلبك بنجاح! سيتواصل معك المهندس أرقم راشد خلال 24 ساعة.'
+            : 'Inquiry transmitted successfully. Arqam Rashed will respond within 24 hours.';
+          inquiryForm.reset();
+        } else {
+          throw new Error('Server response not ok');
+        }
+      } catch (err) {
+        inquiryFeedback.className = 'form-feedback is-error';
+        const mailtoUri = `mailto:arkam2014a@gmail.com?subject=${encodeURIComponent('Project Inquiry: ' + domain)}&body=${encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nDomain: ' + domain + '\n\n' + message)}`;
+        inquiryFeedback.innerHTML = isAr
+          ? `تعذر الاتصال المباشر. <a href="${mailtoUri}" style="color:var(--accent);text-decoration:underline;">اضغط هنا لإرسال رسالتك عبر البريد مباشرة ↗</a>`
+          : `Direct transmission failed. <a href="${mailtoUri}" style="color:var(--accent);text-decoration:underline;">Click here to send via email client ↗</a>`;
+      } finally {
+        if (inquirySubmitBtn) {
+          inquirySubmitBtn.disabled = false;
+          inquirySubmitBtn.style.opacity = '1';
+        }
+      }
+    });
+  }
+
 </script>
 
 </body>
