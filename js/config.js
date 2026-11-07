@@ -5,9 +5,9 @@
  * exclusively as an encrypted secret inside Cloudflare Pages Functions (functions/api/leaderboard.js).
  */
 export const CONFIG = {
-  email: 'arkam2014a@gmail.com',
+  email: 'me@arqamrashed.com',
   whatsapp: '201016843477',
-  formEndpoint: 'https://formsubmit.co/ajax/arkam2014a@gmail.com',
+  formEndpoint: 'https://formsubmit.co/ajax/arkamrashed@gmail.com',
   cvUrl: 'assets/docs/Arqam-Rashed-CV.pdf',
   vcardUrl: 'assets/docs/Arqam-Rashed.vcf',
   leaderboardApiUrl: 'https://arqam-rashed.pages.dev/api/leaderboard',
