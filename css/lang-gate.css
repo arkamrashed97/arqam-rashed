@@ -1,10 +1,21 @@
-/* Language onboarding */
+/* Language onboarding — strict scroll lock while open */
+html.lang-pending,
+html.lang-pending body {
+  overflow: hidden !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overscroll-behavior: none !important;
+}
 .lang-gate{
   position:fixed;inset:0;z-index:500;
+  height:100dvh;max-height:100dvh;
   display:grid;grid-template-rows:auto 1fr auto;
-  padding:18px 22px 22px;
+  padding:clamp(12px,2.2vh,20px) clamp(16px,2.4vw,26px);
   background:#070708;color:#E2E2E5;
-  overflow:auto;
+  overflow:hidden !important;
+  overscroll-behavior:none;
+  touch-action:none;
+  user-select:none;
 }
 .lang-gate[hidden],
 html.lang-set .lang-gate,
@@ -39,13 +50,27 @@ body.is-ready #boot {
 }
 .lang-gate__top{
   display:flex;justify-content:space-between;gap:20px;
-  border-bottom:1px solid rgba(212,255,0,.24);padding-bottom:14px;
+  border-bottom:1px solid rgba(212,255,0,.24);padding-bottom:12px;
   font:400 9.5px/1.5 var(--mono);letter-spacing:.09em;text-transform:uppercase;
   color:rgba(226,226,229,.55);
 }
+.lang-gate__top span,
+.lang-gate__bottom span,
+.lang-gate__kicker,
+.lang-gate h1,
+.lang-gate__note{
+  transition:color .22s,text-shadow .22s,transform .22s;
+}
+.lang-gate__top span:hover,
+.lang-gate__bottom span:hover,
+.lang-gate__kicker:hover{
+  color:#D4FF00;
+  text-shadow:0 0 12px rgba(212,255,0,.35);
+}
 .lang-gate__center{
-  display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:center;
-  padding:7vh 0;
+  display:grid;grid-template-columns:1.05fr .95fr;gap:4.5vw;align-items:center;
+  padding:clamp(8px,3vh,42px) 0;
+  min-height:0;
 }
 .lang-gate__kicker{
   display:flex;align-items:center;gap:10px;

@@ -32,10 +32,17 @@ export function initScroll() {
     gsap.ticker.add((time) => scrollEngine.lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(500, 33);
     window.__lenis = scrollEngine.lenis;
+    if (document.documentElement.classList.contains('lang-pending')) {
+      scrollEngine.lenis.stop();
+    }
   } else {
     let lastY = window.scrollY;
     let lastT = performance.now();
     window.addEventListener('scroll', () => {
+      if (document.documentElement.classList.contains('lang-pending')) {
+        if (window.scrollY !== 0) window.scrollTo(0, 0);
+        return;
+      }
       const now = performance.now();
       const dt = Math.max(8, now - lastT);
       const y = window.scrollY;
@@ -46,6 +53,20 @@ export function initScroll() {
       ScrollTrigger.update();
     }, { passive: true });
   }
+
+  window.addEventListener('arqam:gate-closed', () => {
+    window.scrollTo(0, 0);
+    state.scroll = 0;
+    state.velocity = 0;
+    if (scrollEngine.lenis) {
+      scrollEngine.lenis.scrollTo(0, { immediate: true });
+      scrollEngine.lenis.start();
+    }
+    requestAnimationFrame(() => {
+      measureLayout();
+      ScrollTrigger.refresh();
+    });
+  });
 
   initHorizontal();
   ScrollTrigger.addEventListener('refresh', measureLayout);

@@ -47,7 +47,16 @@ export const SOUNDS = [
   { name: 'water-plop.mp3', duration: 0.8, influence: 0.7, text: `Single natural round water droplet plop as a small fishing bobber touches calm water, ${CALM}` },
   { name: 'fish-bite.mp3', duration: 0.9, influence: 0.7, text: `Playful underwater bubble pop with a quick gentle line tug, fish nibbling hook, ${CALM}` },
   { name: 'reel-in.mp3', duration: 1.0, influence: 0.65, text: `Smooth gentle fishing reel mechanical clicks with a light water swirl, ${CALM}` },
-  { name: 'fish-catch.mp3', duration: 1.5, influence: 0.6, text: `Joyful warm wooden marimba chord with a pleasant water splash, fish caught celebration, ${CALM}` }
+  { name: 'fish-catch.mp3', duration: 1.5, influence: 0.6, text: `Joyful warm wooden marimba chord with a pleasant water splash, fish caught celebration, ${CALM}` },
+  // ---- v5 additions: dedicated onboarding gate (#lang-gate) sound vocabulary -
+  { name: 'gate-hover-en.mp3', duration: 0.8, influence: 0.7, text: `Delicate airy crystal glass harp harmonic note, hovering English language card, ${CALM}` },
+  { name: 'gate-hover-ar.mp3', duration: 0.9, influence: 0.7, text: `Warm resonant acoustic oud wood pluck with a subtle desert wind chime, hovering Arabic language card, ${CALM}` },
+  { name: 'gate-select-en.mp3', duration: 1.8, influence: 0.6, text: `Luminous welcoming crystal chord bloom with a smooth architectural portal opening whoosh, ${CALM}` },
+  { name: 'gate-select-ar.mp3', duration: 1.8, influence: 0.6, text: `Rich welcoming warm wooden temple chime with a gentle Luxor desert breeze bloom, ${CALM}` },
+  { name: 'gate-telemetry.mp3', duration: 0.7, influence: 0.7, text: `Soft warm analog spacecraft telemetry micro ping, subtle status bar interaction, ${CALM}` },
+  { name: 'gate-monolith.mp3', duration: 1.1, influence: 0.65, text: `Deep warm obsidian stone resonance with a gentle golden sand shimmer, ${CALM}` },
+  { name: 'gate-coords.mp3', duration: 0.8, influence: 0.7, text: `Soft celestial brass astrolabe compass click with a tiny starlight chime, ${CALM}` },
+  { name: 'gate-touch.mp3', duration: 0.8, influence: 0.7, text: `Gentle warm sanctuary stone tap with a soft airy ripple, ${CALM}` }
 ];
 
 async function main() {

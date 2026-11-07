@@ -106,6 +106,22 @@ async function verifyEdition(browser, baseUrl, route, label) {
   assert.ok(cursorCheck.cursorTransform.includes('translate3d'), `${label}: .cursor transform should update on pointermove before language selection`);
   console.log(`  [PASS] Desktop cursor on #lang-gate: z-index=${cursorCheck.cursorZ} (> ${cursorCheck.gateZ}), transform=${cursorCheck.cursorTransform}`);
 
+  // 1b. Onboarding Scroll Lock Check (wheel must NOT scroll window or #lang-gate)
+  await page.mouse.wheel(0, 700);
+  await page.waitForTimeout(160);
+  const gateScrollCheck = await page.evaluate(() => {
+    const gate = document.getElementById('lang-gate');
+    return {
+      windowScrollY: window.scrollY,
+      gateScrollTop: gate ? gate.scrollTop : 0,
+      gateOverflow: gate ? getComputedStyle(gate).overflow : ''
+    };
+  });
+  assert.equal(gateScrollCheck.windowScrollY, 0, `${label}: window.scrollY must remain 0 while #lang-gate is open`);
+  assert.equal(gateScrollCheck.gateScrollTop, 0, `${label}: #lang-gate.scrollTop must remain 0`);
+  assert.equal(gateScrollCheck.gateOverflow, 'hidden', `${label}: #lang-gate must have overflow: hidden`);
+  console.log(`  [PASS] Onboarding scroll lock verified (scrollY=0, gateScrollTop=0, overflow=${gateScrollCheck.gateOverflow})`);
+
   // 2. Language Selection + Audio Unlock Check
   await page.click('[data-lang-choice="en"]');
   await page.waitForTimeout(600);

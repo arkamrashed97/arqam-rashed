@@ -232,6 +232,9 @@ class SoundEngine {
     if (!this.ctx) this.build();
     const ctx = this.ctx;
     if (ctx.state !== 'running') ctx.resume().catch(() => {});
+    if (!this.preferenceOff && this.master) {
+      this.master.gain.setTargetAtTime(0.95, ctx.currentTime, 0.02);
+    }
     try {
       const src = ctx.createBufferSource();
       src.buffer = ctx.createBuffer(1, 1, 22050);
@@ -253,13 +256,34 @@ class SoundEngine {
     return ctx;
   }
 
+  /** Pre-decode onboarding gate cues immediately so they play with zero latency. */
+  preloadGate() {
+    if (!this.supported) return;
+    if (!this.ctx) this.build();
+    const gateKeys = [
+      'gate-hover-en',
+      'gate-hover-ar',
+      'gate-select-en',
+      'gate-select-ar',
+      'gate-telemetry',
+      'gate-monolith',
+      'gate-coords',
+      'gate-touch',
+      'gate-open'
+    ];
+    gateKeys.forEach((k) => {
+      const def = SFX[k];
+      if (def) this.decode(def.url).catch(() => {});
+    });
+  }
+
   build() {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     const ctx = new Ctx({ latencyHint: 'interactive' });
     this.ctx = ctx;
 
     this.master = ctx.createGain();
-    this.master.gain.value = 0;
+    this.master.gain.value = 0.95;
 
     // Master brickwall limiter + gentle glue compressor
     const limiter = ctx.createDynamicsCompressor();

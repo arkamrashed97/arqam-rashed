@@ -27,8 +27,16 @@ export const SFX = {
   'touch-act3': { url: 'assets/audio/touch-act3.mp3', gain: 0.70, reverb: 0.22, cooldown: 320 },
   'touch-act4': { url: 'assets/audio/touch-act4.mp3', gain: 0.74, reverb: 0.24, cooldown: 320 },
 
-  // Core UI interactions
+  // Core UI interactions & Onboarding Gate (#lang-gate) distinct vocabulary
   'gate-open': { url: 'assets/audio/gate-open.mp3', gain: 0.78, reverb: 0.24, cooldown: 400 },
+  'gate-hover-en': { url: 'assets/audio/gate-hover-en.mp3', gain: 0.74, reverb: 0.18, cooldown: 140 },
+  'gate-hover-ar': { url: 'assets/audio/gate-hover-ar.mp3', gain: 0.76, reverb: 0.20, cooldown: 140 },
+  'gate-select-en': { url: 'assets/audio/gate-select-en.mp3', gain: 0.84, reverb: 0.26, cooldown: 350 },
+  'gate-select-ar': { url: 'assets/audio/gate-select-ar.mp3', gain: 0.84, reverb: 0.26, cooldown: 350 },
+  'gate-telemetry': { url: 'assets/audio/gate-telemetry.mp3', gain: 0.68, reverb: 0.14, cooldown: 180 },
+  'gate-monolith': { url: 'assets/audio/gate-monolith.mp3', gain: 0.74, reverb: 0.22, cooldown: 240 },
+  'gate-coords': { url: 'assets/audio/gate-coords.mp3', gain: 0.70, reverb: 0.16, cooldown: 180 },
+  'gate-touch': { url: 'assets/audio/gate-touch.mp3', gain: 0.72, reverb: 0.18, cooldown: 160 },
   'toggle-on': { url: 'assets/audio/toggle-on.mp3', gain: 0.80, reverb: 0.12, cooldown: 120 },
   'toggle-off': { url: 'assets/audio/toggle-off.mp3', gain: 0.80, reverb: 0.12, cooldown: 120 },
   'hover-soft': { url: 'assets/audio/hover-soft.mp3', gain: 0.62, reverb: 0.06, cooldown: 95 },
