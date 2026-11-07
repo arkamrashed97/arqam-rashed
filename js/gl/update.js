@@ -204,8 +204,11 @@ export function updateScene(dt) {
       if (gridGate > 0.004) {
         sceneState.gridUniforms.uTime.value = state.time;
         sceneState.gridUniforms.uOpacity.value = gridGate;
-        sceneState.gridUniforms.uPointer.value.set(state.pointerNX * 1.615, state.pointerNY);
-        sceneState.gridUniforms.uAspect.value = 42 / 26;
+        sceneState.gridUniforms.uPointer.value.set(state.pointerSmoothX * 1.615, state.pointerSmoothY);
+        if (sceneState.gridUniforms.uRipple) {
+          sceneState.gridUniforms.uRipple.value = clamp(state.burst + Math.abs(state.velocitySmooth) * 0.4, 0, 1.5);
+        }
+        sceneState.gridUniforms.uAspect.value = 44 / 28;
       }
     }
   }

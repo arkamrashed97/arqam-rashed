@@ -37,7 +37,17 @@ export const SOUNDS = [
   { name: 'form-success.mp3', duration: 2.0, influence: 0.55, text: `Warm gentle resolved sequence of three soft bell notes, satisfying completion, ${CALM}` },
   { name: 'form-error.mp3', duration: 0.8, influence: 0.7, text: `Very soft low muted wooden thud, gentle notification, not alarming, ${CALM}` },
   { name: 'download-ok.mp3', duration: 1.0, influence: 0.65, text: `Soft paper drop followed by a gentle pluck, file saved confirmation, ${CALM}` },
-  { name: 'type-tick.mp3', duration: 0.5, influence: 0.8, text: 'Very soft quiet single keyboard key tap, muted, subtle, no music' }
+  { name: 'type-tick.mp3', duration: 0.5, influence: 0.8, text: 'Very soft quiet single keyboard key tap, muted, subtle, no music' },
+  // ---- v4 additions: per-act physical touch & Act V fishing game -----------
+  { name: 'touch-act1.mp3', duration: 0.9, influence: 0.65, text: `Soft deep magnetic pulse with a gentle starlight shimmer, physical cursor touch in space, ${CALM}` },
+  { name: 'touch-act2.mp3', duration: 0.9, influence: 0.65, text: `Crisp paper airplane gliding whoosh through soft air, physical touch, ${CALM}` },
+  { name: 'touch-act3.mp3', duration: 0.9, influence: 0.65, text: `Delicate crystalline harmonic chime ping, touching a floating glass prism node, ${CALM}` },
+  { name: 'touch-act4.mp3', duration: 1.1, influence: 0.65, text: `Gentle silk fabric gliding over calm water with a soft liquid ripple, ${CALM}` },
+  { name: 'cast-line.mp3', duration: 1.1, influence: 0.65, text: `Smooth fishing rod cast whoosh with a light line zip and gentle water entry, ${CALM}` },
+  { name: 'water-plop.mp3', duration: 0.8, influence: 0.7, text: `Single natural round water droplet plop as a small fishing bobber touches calm water, ${CALM}` },
+  { name: 'fish-bite.mp3', duration: 0.9, influence: 0.7, text: `Playful underwater bubble pop with a quick gentle line tug, fish nibbling hook, ${CALM}` },
+  { name: 'reel-in.mp3', duration: 1.0, influence: 0.65, text: `Smooth gentle fishing reel mechanical clicks with a light water swirl, ${CALM}` },
+  { name: 'fish-catch.mp3', duration: 1.5, influence: 0.6, text: `Joyful warm wooden marimba chord with a pleasant water splash, fish caught celebration, ${CALM}` }
 ];
 
 async function main() {

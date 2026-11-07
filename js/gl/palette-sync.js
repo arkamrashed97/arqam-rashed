@@ -25,7 +25,10 @@ export function syncScenePalette() {
   if (sceneState.lineUniforms) sceneState.lineUniforms.uInk.value.setStyle(ink);
   if (sceneState.ringMats) sceneState.ringMats.forEach((r) => r.mat.color.setStyle(ink));
   if (sceneState.shardMat) sceneState.shardMat.color.setStyle(ink);
-  if (sceneState.gridUniforms) sceneState.gridUniforms.uInk.value.setStyle(ink);
+  if (sceneState.gridUniforms) {
+    sceneState.gridUniforms.uInk.value.setStyle(ink);
+    if (sceneState.gridUniforms.uAccent) sceneState.gridUniforms.uAccent.value.setStyle(accent);
+  }
   if (sceneState.ringUniforms) {
     sceneState.ringUniforms.uInk.value.setStyle(ink);
     sceneState.ringUniforms.uAccent.value.setStyle(accent);

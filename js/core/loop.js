@@ -9,6 +9,7 @@ import { setDynamicResolution } from '../gl/renderer.js';
 import { sceneState } from '../gl/scene-state.js';
 import { updateScene } from '../gl/update.js';
 import { sound } from '../audio/index.js';
+import { updateActWorlds } from '../features/act-worlds.js';
 
 let loopStarted = false;
 let avgDt = 0.0167;
@@ -39,6 +40,7 @@ export function tick() {
   sound.setEnergy(state.velocitySmooth);
 
   updateScene(dt);
+  updateActWorlds(dt);
   updateCursor(dt);
   updateHUD(now);
 

@@ -18,6 +18,7 @@ import { initGate } from './features/gate.js';
 import { initModal } from './features/modal.js';
 import { initContact } from './features/contact.js';
 import { initInquiry } from './features/inquiry.js';
+import { initActWorlds } from './features/act-worlds.js';
 
 /**
  * Portfolio application bootstrap.
@@ -36,6 +37,7 @@ async function init() {
   initModal();
   initContact();
   initInquiry();
+  initActWorlds();
 
   await whenLanguageReady();
   initMotionPreference();

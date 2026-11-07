@@ -1,23 +1,16 @@
 import { AMBIENT, SFX } from './manifest.js';
 
 /**
- * Web Audio sound engine.
+ * Web Audio sound engine V4 — Balanced Perceptual Loudness & Spatial Physics.
  *
- * Why Web Audio instead of <audio> elements: iOS ignores HTMLMediaElement.volume (no fades),
- * clone-and-play has audible latency on Android, and mp3 encoder padding makes `loop=true`
- * click. Here every ambience is decoded once and looped with an equal-power crossfade, every
- * sound passes through a gentle limiter, and everything starts synchronously inside the user
- * gesture so the first tap always works (no more "tap three times").
- *
- * Physical touches (all subtle, never harsh):
- *  - scroll velocity opens a low-pass on the ambience and swells it slightly (wind picks up)
- *  - UI sounds are panned by pointer position and detuned +-3% so repeats never sound identical
- *  - UI sounds feed a small procedural room reverb (decaying filtered noise impulse response)
- *  - a limiter on the master bus keeps peaks calm on earbuds and phone speakers
+ * Every decoded AudioBuffer is analyzed in 20ms windows and normalized in-place using
+ * gated active RMS + soft-knee transient taming so quiet effects (hover-soft, type-tick,
+ * water-plop) are crystal clear while loud effects never spike or startle.
  */
 
 const PREF_KEY = 'arqam-sound';
 const CROSSFADE_CURVE_STEPS = 96;
+const AMBIENT_URLS = new Set(AMBIENT.map((a) => a.url));
 
 function makeFadeCurves() {
   const fadeIn = new Float32Array(CROSSFADE_CURVE_STEPS);
@@ -30,6 +23,100 @@ function makeFadeCurves() {
   return { fadeIn, fadeOut };
 }
 const CURVES = makeFadeCurves();
+
+/**
+ * In-place perceptual loudness normalizer.
+ * Uses 20ms gated RMS (ignoring silent padding) + soft-knee tanh crest control so all
+ * sounds sit in a tight, comfortable dynamic window on both phone and desktop speakers.
+ */
+function normalizeBufferInPlace(buffer, isAmbient = false) {
+  const channels = buffer.numberOfChannels;
+  const len = buffer.length;
+  if (!len || !channels) return;
+
+  const winSize = Math.max(256, Math.floor(buffer.sampleRate * 0.02));
+  const winRmsList = [];
+  let maxWinRms = 0;
+  let peak = 0;
+
+  for (let c = 0; c < channels; c++) {
+    const data = buffer.getChannelData(c);
+    for (let i = 0; i < len; i++) {
+      const a = Math.abs(data[i]);
+      if (a > peak) peak = a;
+    }
+  }
+
+  const ch0 = buffer.getChannelData(0);
+  for (let start = 0; start < len; start += winSize) {
+    const end = Math.min(len, start + winSize);
+    let sum = 0;
+    for (let i = start; i < end; i++) {
+      sum += ch0[i] * ch0[i];
+    }
+    const rms = Math.sqrt(sum / (end - start));
+    winRmsList.push(rms);
+    if (rms > maxWinRms) maxWinRms = rms;
+  }
+
+  if (peak < 1e-5 || maxWinRms < 1e-5) return;
+
+  // Gate at 18% of max window RMS to exclude leading/trailing silence
+  const gate = maxWinRms * 0.18;
+  let gatedSumSq = 0;
+  let gatedCount = 0;
+  for (let i = 0; i < winRmsList.length; i++) {
+    if (winRmsList[i] >= gate) {
+      gatedSumSq += winRmsList[i] * winRmsList[i];
+      gatedCount++;
+    }
+  }
+  const activeRms = Math.sqrt(gatedSumSq / Math.max(1, gatedCount));
+
+  // If crest factor is very high (spiky click with quiet body), gently soft-saturate first
+  const crest = peak / Math.max(1e-4, activeRms);
+  if (!isAmbient && crest > 4.0) {
+    const drive = Math.min(2.6, (crest / 3.4) / peak);
+    const normTanh = 1 / Math.tanh(drive * peak);
+    peak = 0;
+    for (let c = 0; c < channels; c++) {
+      const data = buffer.getChannelData(c);
+      for (let i = 0; i < len; i++) {
+        const s = Math.tanh(data[i] * drive) * normTanh * 0.85;
+        data[i] = s;
+        const a = Math.abs(s);
+        if (a > peak) peak = a;
+      }
+    }
+  }
+
+  // Re-measure gated RMS after soft-knee crest taming
+  let postSumSq = 0;
+  let postCount = 0;
+  for (let start = 0; start < len; start += winSize) {
+    const end = Math.min(len, start + winSize);
+    let sum = 0;
+    for (let i = start; i < end; i++) sum += ch0[i] * ch0[i];
+    const r = Math.sqrt(sum / (end - start));
+    if (r >= maxWinRms * 0.15) {
+      postSumSq += r * r;
+      postCount++;
+    }
+  }
+  const finalRms = Math.sqrt(postSumSq / Math.max(1, postCount)) || activeRms;
+
+  const targetRms = isAmbient ? 0.088 : 0.185;
+  const maxPeak = isAmbient ? 0.42 : 0.72;
+  let scale = targetRms / Math.max(1e-4, finalRms);
+  scale = Math.min(scale, maxPeak / Math.max(1e-4, peak), 12.0);
+
+  for (let c = 0; c < channels; c++) {
+    const data = buffer.getChannelData(c);
+    for (let i = 0; i < len; i++) {
+      data[i] *= scale;
+    }
+  }
+}
 
 /** Gapless looping voice: overlapping buffer sources joined by an equal-power crossfade. */
 class LoopVoice {
@@ -110,26 +197,6 @@ function silentWavUrl() {
   return silentUrl;
 }
 
-function peakOf(buffer) {
-  let peak = 0;
-  for (let c = 0; c < buffer.numberOfChannels; c++) {
-    const data = buffer.getChannelData(c);
-    for (let i = 0; i < data.length; i += 4) {
-      const v = Math.abs(data[i]);
-      if (v > peak) peak = v;
-    }
-  }
-  return peak || 1;
-}
-
-function rmsOf(buffer) {
-  const data = buffer.getChannelData(0);
-  let sum = 0;
-  let n = 0;
-  for (let i = 0; i < data.length; i += 8) { sum += data[i] * data[i]; n++; }
-  return Math.sqrt(sum / Math.max(1, n)) || 0.05;
-}
-
 class SoundEngine {
   constructor() {
     this.ctx = null;
@@ -165,14 +232,12 @@ class SoundEngine {
     if (!this.ctx) this.build();
     const ctx = this.ctx;
     if (ctx.state !== 'running') ctx.resume().catch(() => {});
-    // Old iOS: a started (even silent) source unlocks the output route inside the gesture.
     try {
       const src = ctx.createBufferSource();
       src.buffer = ctx.createBuffer(1, 1, 22050);
       src.connect(ctx.destination);
       src.start(0);
     } catch (err) { /* ignore */ }
-    // iOS ignores Web Audio when the ring switch is on unless a media element is playing.
     try {
       if (navigator.audioSession) navigator.audioSession.type = 'playback';
       if (!this.silentEl) {
@@ -196,20 +261,21 @@ class SoundEngine {
     this.master = ctx.createGain();
     this.master.gain.value = 0;
 
+    // Master brickwall limiter + gentle glue compressor
     const limiter = ctx.createDynamicsCompressor();
-    limiter.threshold.value = -16;
-    limiter.knee.value = 14;
-    limiter.ratio.value = 6;
-    limiter.attack.value = 0.006;
-    limiter.release.value = 0.28;
+    limiter.threshold.value = -12;
+    limiter.knee.value = 10;
+    limiter.ratio.value = 8;
+    limiter.attack.value = 0.003;
+    limiter.release.value = 0.22;
     this.master.connect(limiter);
     limiter.connect(ctx.destination);
 
     this.ambientBus = ctx.createGain();
-    this.ambientBus.gain.value = 0.9;
+    this.ambientBus.gain.value = 0.72;
     this.ambientTone = ctx.createBiquadFilter();
     this.ambientTone.type = 'lowpass';
-    this.ambientTone.frequency.value = 3200;
+    this.ambientTone.frequency.value = 3400;
     this.ambientTone.Q.value = 0.4;
     this.ambientSwell = ctx.createGain();
     this.ambientSwell.gain.value = 0.85;
@@ -218,15 +284,15 @@ class SoundEngine {
     this.ambientSwell.connect(this.master);
 
     this.sfxBus = ctx.createGain();
-    this.sfxBus.gain.value = 0.85;
+    this.sfxBus.gain.value = 0.92;
     this.sfxBus.connect(this.master);
 
     this.reverbSend = ctx.createGain();
     this.reverbSend.gain.value = 1;
     const convolver = ctx.createConvolver();
-    convolver.buffer = this.makeImpulse(1.7);
+    convolver.buffer = this.makeImpulse(1.5);
     const reverbReturn = ctx.createGain();
-    reverbReturn.gain.value = 0.55;
+    reverbReturn.gain.value = 0.42;
     this.reverbSend.connect(convolver);
     convolver.connect(reverbReturn);
     reverbReturn.connect(this.master);
@@ -246,7 +312,7 @@ class SoundEngine {
         const white = Math.random() * 2 - 1;
         const k = 0.15 + 0.7 * t;
         low += (white - low) * (1 - k);
-        data[i] = low * Math.pow(1 - t, 2.6) * 0.9;
+        data[i] = low * Math.pow(1 - t, 2.6) * 0.85;
       }
     }
     return impulse;
@@ -255,10 +321,16 @@ class SoundEngine {
   async decode(url) {
     if (this.buffers.has(url)) return this.buffers.get(url);
     if (this.loading.has(url)) return this.loading.get(url);
+    const isAmbient = AMBIENT_URLS.has(url);
     const job = fetch(url)
       .then((r) => r.arrayBuffer())
       .then((data) => new Promise((resolve, reject) => this.ctx.decodeAudioData(data, resolve, reject)))
-      .then((buffer) => { this.buffers.set(url, buffer); this.loading.delete(url); return buffer; })
+      .then((buffer) => {
+        normalizeBufferInPlace(buffer, isAmbient);
+        this.buffers.set(url, buffer);
+        this.loading.delete(url);
+        return buffer;
+      })
       .catch((err) => { this.loading.delete(url); throw err; });
     this.loading.set(url, job);
     return job;
@@ -266,14 +338,14 @@ class SoundEngine {
 
   preloadSfx() {
     const run = () => Object.values(SFX).forEach((def) => this.decode(def.url).catch(() => {}));
-    if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 2500 });
-    else window.setTimeout(run, 1200);
+    if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 2000 });
+    else window.setTimeout(run, 800);
   }
 
   preloadAmbient() {
     const run = () => AMBIENT.forEach((def) => this.decode(def.url).catch(() => {}));
-    if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 4000 });
-    else window.setTimeout(run, 2500);
+    if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 3500 });
+    else window.setTimeout(run, 1800);
   }
 
   /** Turn sound on. Call from a user gesture. Idempotent. */
@@ -286,7 +358,7 @@ class SoundEngine {
       this.enabled = true;
       const now = this.ctx.currentTime;
       this.master.gain.cancelScheduledValues(now);
-      this.master.gain.setTargetAtTime(0.9, now, 0.12);
+      this.master.gain.setTargetAtTime(0.95, now, 0.12);
       this.startAct(this.currentAct, true);
       this.preloadSfx();
       this.preloadAmbient();
@@ -304,11 +376,11 @@ class SoundEngine {
     if (withCue) this.playNow('toggle-off', { force: true });
     const now = ctx.currentTime;
     this.master.gain.cancelScheduledValues(now);
-    this.master.gain.setTargetAtTime(0, now + (withCue ? 0.4 : 0), 0.07);
+    this.master.gain.setTargetAtTime(0, now + (withCue ? 0.35 : 0), 0.07);
     window.setTimeout(() => {
       if (!this.enabled && this.ctx.state === 'running') this.ctx.suspend().catch(() => {});
       if (!this.enabled && this.silentEl) this.silentEl.pause();
-    }, withCue ? 1100 : 500);
+    }, withCue ? 1000 : 450);
     this.emit();
   }
 
@@ -342,21 +414,20 @@ class SoundEngine {
       try { buffer = await this.decode(def.url); } catch (err) { return; }
       if (!this.enabled || this.currentAct !== act) return;
       voice = new LoopVoice(this.ctx, buffer, this.ambientBus);
-      voice.level = def.gain * Math.min(5, Math.max(0.3, 0.055 / rmsOf(buffer)));
+      voice.level = def.gain;
       this.voices.set(act, voice);
     }
-    // A previous act may still be looping silently (it changed while sound was off).
     this.voices.forEach((other, key) => {
       if (key === act) return;
       other.out.gain.cancelScheduledValues(this.ctx.currentTime);
-      other.out.gain.setTargetAtTime(0, this.ctx.currentTime, 0.4);
+      other.out.gain.setTargetAtTime(0, this.ctx.currentTime, 0.45);
       other.stop(2);
       this.voices.delete(key);
     });
     voice.start();
     const now = this.ctx.currentTime;
     voice.out.gain.cancelScheduledValues(now);
-    voice.out.gain.setTargetAtTime(voice.level, now, instant ? 0.9 : 0.8);
+    voice.out.gain.setTargetAtTime(voice.level, now, instant ? 0.65 : 0.75);
   }
 
   setAct(act, { announce = true } = {}) {
@@ -368,8 +439,8 @@ class SoundEngine {
     if (prev) {
       const now = this.ctx.currentTime;
       prev.out.gain.cancelScheduledValues(now);
-      prev.out.gain.setTargetAtTime(0, now, 0.7);
-      prev.stop(3.2);
+      prev.out.gain.setTargetAtTime(0, now, 0.65);
+      prev.stop(3.0);
       this.voices.delete(previous);
     }
     this.startAct(act);
@@ -383,8 +454,8 @@ class SoundEngine {
     if (Math.abs(e - this.energy) < 0.025) return;
     this.energy = e;
     const now = this.ctx.currentTime;
-    this.ambientTone.frequency.setTargetAtTime(3200 + e * 6500, now, 0.28);
-    this.ambientSwell.gain.setTargetAtTime(0.85 + e * 0.22, now, 0.35);
+    this.ambientTone.frequency.setTargetAtTime(3400 + e * 6200, now, 0.25);
+    this.ambientSwell.gain.setTargetAtTime(0.85 + e * 0.18, now, 0.3);
   }
 
   setPointer(nx) { this.pointerPan = Math.max(-1, Math.min(1, nx)); }
@@ -398,7 +469,8 @@ class SoundEngine {
     if (!def) return;
     const t = performance.now();
     const last = this.lastPlay.get(name) || 0;
-    if (t - last < (def.cooldown || 0)) return;
+    const cd = opts.cooldown != null ? opts.cooldown : (def.cooldown || 0);
+    if (t - last < cd) return;
     this.lastPlay.set(name, t);
 
     const buffer = this.buffers.get(def.url);
@@ -409,17 +481,16 @@ class SoundEngine {
     const ctx = this.ctx;
     const src = ctx.createBufferSource();
     src.buffer = buffer;
-    src.playbackRate.value = (opts.rate || 1) * (1 + (Math.random() - 0.5) * 0.06);
+    src.playbackRate.value = (opts.rate || 1) * (1 + (Math.random() - 0.5) * 0.05);
 
     const gain = ctx.createGain();
-    const norm = Math.min(3, 0.5 / peakOf(buffer));
-    gain.gain.value = (opts.gain || 1) * def.gain * norm;
+    gain.gain.value = Math.min(1.35, (opts.gain || 1) * def.gain);
     src.connect(gain);
 
     let tail = gain;
     if (ctx.createStereoPanner) {
       const panner = ctx.createStereoPanner();
-      panner.pan.value = opts.pan != null ? opts.pan : this.pointerPan * 0.55;
+      panner.pan.value = opts.pan != null ? opts.pan : this.pointerPan * 0.6;
       gain.connect(panner);
       tail = panner;
     }
