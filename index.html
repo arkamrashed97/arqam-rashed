@@ -13,7 +13,21 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23070708'/%3E%3Cpath d='M14 50 32 14l18 36h-8l-4-9H26l-4 9z' fill='%23D4FF00'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script>
+(function () {
+  var root = document.documentElement;
+  var lang = null;
+  try { lang = localStorage.getItem('arqam-lang'); } catch (err) { lang = null; }
+  if (lang === 'ar' || lang === 'en') {
+    root.lang = lang;
+    root.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    root.classList.add('lang-set');
+  } else {
+    root.classList.add('lang-pending');
+  }
+})();
+</script>
 <style>
 /* ---------------------------------------------------------------
    ARQAM RASHED / PORTFOLIO 2026
@@ -163,10 +177,9 @@ body.no-gl{
   display:flex;gap:18px;
   font:400 8.5px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);pointer-events:none;
-  transition:opacity .3s var(--ease),transform .3s var(--ease);
 }
 .readout b{font-weight:400;color:var(--ink)}
-body.act-4-on .readout,body.contact-in-view .readout{opacity:0;transform:translateY(8px)}
+body.act-4-on .readout,body.contact-in-view .readout{display:none}
 .skew{transform:skewY(var(--vskew,0deg));will-change:transform}
 
 /* Act index */
@@ -278,6 +291,220 @@ body.cursor-hover .cursor-dot{opacity:0}
 .data-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font:400 9.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase}
 .data-row dt{color:var(--muted)}
 .data-row dd{margin:0;text-align:right;color:var(--ink)}
+
+/* Language onboarding */
+.lang-gate{
+  position:fixed;inset:0;z-index:500;
+  display:grid;grid-template-rows:auto 1fr auto;
+  padding:18px 22px 22px;
+  background:#070708;color:#E2E2E5;
+  overflow:auto;
+}
+.lang-gate[hidden],html.lang-set .lang-gate{display:none}
+.lang-gate::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(212,255,0,.055) 1px,transparent 1px) 0 0/18vw 100%,
+    linear-gradient(0deg,rgba(226,226,229,.045) 1px,transparent 1px) 0 0/100% 16vh;
+  mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);
+}
+.lang-gate::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(70% 58% at 28% 48%,rgba(212,255,0,.075),transparent 68%);
+}
+.lang-gate.is-closing{
+  opacity:0;transform:scale(1.014);
+  transition:opacity .38s var(--ease),transform .38s var(--ease);
+  pointer-events:none;
+}
+.lang-gate__top{
+  display:flex;justify-content:space-between;gap:20px;
+  border-bottom:1px solid rgba(212,255,0,.24);padding-bottom:14px;
+  font:400 9.5px/1.5 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:rgba(226,226,229,.55);
+}
+.lang-gate__center{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:center;
+  padding:7vh 0;
+}
+.lang-gate__kicker{
+  display:flex;align-items:center;gap:10px;
+  font:400 9.5px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(226,226,229,.5);
+}
+.lang-gate__kicker::before{content:"";width:26px;height:1px;background:#D4FF00}
+.lang-gate h1{
+  margin:18px 0 0;
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(46px,6.6vw,108px);line-height:.84;letter-spacing:-.045em;
+  text-transform:uppercase;
+}
+.lang-gate h1 .ar{
+  display:block;direction:rtl;
+  margin-top:.16em;
+  font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
+  font-size:.58em;font-weight:700;line-height:1.45;letter-spacing:0;
+  color:#D4FF00;text-transform:none;
+}
+.lang-gate__note{
+  max-width:42ch;margin-top:3vh;
+  font-size:clamp(14px,1.1vw,18px);line-height:1.6;color:rgba(226,226,229,.62);
+}
+.lang-gate__note .ar{
+  display:block;direction:rtl;margin-top:.55em;
+  font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
+  font-size:.94em;line-height:1.8;color:rgba(226,226,229,.52);
+}
+.lang-options{display:grid;gap:12px;width:min(100%,520px);justify-self:end}
+.lang-option{
+  display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:18px;
+  min-height:96px;padding:16px 20px;
+  border:1px solid rgba(226,226,229,.22);
+  background:rgba(226,226,229,.02);
+  text-align:left;
+  transition:border-color .2s,background .2s,transform .2s;
+}
+.lang-option:hover,.lang-option:focus-visible{
+  border-color:#D4FF00;background:rgba(212,255,0,.07);transform:translateY(-2px);
+}
+.lang-option__code{font:500 12px/1 var(--mono);letter-spacing:.12em;color:#D4FF00}
+.lang-option__name{
+  font-family:var(--display);font-size:clamp(24px,2.3vw,36px);line-height:1;
+  letter-spacing:-.02em;text-transform:uppercase;
+}
+.lang-option__sub{
+  display:block;margin-top:7px;
+  font:400 9px/1.5 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(226,226,229,.5);
+}
+.lang-option__arrow{font-size:18px;line-height:1;color:#D4FF00;transition:transform .2s}
+.lang-option:hover .lang-option__arrow,.lang-option:focus-visible .lang-option__arrow{transform:translate(3px,-3px)}
+.lang-option[data-lang-choice="ar"]{
+  direction:rtl;text-align:right;grid-template-columns:auto 1fr 52px;
+}
+.lang-option[data-lang-choice="ar"] .lang-option__code{
+  font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
+  font-size:16px;font-weight:600;letter-spacing:0;
+}
+.lang-option[data-lang-choice="ar"] .lang-option__name{
+  font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
+  font-size:clamp(26px,2.5vw,38px);font-weight:700;letter-spacing:0;text-transform:none;
+}
+.lang-option[data-lang-choice="ar"] .lang-option__sub{
+  font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
+  font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;
+}
+.lang-option[data-lang-choice="ar"] .lang-option__arrow{transform:scaleX(-1)}
+.lang-option[data-lang-choice="ar"]:hover .lang-option__arrow,
+.lang-option[data-lang-choice="ar"]:focus-visible .lang-option__arrow{transform:scaleX(-1) translate(3px,-3px)}
+.lang-gate__bottom{
+  display:flex;justify-content:space-between;gap:20px;
+  border-top:1px solid rgba(226,226,229,.18);padding-top:12px;
+  font:400 8.5px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(226,226,229,.42);
+}
+
+/* Persistent language switch */
+.lang-toggle{
+  min-width:44px;min-height:44px;padding:0 8px;
+  border:1px solid var(--line);
+  font:500 11px/1 var(--mono);letter-spacing:.04em;
+  color:var(--ink);
+  transition:border-color .2s,color .2s,background .2s;
+}
+.lang-toggle:hover,.lang-toggle:focus-visible{border-color:var(--accent);color:var(--accent-strong);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+html[lang="ar"] .lang-toggle{font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;font-size:13px;font-weight:600}
+
+/* Arabic typesetting */
+html[lang="ar"]{
+  --display:'Archivo Black','IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
+  --body:'Archivo','IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
+  --mono:'IBM Plex Mono','IBM Plex Sans Arabic','Noto Sans Arabic',monospace;
+  --serif:'Instrument Serif','IBM Plex Sans Arabic','Noto Sans Arabic',serif;
+}
+html[lang="ar"] *{letter-spacing:normal!important}
+html[lang="ar"] .hero-name h1,
+html[lang="ar"] .hero-name h1 *{letter-spacing:-.045em!important}
+html[lang="ar"] .project h3,
+html[lang="ar"] .project h3 *{letter-spacing:-.035em!important}
+html[lang="ar"] .project[data-project="2"] h3{letter-spacing:-.045em!important}
+html[lang="ar"] .hud__brand b{letter-spacing:.12em!important}
+html[lang="ar"] .work-intro h2,
+html[lang="ar"] .act-3 h2,
+html[lang="ar"] .contact-title{font-weight:700;line-height:1.04}
+html[lang="ar"] .contact-title{line-height:1.1}
+html[lang="ar"] .contact-title .line:last-child span{-webkit-text-stroke-width:1px}
+html[lang="ar"] .cta{font-weight:600;line-height:1.5}
+html[lang="ar"] .hero-copy em,
+html[lang="ar"] .work-intro h2 em{font-style:normal}
+html[lang="ar"] .hero-copy{font-size:clamp(17px,1.45vw,22px)}
+html[lang="ar"] .hero-copy,
+html[lang="ar"] .work-intro p,
+html[lang="ar"] .act-3__head p,
+html[lang="ar"] .contact-copy,
+html[lang="ar"] .contact-note{line-height:1.78}
+html[lang="ar"] .data-row,
+html[lang="ar"] .glass__head,
+html[lang="ar"] .project__top,
+html[lang="ar"] .kicker,
+html[lang="ar"] .hero-top,
+html[lang="ar"] .hero-name__aside,
+html[lang="ar"] .capabilities,
+html[lang="ar"] .work-intro__foot,
+html[lang="ar"] .cluster-status,
+html[lang="ar"] .panel-note,
+html[lang="ar"] .act-3__context,
+html[lang="ar"] .contact-head,
+html[lang="ar"] .contact-note,
+html[lang="ar"] .timeline li,
+html[lang="ar"] .footer-meta,
+html[lang="ar"] .domain-status{line-height:1.7}
+html[lang="ar"] .motion-toggle,
+html[lang="ar"] .mobile-nav a,
+html[lang="ar"] .scroll-cue,
+html[lang="ar"] .project__link,
+html[lang="ar"] .footer-links a,
+html[lang="ar"] .act-nav a{line-height:1.65}
+
+/* Right-to-left composition */
+html[dir="rtl"] .skip{left:auto;right:16px}
+html[dir="rtl"] .scroll-progress{transform-origin:100% 50%}
+html[dir="rtl"] .readout{left:auto;right:22px}
+html[dir="rtl"] .hud__brand{direction:ltr}
+html[dir="rtl"] .hero-name h1{direction:ltr}
+html[dir="rtl"] .hero-name .line:first-child{text-align:right}
+html[dir="rtl"] .hero-name .line--2{text-align:left;padding-right:0;padding-left:3vw}
+html[dir="rtl"] .hero-top__right{text-align:left}
+html[dir="rtl"] .capabilities li{border-right:0;border-left:1px solid var(--line)}
+html[dir="rtl"] .capabilities li:last-child{border-left:0}
+html[dir="rtl"] .work-pin{direction:ltr}
+html[dir="rtl"] .work-track > *{direction:rtl}
+html[dir="rtl"] .project__body{border-right:0;border-left:1px solid var(--line)}
+html[dir="rtl"] .project__tag{left:auto;right:10px}
+html[dir="rtl"] .project__cross{right:auto;left:10px}
+html[dir="rtl"] .project h3{direction:ltr;text-align:right}
+html[dir="rtl"] .cluster{text-align:right}
+html[dir="rtl"] .data-row dd{text-align:left}
+html[dir="rtl"] .email-copy{text-align:right}
+html[dir="rtl"] .email-copy__value{direction:ltr;text-align:right}
+html[dir="rtl"] .domain-status{text-align:right}
+html[dir="rtl"] .contact-title .line{text-align:right}
+html[dir="rtl"] .contact-title .line:last-child{text-align:left}
+html[dir="rtl"] .motion-toggle__dot{margin-right:0;margin-left:7px}
+html[dir="rtl"] .boot__bar i{transform-origin:100% 50%}
+html[dir="rtl"] .act-nav{
+  right:auto;left:0;border-left:0;border-right:1px solid var(--line);
+  padding:6px 16px 6px 4px;
+}
+html[dir="rtl"] .act-nav a{padding-left:0;padding-right:14px}
+@media (min-width:1101px){
+  html[dir="rtl"] .act-nav{right:auto;left:0;padding:6px 0}
+  html[dir="rtl"] .act-nav a{padding:0 0 0 14px}
+  html[dir="rtl"] .act-nav:hover,html[dir="rtl"] .act-nav:focus-within{
+    border-left:0;border-right:1px solid var(--line);
+  }
+}
 /* Act I: obsidian monolith */
 .act{position:relative;z-index:2}
 .act-1{
@@ -495,6 +722,10 @@ body.cursor-hover .cursor-dot{opacity:0}
   min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;gap:6vh;
   padding:calc(var(--hud-h) + 8vh) var(--pad) 5vh;
 }
+.act-4::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:60%;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg) 68%,transparent) 38%,color-mix(in srgb,var(--bg) 92%,transparent));
+}
 .contact-head{
   display:flex;justify-content:space-between;gap:20px;
   border-bottom:1px solid var(--line);padding-bottom:12px;
@@ -504,13 +735,15 @@ body.cursor-hover .cursor-dot{opacity:0}
   font-family:var(--display);font-weight:400;
   font-size:clamp(64px,17vw,300px);line-height:.74;letter-spacing:-.05em;text-transform:uppercase;
   margin:2vh 0;
+  text-shadow:0 0 26px color-mix(in srgb,var(--bg) 82%,transparent),0 0 70px color-mix(in srgb,var(--bg) 55%,transparent);
 }
 .contact-title .line{display:block}
 .contact-title .line:last-child{text-align:right}
 .contact-title .line:last-child span{color:transparent;-webkit-text-stroke:2px var(--ink)}
 .contact-grid{
   display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:end;
-  border-top:1px solid var(--line);padding-top:2vh;
+  border-top:1px solid var(--line);
+  padding:3vh 0 2vh;
 }
 .contact-copy{max-width:34ch;font-size:clamp(17px,1.4vw,22px);line-height:1.4}
 .contact-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
@@ -547,7 +780,11 @@ body.cursor-hover .cursor-dot{opacity:0}
 .contact-note{max-width:30ch;font:400 9.5px/1.55 var(--mono);letter-spacing:.05em;color:var(--muted)}
 
 /* Footer: colophon and trajectory */
-.site-footer{position:relative;z-index:2;padding:0 var(--pad) calc(4vh + 54px);color:var(--ink)}
+.site-footer{
+  position:relative;z-index:2;color:var(--ink);
+  padding:3vh var(--pad) calc(4vh + 54px);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 92%,transparent),color-mix(in srgb,var(--bg) 97%,transparent) 42%,var(--bg));
+}
 .footer-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:5vw;border-top:1px solid var(--line);padding-top:3vh}
 .timeline li{
   display:grid;grid-template-columns:110px 1fr auto;gap:16px;
@@ -666,6 +903,26 @@ body.cursor-hover .cursor-dot{opacity:0}
 @media (max-width:360px){
   .project h3{font-size:clamp(28px,9vw,48px)}
 }
+@media (max-width:900px){
+  html[dir="rtl"] .hero-name .line:first-child{text-align:right}
+  html[dir="rtl"] .hero-name .line--2{text-align:right;padding-right:7vw;padding-left:0}
+}
+@media (max-width:860px){
+  .lang-gate{padding:14px 18px 18px}
+  .lang-gate__center{grid-template-columns:1fr;gap:32px;padding:5vh 0 3vh;align-content:center}
+  .lang-gate h1{font-size:clamp(40px,11vw,72px)}
+  .lang-gate__note{max-width:38ch;margin-top:2.2vh}
+  .lang-options{justify-self:stretch;width:100%}
+  .lang-option{min-height:84px;padding:14px 16px;grid-template-columns:44px 1fr auto;gap:14px}
+  .lang-option[data-lang-choice="ar"]{grid-template-columns:auto 1fr 44px}
+  .lang-gate__bottom{flex-direction:column;gap:4px}
+}
+@media (max-width:480px){
+  .hud{padding:8px 12px;gap:8px}
+  .hud__telemetry{gap:8px}
+  .hud__wave{display:none}
+  .motion-toggle{font-size:8.5px;padding:0 8px}
+}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{
     animation-duration:.001ms!important;animation-iteration-count:1!important;
@@ -685,6 +942,36 @@ body.no-js .project__img{opacity:.92!important}
 </style>
 </head>
 <body class="is-booting">
+<div class="lang-gate" id="lang-gate" role="dialog" aria-modal="true" aria-labelledby="lang-gate-title" aria-describedby="lang-gate-note">
+  <div class="lang-gate__top" aria-hidden="true">
+    <span>ARQAM RASHED / PORTFOLIO 2026</span>
+    <span>01 / LANGUAGE</span>
+  </div>
+  <div class="lang-gate__center">
+    <div>
+      <p class="lang-gate__kicker">IDENTITY / LANGUAGE</p>
+      <h1 id="lang-gate-title">Choose a language <span class="ar" lang="ar" dir="rtl">اختر اللغة</span></h1>
+      <p class="lang-gate__note" id="lang-gate-note">The portfolio is available in English and Arabic. You can switch anytime from the header.<span class="ar" lang="ar" dir="rtl">البورتفوليو متاح بالإنجليزية والعربية. يمكنك التبديل في أي وقت من الشريط العلوي.</span></p>
+    </div>
+    <div class="lang-options" role="group" aria-label="Language selection">
+      <button class="lang-option" type="button" data-lang-choice="en" lang="en">
+        <span class="lang-option__code">EN</span>
+        <span class="lang-option__name">English<span class="lang-option__sub">Continue in English</span></span>
+        <span class="lang-option__arrow" aria-hidden="true">↗</span>
+      </button>
+      <button class="lang-option" type="button" data-lang-choice="ar" lang="ar" dir="rtl">
+        <span class="lang-option__code">ع</span>
+        <span class="lang-option__name">العربية<span class="lang-option__sub">المتابعة بالعربية</span></span>
+        <span class="lang-option__arrow" aria-hidden="true">↗</span>
+      </button>
+    </div>
+  </div>
+  <div class="lang-gate__bottom" aria-hidden="true">
+    <span>LUXOR, EGYPT / 25.6872 N, 32.6396 E</span>
+    <span>THREE.JS / GSAP / LENIS</span>
+  </div>
+</div>
+
 <a class="skip" href="#main">Skip to content</a>
 
 <div id="boot" class="boot" aria-hidden="true">
@@ -727,6 +1014,7 @@ body.no-js .project__img{opacity:.92!important}
     <span class="hud__time" id="clock">CAI 00:00:00</span>
     <span class="hud__fps"><span class="live" id="fps">60</span> FPS</span>
     <svg class="hud__wave" viewBox="0 0 74 20" aria-hidden="true"><polyline id="wave-line" points="0,10 74,10"></polyline></svg>
+    <button class="lang-toggle" id="lang-toggle" type="button" lang="ar" aria-label="Switch to Arabic" title="العربية">ع</button>
     <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="true">
       <span class="motion-toggle__dot" aria-hidden="true"></span><span id="motion-label">MOTION ON</span>
     </button>
@@ -1001,19 +1289,24 @@ body.no-js .project__img{opacity:.92!important}
 <script>
 (function () {
   window.__ARQAM_READY = false;
-  var fallback = window.setTimeout(function () {
-    if (window.__ARQAM_READY) return;
-    document.body.classList.remove('is-booting');
-    document.body.classList.add('static-work', 'no-gl');
-    var boot = document.getElementById('boot');
-    if (boot) boot.remove();
-    var gl = document.getElementById('gl');
-    if (gl) gl.remove();
-    document.querySelectorAll('.project__img').forEach(function (img) {
-      img.style.opacity = '.92';
-    });
-  }, 12000);
-  window.__ARQAM_FALLBACK_TIMER = fallback;
+  window.__ARQAM_ARM_FALLBACK = function () {
+    window.clearTimeout(window.__ARQAM_FALLBACK_TIMER);
+    window.__ARQAM_FALLBACK_TIMER = window.setTimeout(function () {
+      if (window.__ARQAM_READY) return;
+      document.body.classList.remove('is-booting');
+      document.body.classList.add('static-work', 'no-gl');
+      var boot = document.getElementById('boot');
+      if (boot) boot.remove();
+      var gl = document.getElementById('gl');
+      if (gl) gl.remove();
+      document.querySelectorAll('.project__img').forEach(function (img) {
+        img.style.opacity = '.92';
+      });
+    }, 12000);
+  };
+  if (!document.documentElement.classList.contains('lang-pending')) {
+    window.__ARQAM_ARM_FALLBACK();
+  }
 })();
 </script>
 <script type="importmap">
@@ -1090,6 +1383,21 @@ const state = {
 const prefersReduced = reducedQuery.matches;
 if (prefersReduced) state.motion = false;
 
+const langCode = () => (document.documentElement.lang === 'ar' ? 'ar' : 'en');
+const langText = (key) => (
+  typeof window.__arqamText === 'function' ? window.__arqamText(key, langCode()) : key
+);
+
+function whenLanguageReady() {
+  return new Promise((resolve) => {
+    if (!document.documentElement.classList.contains('lang-pending')) {
+      resolve();
+      return;
+    }
+    window.addEventListener('arqam:lang', () => resolve(), { once: true });
+  });
+}
+
 const PALETTE_STOPS = [
   { m: 0.00, bg: '070708', ink: 'E2E2E5', accent: 'D4FF00', strong: 'D4FF00', muted: '8A8A90', line: 'E2E2E5', la: 0.18 },
   { m: 0.72, bg: '070708', ink: 'E2E2E5', accent: 'D4FF00', strong: 'D4FF00', muted: '8A8A90', line: 'E2E2E5', la: 0.18 },
@@ -1097,7 +1405,7 @@ const PALETTE_STOPS = [
   { m: 1.72, bg: 'F2EFE9', ink: '111111', accent: 'FF3B00', strong: 'B82800', muted: '6B665E', line: '111111', la: 0.16 },
   { m: 2.00, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: '8AA2B8', line: 'E8F7FF', la: 0.18 },
   { m: 2.72, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: '8AA2B8', line: 'E8F7FF', la: 0.18 },
-  { m: 3.00, bg: 'FF2A00', ink: '0B0B0B', accent: '0B0B0B', strong: '0B0B0B', muted: '170300', line: '0B0B0B', la: 0.24 }
+  { m: 3.00, bg: '9E442C', ink: 'F8EEE2', accent: 'FFD9A8', strong: 'FFE7C9', muted: 'EFD9C6', line: 'F8EEE2', la: 0.30 }
 ];
 
 const hexToRgb = (hex) => {
@@ -1203,7 +1511,7 @@ const refs = {
   mediaEls: $$('.project__media')
 };
 
-const ACT_NAMES = ['OBSIDIAN MONOLITH', 'SWISS EDITORIAL', 'SPATIAL SYSTEM', 'SINGULARITY'];
+const ACT_NAME_KEYS = ['actName0', 'actName1', 'actName2', 'actName3'];
 let lenis = null;
 let scrollEngineStarted = false;
 /* Scroll engine */
@@ -1457,7 +1765,8 @@ function initCursor() {
     if (e.relatedTarget && target.contains(e.relatedTarget)) return;
     const href = target.getAttribute('href') || '';
     const fallback = target.tagName === 'A' ? (href.charAt(0) === '#' ? 'JUMP' : 'OPEN') : 'SELECT';
-    refs.cursorLabel.textContent = target.dataset.cursor || fallback;
+    refs.cursorLabel.textContent = target.dataset.cursor ||
+      (typeof window.__arqamCursor === 'function' ? window.__arqamCursor(fallback) : fallback);
     document.body.classList.add('cursor-hover');
   });
 
@@ -1495,21 +1804,21 @@ refs.projectEls.forEach((el, index) => {
 });
 
 /* Cluster selection */
-const CLUSTER_INFO = [
-  { label: 'FRONTEND', status: 'FRONTEND CLUSTER ACTIVE / NEXT.JS + REACT + TYPESCRIPT' },
-  { label: 'DATA', status: 'DATA CLUSTER ACTIVE / SUPABASE + POSTGRES + RLS' },
-  { label: 'SYSTEMS', status: 'SYSTEMS CLUSTER ACTIVE / RUST + WIN32 + EGUI' },
-  { label: 'AI + OPS', status: 'AI + OPS CLUSTER ACTIVE / LLM APIS + PYTHON + AUTOMATION' }
+const CLUSTER_KEYS = [
+  { label: 'cluster0Label', status: 'clusterStatus0' },
+  { label: 'cluster1Label', status: 'clusterStatus1' },
+  { label: 'cluster2Label', status: 'clusterStatus2' },
+  { label: 'cluster3Label', status: 'clusterStatus3' }
 ];
 
 function setCluster(index) {
-  const idx = clamp(Number(index) || 0, 0, CLUSTER_INFO.length - 1);
+  const idx = clamp(Number(index) || 0, 0, CLUSTER_KEYS.length - 1);
   state.activeCluster = idx;
   refs.clusterBtns.forEach((btn, i) => {
     btn.setAttribute('aria-pressed', String(i === idx));
   });
-  refs.clusterLabel.textContent = CLUSTER_INFO[idx].label;
-  refs.clusterStatus.textContent = CLUSTER_INFO[idx].status;
+  refs.clusterLabel.textContent = langText(CLUSTER_KEYS[idx].label);
+  refs.clusterStatus.textContent = langText(CLUSTER_KEYS[idx].status);
 }
 
 refs.clusterBtns.forEach((btn) => {
@@ -1560,6 +1869,13 @@ function legacyCopy(text) {
   return ok;
 }
 
+let copyFeedback = 'copy';
+
+function renderCopyLabel() {
+  if (!refs.copyAction) return;
+  refs.copyAction.textContent = langText(copyFeedback);
+}
+
 async function copyEmail() {
   const text = refs.emailCopy.dataset.copy;
   let ok = false;
@@ -1569,42 +1885,51 @@ async function copyEmail() {
   } catch (err) {
     ok = legacyCopy(text);
   }
-  refs.copyAction.textContent = ok ? 'COPIED' : 'SELECT';
+  copyFeedback = ok ? 'copied' : 'select';
   refs.emailCopy.classList.toggle('is-copied', ok);
+  renderCopyLabel();
   const r = refs.emailCopy.getBoundingClientRect();
   if (ok) burstFrom(r.left + r.width - 20, r.top + r.height / 2);
   window.setTimeout(() => {
-    refs.copyAction.textContent = 'COPY';
+    copyFeedback = 'copy';
     refs.emailCopy.classList.remove('is-copied');
+    renderCopyLabel();
   }, 2600);
 }
 
 refs.emailCopy.addEventListener('click', copyEmail);
 
 /* Live domain probe */
-function setDomain(stateName, text) {
-  refs.domainBtn.dataset.state = stateName;
-  refs.domainText.textContent = text;
+let domainStatus = { css: 'checking', key: 'domainChecking' };
+
+function renderDomain() {
+  refs.domainBtn.dataset.state = domainStatus.css;
+  refs.domainText.textContent = langText(domainStatus.key);
+}
+
+function setDomain(cssState, key) {
+  domainStatus = { css: cssState, key };
+  renderDomain();
 }
 
 function probeDomain() {
-  setDomain('checking', 'ARQAMRASHED.COM / CHECKING');
+  setDomain('checking', 'domainChecking');
   const host = window.location.hostname;
   if (host === 'arqamrashed.com' || host.endsWith('.arqamrashed.com')) {
-    setDomain('live', 'ARQAMRASHED.COM / LIVE / THIS ORIGIN');
+    setDomain('live', 'domainOrigin');
     return;
   }
   let settled = false;
-  const finish = (stateName, text) => {
+  const finish = (cssState, key) => {
     if (settled) return;
     settled = true;
     window.clearTimeout(timer);
-    setDomain(stateName, text);
+    setDomain(cssState, key);
   };
   const img = new Image();
-  const timer = window.setTimeout(() => finish('error', 'ARQAMRASHED.COM / UNREACHABLE / TIMEOUT'), 6500);
-  img.onload = () => finish('live', 'ARQAMRASHED.COM / LIVE / HTTP OK');
-  img.onerror = () => finish('error', 'ARQAMRASHED.COM / UNREACHABLE / DNS PENDING');
+  const timer = window.setTimeout(() => finish('error', 'domainTimeout'), 6500);
+  img.onload = () => finish('live', 'domainLive');
+  img.onerror = () => finish('error', 'domainPending');
   img.src = 'https://arqamrashed.com/favicon.ico?probe=' + Date.now();
 }
 
@@ -1614,7 +1939,7 @@ refs.domainBtn.addEventListener('click', probeDomain);
 function applyMotion(on, announce) {
   state.motion = Boolean(on);
   refs.motionToggle.setAttribute('aria-pressed', String(state.motion));
-  refs.motionLabel.textContent = state.motion ? 'MOTION ON' : 'MOTION OFF';
+  refs.motionLabel.textContent = langText(state.motion ? 'motionOn' : 'motionOff');
   document.body.classList.toggle('motion-off', !state.motion);
   if (!state.motion) state.velocitySmooth = 0;
   if (announce) {
@@ -1714,13 +2039,31 @@ function updateHUD(now) {
   if (actIndex !== hudStats.lastAct) {
     hudStats.lastAct = actIndex;
     if (refs.hudActNum) refs.hudActNum.textContent = '0' + (actIndex + 1);
-    if (refs.hudActName) refs.hudActName.textContent = ACT_NAMES[actIndex];
+    if (refs.hudActName) refs.hudActName.textContent = langText(ACT_NAME_KEYS[actIndex]);
     refs.actLinks.forEach((a) => {
       a.classList.toggle('is-active', Number(a.dataset.actLink) === actIndex);
     });
     document.body.classList.toggle('act-4-on', actIndex === 3);
   }
 }
+
+/* Language changes update every live label without a reload */
+window.addEventListener('arqam:lang', () => {
+  if (!state.ready) return;
+  setCluster(state.activeCluster);
+  applyMotion(state.motion, false);
+  renderCopyLabel();
+  renderDomain();
+  if (refs.hudActName) {
+    refs.hudActName.textContent = langText(ACT_NAME_KEYS[clamp(Math.round(state.actMix), 0, 3)]);
+  }
+  if (document.body.classList.contains('cursor-hover')) {
+    const hovered = document.querySelector('[data-cursor]:hover');
+    if (hovered && refs.cursorLabel) refs.cursorLabel.textContent = hovered.dataset.cursor || '';
+  }
+  measureLayout();
+  ScrollTrigger.refresh();
+});
 /* WebGL surface */
 const NOISE_GLSL = /* glsl */`
 vec3 mod289(vec3 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
@@ -2510,8 +2853,8 @@ function buildActFour() {
   const vortexUniforms = {
     uTime: { value: 0 },
     uOpacity: { value: 0 },
-    uInk: { value: new THREE.Color('#0B0B0B') },
-    uAccent: { value: new THREE.Color('#0B0B0B') }
+    uInk: { value: new THREE.Color(rgbCss(palette.ink)) },
+    uAccent: { value: new THREE.Color(rgbCss(palette.accent)) }
   };
   const vortexMat = new THREE.ShaderMaterial({
     uniforms: vortexUniforms,
@@ -2557,7 +2900,7 @@ function buildActFour() {
   ];
   ringConfigs.forEach((cfg, i) => {
     const mat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color('#0B0B0B'),
+      color: new THREE.Color(rgbCss(palette.ink)),
       transparent: true,
       opacity: cfg.op,
       depthWrite: false
@@ -2573,7 +2916,7 @@ function buildActFour() {
   const shardGroup = new THREE.Group();
   const shardGeometry = new THREE.BoxGeometry(0.12, 0.012, 0.012);
   const shardMat = new THREE.MeshBasicMaterial({
-    color: new THREE.Color('#0B0B0B'),
+    color: new THREE.Color(rgbCss(palette.ink)),
     transparent: true,
     opacity: 0.55,
     depthWrite: false
@@ -2595,7 +2938,7 @@ function buildActFour() {
     uOpacity: { value: 0 },
     uPointer: { value: new THREE.Vector2(0, 0) },
     uAspect: { value: 1.6 },
-    uInk: { value: new THREE.Color('#0B0B0B') }
+    uInk: { value: new THREE.Color(rgbCss(palette.ink)) }
   };
   const gridMat = new THREE.ShaderMaterial({
     uniforms: gridUniforms,
@@ -2753,7 +3096,6 @@ function syncScenePalette() {
   const ink = rgbCss(palette.ink);
   const accent = rgbCss(palette.accent);
   const bg = rgbCss(palette.bg);
-  const fixedBlack = '#0B0B0B';
 
   if (sceneState.scene.background) sceneState.scene.background.setStyle(bg);
   if (sceneState.renderer) sceneState.renderer.setClearColor(bg, 1);
@@ -2771,12 +3113,12 @@ function syncScenePalette() {
   if (sceneState.monolithLines) sceneState.monolithLines.forEach((m) => m.lineMat.color.setStyle(accent));
   if (sceneState.pointUniforms) sceneState.pointUniforms.uInk.value.setStyle(ink);
   if (sceneState.lineUniforms) sceneState.lineUniforms.uInk.value.setStyle(ink);
-  if (sceneState.ringMats) sceneState.ringMats.forEach((r) => r.mat.color.setStyle(fixedBlack));
-  if (sceneState.shardMat) sceneState.shardMat.color.setStyle(fixedBlack);
-  if (sceneState.gridUniforms) sceneState.gridUniforms.uInk.value.setStyle(fixedBlack);
+  if (sceneState.ringMats) sceneState.ringMats.forEach((r) => r.mat.color.setStyle(ink));
+  if (sceneState.shardMat) sceneState.shardMat.color.setStyle(ink);
+  if (sceneState.gridUniforms) sceneState.gridUniforms.uInk.value.setStyle(ink);
   if (sceneState.ringUniforms) {
-    sceneState.ringUniforms.uInk.value.setStyle(fixedBlack);
-    sceneState.ringUniforms.uAccent.value.setStyle(fixedBlack);
+    sceneState.ringUniforms.uInk.value.setStyle(ink);
+    sceneState.ringUniforms.uAccent.value.setStyle(accent);
   }
 }
 
@@ -3048,12 +3390,14 @@ function startLoop() {
 }
 
 async function init() {
+  await whenLanguageReady();
   initMotionPreference();
   initCursor();
   initScroll();
   startBoot();
   prepareIntro();
   setCluster(0);
+  renderCopyLabel();
   window.setTimeout(probeDomain, 2600);
 
   if (initGL()) {
@@ -3100,6 +3444,534 @@ init().catch((err) => {
   }
   finishBoot();
 });
+</script>
+<script>
+(function () {
+  'use strict';
+
+  var STORE_KEY = 'arqam-lang';
+  var root = document.documentElement;
+
+  var I18N = {
+    en: {
+      pageTitle: 'Arqam Rashed / Full-Stack Architect',
+      metaDesc: 'Arqam Rashed is a full-stack architect and creative developer in Luxor, Egypt. Production platforms, native systems, and real-time interfaces built end to end.',
+      skip: 'Skip to content',
+      bootTop1: 'ARQAM RASHED / PORTFOLIO 2026',
+      bootTop2: 'SYSTEM BOOT / V.01',
+      boot1: '01 COMPILE VERTEX SHADERS',
+      boot2: '02 BUILD POST PROCESS FX',
+      boot3: '03 CALIBRATE POINTER RIG',
+      boot4: '04 MOUNT SCROLL ENGINE',
+      boot5: '05 RESOLVE TYPOGRAPHIC GRID',
+      location: 'LUXOR, EGYPT / 25.6872 N, 32.6396 E',
+      hudPortfolio: '/ PORTFOLIO 2026',
+      motionOn: 'MOTION ON',
+      motionOff: 'MOTION OFF',
+      switchToAr: 'Switch to Arabic',
+      switchToEn: 'Switch to English',
+      actsLabel: 'Acts',
+      sectionsLabel: 'Sections',
+      navCore: 'CORE',
+      navWork: 'WORK',
+      navSystem: 'SYSTEM',
+      navSignal: 'SIGNAL',
+      mobileCore: '01 / CORE',
+      mobileWork: '02 / WORK',
+      mobileSystem: '03 / SYSTEM',
+      mobileSignal: '04 / SIGNAL',
+      actName0: 'OBSIDIAN MONOLITH',
+      actName1: 'SWISS EDITORIAL',
+      actName2: 'SPATIAL SYSTEM',
+      actName3: 'SINGULARITY',
+      heroTopLeft: 'FULL-STACK ARCHITECT / CREATIVE DEVELOPER',
+      heroTopRight: '<b>LUXOR, EGYPT</b> / 25.6872 N, 32.6396 E',
+      heroAside1: 'PORTFOLIO / 2026',
+      heroAside2: 'SCROLL VELOCITY / LIVE',
+      heroCopy: 'I build the schema, the interface, and the systems that keep them running. Production web platforms, native Windows tools, and real-time surfaces, <em>owned end to end.</em>',
+      scrollCue: 'SCROLL TO MUTATE <span aria-hidden="true">↓</span>',
+      fact1: 'Production platforms',
+      fact2: 'Open-source release',
+      fact3: 'Projects shipped',
+      heroFactsLabel: 'Project record',
+      capLabel: 'Core capabilities',
+      heroName: 'Arqam Rashed',
+      workKicker: 'ACT II / SELECTED WORK',
+      workTitle: 'BUILT<br><em>to hold.</em>',
+      workIntro: 'Three systems, shipped end to end. Two production platforms and one open-source desktop release. Schema, auth, interface, deployment: no handoff.',
+      workFoot1: '03 PROJECTS / 02 PRODUCTION PLATFORMS / 01 OSS RELEASE',
+      workFoot2: 'HORIZONTAL AXIS / SCROLL',
+      p1Type: 'TOURISM MANAGEMENT / PRODUCTION',
+      p1Desc: 'Customer and admin portals, a booking engine, real-time admin chat, and an AI assistant grounded in live services, prices, and bookings. Role-based auth, schema design, deployment, and DNS handled end to end.',
+      p1Link: 'OPEN PLATFORM <span aria-hidden="true">↗</span>',
+      p1StackLabel: 'Sequoia Travel stack',
+      p1Tag: 'LIVE / SEQUOIATRAVEL.COM',
+      p2Type: 'WINDOWS AUTOMATION / OPEN SOURCE',
+      p2Desc: 'Native Windows automation that sends input to hidden or covered windows without moving the mouse. Win32 PostMessage, a min-heap scheduler with zero idle CPU, SHA-256 verified auto-updates, and a bilingual RTL interface.',
+      p2Link: 'VIEW CODE <span aria-hidden="true">↗</span>',
+      p2StackLabel: 'Arko Click stack',
+      p2Tag: 'OPEN SOURCE / MIT / GITHUB',
+      p3Type: 'RETAIL MANAGEMENT / PRODUCTION',
+      p3Desc: 'Inventory, sales, and stock reporting for supplement retail. A built-in demo mode exercises every feature on simulated records before real data is touched.',
+      p3Link: 'OPEN SYSTEM <span aria-hidden="true">↗</span>',
+      p3StackLabel: 'RT Supplements stack',
+      p3Tag: 'LIVE / RTSUPPLEMENTS.VERCEL.APP',
+      sysKicker: 'ACT III / SYSTEM ARCHITECTURE',
+      sysTitle: 'EVERY LAYER<br><span>OWNED.</span>',
+      sysIntro: 'The stack is not a list of logos. It is the path a request takes from the browser to the database and back. Select a cluster to trace it through the topology.',
+      clusterSelect: 'CLUSTER SELECT',
+      clusterGroupLabel: 'System clusters',
+      cluster0Label: '01 / FRONTEND',
+      cluster0Stack: 'Next.js / React / TypeScript',
+      cluster1Label: '02 / DATA',
+      cluster1Stack: 'Supabase / Postgres / RLS',
+      cluster2Label: '03 / SYSTEMS',
+      cluster2Stack: 'Rust / Win32 / egui',
+      cluster3Label: '04 / AI + OPS',
+      cluster3Stack: 'LLM APIs / Python / automation',
+      clusterStatus0: 'FRONTEND CLUSTER ACTIVE / NEXT.JS + REACT + TYPESCRIPT',
+      clusterStatus1: 'DATA CLUSTER ACTIVE / SUPABASE + POSTGRES + RLS',
+      clusterStatus2: 'SYSTEMS CLUSTER ACTIVE / RUST + WIN32 + EGUI',
+      clusterStatus3: 'AI + OPS CLUSTER ACTIVE / LLM APIS + PYTHON + AUTOMATION',
+      panelNote1: 'The graph is live, not a diagram. Selecting a cluster pulls its nodes forward and marks its edges in the 3D topology.',
+      runtimeLabel: 'RUNTIME / VERIFIED',
+      runtimeLive: 'LIVE',
+      rowApp: 'Application',
+      rowData: 'Data',
+      rowAuth: 'Auth',
+      rowRealtime: 'Realtime',
+      rowNative: 'Native',
+      rowDeploy: 'Deploy',
+      rowRender: 'Render',
+      authValue: 'Role-based access',
+      deployValue: 'Vercel / custom DNS',
+      panelNote2: 'Custom GLSL shaders run on WebGL2. WebGPU capability is detected for telemetry, but this shader path stays on GLSL.',
+      context1: '<b>CURRENT OPERATING CONTEXT</b> / BOSTA, LOGISTICS OPERATIONS',
+      context2: 'INTERNAL TOOLS BUILT WITH NEXT.JS + SUPABASE',
+      signalKicker: 'ACT IV / SIGNAL',
+      contactTitle: '<span class="line">LET\'S</span><span class="line"><span>BUILD.</span></span>',
+      contactCopy: 'Have a platform, an internal tool, or a system that has to hold under real use? Send the constraints, the deadline, and the stack you already have.',
+      contactNote: 'Direct line. No form. The reply comes from the person who will build it.',
+      ctaLabel: 'START A PROJECT <span aria-hidden="true">↗</span>',
+      emailLabel: 'EMAIL',
+      copy: 'COPY',
+      copied: 'COPIED',
+      select: 'SELECT',
+      domainAria: 'Check the live status of arqamrashed.com',
+      domainChecking: 'ARQAMRASHED.COM / CHECKING',
+      domainTimeout: 'ARQAMRASHED.COM / UNREACHABLE / TIMEOUT',
+      domainPending: 'ARQAMRASHED.COM / UNREACHABLE / DNS PENDING',
+      domainLive: 'ARQAMRASHED.COM / LIVE / HTTP OK',
+      domainOrigin: 'ARQAMRASHED.COM / LIVE / THIS ORIGIN',
+      trajectoryLabel: 'TRAJECTORY / REAL ROLES',
+      channelsLabel: 'CHANNELS / VERIFIED',
+      footerNavLabel: 'Contact and project links',
+      tl1Date: '2025 / NOW',
+      tl1Role: 'Bosta, Operations Specialist. Internal tools for logistics tracking and reporting.',
+      tl1Place: 'EG',
+      tl2Date: '2024 / 2025',
+      tl2Role: 'Grand Memphis Hotel, Front Desk. High-volume reservations and guest operations.',
+      tl2Place: 'LUXOR',
+      tl3Date: '2022 / 2024',
+      tl3Role: 'AHE, Administrative Assistant / HR. Employee relations and office administration.',
+      tl3Place: 'CAIRO',
+      tl4Date: '2017 / 2021',
+      tl4Role: 'Luxor University, Bachelor\'s in Tourism and Hotels.',
+      tl4Place: 'LUXOR',
+      footerMeta1: 'ARQAM RASHED / LUXOR, EGYPT / 2026',
+      backToTop: 'BACK TO TOP <span aria-hidden="true">↑</span>'
+    },
+    ar: {
+      pageTitle: 'أرقم راشد / مهندس Full-Stack',
+      metaDesc: 'أرقم راشد، مهندس Full-Stack ومطوّر إبداعي في الأقصر، مصر. منصات إنتاج، أنظمة أصلية، وواجهات لحظية مبنية من البداية للنهاية.',
+      skip: 'تخطَّ إلى المحتوى',
+      bootTop1: 'أرقم راشد / معرض الأعمال 2026',
+      bootTop2: 'بدء النظام / الإصدار 01',
+      boot1: '01 تجهيز تظليل الرؤوس',
+      boot2: '02 بناء تأثيرات ما بعد المعالجة',
+      boot3: '03 معايرة مؤشر الحركة',
+      boot4: '04 تشغيل محرك التمرير',
+      boot5: '05 ضبط الشبكة الطباعية',
+      location: 'الأقصر، مصر / 25.6872 شمال، 32.6396 شرق',
+      hudPortfolio: '/ معرض الأعمال 2026',
+      motionOn: 'الحركة مفعّلة',
+      motionOff: 'الحركة متوقفة',
+      switchToAr: 'Switch to Arabic',
+      switchToEn: 'التبديل إلى الإنجليزية',
+      actsLabel: 'الفصول',
+      sectionsLabel: 'الأقسام',
+      navCore: 'النواة',
+      navWork: 'الأعمال',
+      navSystem: 'النظام',
+      navSignal: 'التواصل',
+      mobileCore: '01 / النواة',
+      mobileWork: '02 / الأعمال',
+      mobileSystem: '03 / النظام',
+      mobileSignal: '04 / التواصل',
+      actName0: 'المونوليث الأسود',
+      actName1: 'تحرير سويسري',
+      actName2: 'نظام مكاني',
+      actName3: 'التفرد',
+      heroTopLeft: 'مهندس Full-Stack / مطوّر إبداعي',
+      heroTopRight: '<b>الأقصر، مصر</b> / 25.6872 شمال، 32.6396 شرق',
+      heroAside1: 'معرض الأعمال / 2026',
+      heroAside2: 'سرعة التمرير / مباشر',
+      heroCopy: 'أبني المخطط، والواجهة، والأنظمة التي تُبقيها تعمل. منصات ويب إنتاجية، أدوات Windows أصلية، وواجهات لحظية، <em>من البداية للنهاية.</em>',
+      scrollCue: 'مرّر للتحول <span aria-hidden="true">↓</span>',
+      fact1: 'منصات إنتاج',
+      fact2: 'إصدار مفتوح المصدر',
+      fact3: 'مشاريع منجزة',
+      heroFactsLabel: 'سجل المشاريع',
+      capLabel: 'القدرات الأساسية',
+      heroName: 'أرقم راشد',
+      workKicker: 'الفصل الثاني / أعمال مختارة',
+      workTitle: 'مبني<br><em>ليبقى.</em>',
+      workIntro: 'ثلاثة أنظمة، مسلّمة من البداية للنهاية. منصتان إنتاجيتان وإصدار سطح مكتب مفتوح المصدر. المخطط، المصادقة، الواجهة، والنشر: دون تسليم لأي طرف.',
+      workFoot1: '03 مشاريع / 02 منصتان إنتاجيتان / 01 إصدار مفتوح المصدر',
+      workFoot2: 'المحور الأفقي / تمرير',
+      p1Type: 'إدارة سياحة / إنتاج',
+      p1Desc: 'بوابات للعملاء والإدارة، محرك حجوزات، محادثة إدارية لحظية، ومساعد ذكاء اصطناعي يعتمد على الخدمات والأسعار والحجوزات الحية. مصادقة بالأدوار، تصميم مخطط، نشر، وDNS، من البداية للنهاية.',
+      p1Link: 'افتح المنصة <span aria-hidden="true">↗</span>',
+      p1StackLabel: 'مكدس Sequoia Travel',
+      p1Tag: 'مباشر / SEQUOIATRAVEL.COM',
+      p2Type: 'أتمتة ويندوز / مفتوح المصدر',
+      p2Desc: 'أتمتة أصلية لويندوز ترسل الإدخال إلى نوافذ مخفية أو مغطاة دون تحريك الماوس. Win32 PostMessage، وجدولة min-heap دون استهلاك CPU في الخمول، وتحديثات تلقائية موثقة بـ SHA-256، وواجهة ثنائية اللغة تدعم RTL.',
+      p2Link: 'عرض الكود <span aria-hidden="true">↗</span>',
+      p2StackLabel: 'مكدس Arko Click',
+      p2Tag: 'مفتوح المصدر / MIT / GITHUB',
+      p3Type: 'إدارة تجزئة / إنتاج',
+      p3Desc: 'إدارة مخزون ومبيعات وتقارير مخزون لتجزئة المكملات. وضع تجريبي مدمج يختبر كل ميزة على سجلات محاكاة قبل لمس البيانات الحقيقية.',
+      p3Link: 'افتح النظام <span aria-hidden="true">↗</span>',
+      p3StackLabel: 'مكدس RT Supplements',
+      p3Tag: 'مباشر / RTSUPPLEMENTS.VERCEL.APP',
+      sysKicker: 'الفصل الثالث / معمارية النظام',
+      sysTitle: 'كل طبقة<br><span>بيدي.</span>',
+      sysIntro: 'المكدس ليس قائمة شعارات. إنه المسار الذي يقطعه الطلب من المتصفح إلى قاعدة البيانات وعودًا. اختر مجموعة لاقتفاء أثرها عبر الطوبولوجيا.',
+      clusterSelect: 'اختيار المجموعة',
+      clusterGroupLabel: 'مجموعات النظام',
+      cluster0Label: '01 / الواجهة',
+      cluster0Stack: 'Next.js / React / TypeScript',
+      cluster1Label: '02 / البيانات',
+      cluster1Stack: 'Supabase / Postgres / RLS',
+      cluster2Label: '03 / الأنظمة',
+      cluster2Stack: 'Rust / Win32 / egui',
+      cluster3Label: '04 / الذكاء والتشغيل',
+      cluster3Stack: 'LLM APIs / Python / automation',
+      clusterStatus0: 'مجموعة الواجهة نشطة / NEXT.JS + REACT + TYPESCRIPT',
+      clusterStatus1: 'مجموعة البيانات نشطة / SUPABASE + POSTGRES + RLS',
+      clusterStatus2: 'مجموعة الأنظمة نشطة / RUST + WIN32 + EGUI',
+      clusterStatus3: 'مجموعة الذكاء والتشغيل نشطة / LLM APIS + PYTHON + AUTOMATION',
+      panelNote1: 'الرسم حي، وليس مخططًا. اختيار مجموعة يسحب عقدها إلى المقدمة ويحدد حوافها في الطوبولوجيا ثلاثية الأبعاد.',
+      runtimeLabel: 'التشغيل / موثّق',
+      runtimeLive: 'مباشر',
+      rowApp: 'التطبيق',
+      rowData: 'البيانات',
+      rowAuth: 'المصادقة',
+      rowRealtime: 'اللحظي',
+      rowNative: 'الأصلي',
+      rowDeploy: 'النشر',
+      rowRender: 'العرض',
+      authValue: 'وصول حسب الدور',
+      deployValue: 'Vercel / DNS مخصص',
+      panelNote2: 'تظليل GLSL مخصص يعمل على WebGL2. تُكتشف قدرة WebGPU للقياس، لكن مسار التظليل يبقى على GLSL.',
+      context1: '<b>سياق العمل الحالي</b> / Bosta، عمليات لوجستية',
+      context2: 'أدوات داخلية مبنية بـ Next.js + Supabase',
+      signalKicker: 'الفصل الرابع / الإشارة',
+      contactTitle: '<span class="line">لنبنِ</span><span class="line"><span>الآن.</span></span>',
+      contactCopy: 'لديك منصة، أداة داخلية، أو نظام يجب أن يصمد تحت الاستخدام الحقيقي؟ أرسل القيود، الموعد النهائي، والمكدس الذي تعمل عليه بالفعل.',
+      contactNote: 'خط مباشر. بلا نموذج. الرد يأتي من الشخص الذي سيبنيها.',
+      ctaLabel: 'ابدأ مشروعًا <span aria-hidden="true">↗</span>',
+      emailLabel: 'البريد',
+      copy: 'نسخ',
+      copied: 'تم النسخ',
+      select: 'تحديد',
+      domainAria: 'تحقق من حالة arqamrashed.com',
+      domainChecking: 'ARQAMRASHED.COM / جارٍ الفحص',
+      domainTimeout: 'ARQAMRASHED.COM / غير متاح / انتهت المهلة',
+      domainPending: 'ARQAMRASHED.COM / غير متاح / DNS معلّق',
+      domainLive: 'ARQAMRASHED.COM / مباشر / HTTP OK',
+      domainOrigin: 'ARQAMRASHED.COM / مباشر / هذا النطاق',
+      trajectoryLabel: 'المسار / أدوار حقيقية',
+      channelsLabel: 'القنوات / موثّقة',
+      footerNavLabel: 'روابط التواصل والمشاريع',
+      tl1Date: '2025 / الآن',
+      tl1Role: 'Bosta، أخصائي عمليات. أدوات داخلية لتتبع الشحنات والتقارير.',
+      tl1Place: 'مصر',
+      tl2Date: '2024 / 2025',
+      tl2Role: 'Grand Memphis Hotel، استقبال. حجوزات عالية الحجم وعمليات ضيوف.',
+      tl2Place: 'الأقصر',
+      tl3Date: '2022 / 2024',
+      tl3Role: 'AHE، مساعد إداري / موارد بشرية. علاقات الموظفين وإدارة المكتب.',
+      tl3Place: 'القاهرة',
+      tl4Date: '2017 / 2021',
+      tl4Role: 'Luxor University، بكالوريوس سياحة وفنادق.',
+      tl4Place: 'الأقصر',
+      footerMeta1: 'أرقم راشد / الأقصر، مصر / 2026',
+      backToTop: 'إلى الأعلى <span aria-hidden="true">↑</span>'
+    }
+  };
+
+  var BINDINGS = [
+    { sel: '.skip', key: 'skip' },
+    { sel: '.boot__top span:first-child', key: 'bootTop1' },
+    { sel: '.boot__top span:last-child', key: 'bootTop2' },
+    { sel: '.boot__lines li:nth-child(1) span', key: 'boot1' },
+    { sel: '.boot__lines li:nth-child(2) span', key: 'boot2' },
+    { sel: '.boot__lines li:nth-child(3) span', key: 'boot3' },
+    { sel: '.boot__lines li:nth-child(4) span', key: 'boot4' },
+    { sel: '.boot__lines li:nth-child(5) span', key: 'boot5' },
+    { sel: '.boot__meta span:first-child', key: 'location' },
+    { sel: '.hud__brand > span:last-child', key: 'hudPortfolio' },
+    { sel: '.act-nav', key: 'actsLabel', prop: 'aria-label' },
+    { sel: '.act-nav a[data-act-link="0"] span:nth-child(2)', key: 'navCore' },
+    { sel: '.act-nav a[data-act-link="1"] span:nth-child(2)', key: 'navWork' },
+    { sel: '.act-nav a[data-act-link="2"] span:nth-child(2)', key: 'navSystem' },
+    { sel: '.act-nav a[data-act-link="3"] span:nth-child(2)', key: 'navSignal' },
+    { sel: '#hud-act-name', key: 'actName0' },
+    { sel: '.hero-top > span:first-child', key: 'heroTopLeft' },
+    { sel: '.hero-top__right', key: 'heroTopRight', html: true },
+    { sel: '#hero-title', key: 'heroName', prop: 'aria-label' },
+    { sel: '.hero-name__aside span:first-child', key: 'heroAside1' },
+    { sel: '.hero-name__aside span:last-child', key: 'heroAside2' },
+    { sel: '.hero-copy', key: 'heroCopy', html: true },
+    { sel: '.scroll-cue', key: 'scrollCue', html: true },
+    { sel: '.hero-facts', key: 'heroFactsLabel', prop: 'aria-label' },
+    { sel: '.hero-facts div span', keys: ['fact1', 'fact2', 'fact3'] },
+    { sel: '.capabilities', key: 'capLabel', prop: 'aria-label' },
+    { sel: '.work-intro .kicker', key: 'workKicker' },
+    { sel: '#work-title', key: 'workTitle', html: true },
+    { sel: '.work-intro p', key: 'workIntro' },
+    { sel: '.work-intro__foot span:first-of-type', key: 'workFoot1' },
+    { sel: '.work-intro__foot span:last-of-type', key: 'workFoot2' },
+    { sel: '.project[data-project="0"] .project__top span:last-child', key: 'p1Type' },
+    { sel: '.project[data-project="0"] .project__desc', key: 'p1Desc' },
+    { sel: '.project[data-project="0"] .project__stack', key: 'p1StackLabel', prop: 'aria-label' },
+    { sel: '.project[data-project="0"] .project__link', key: 'p1Link', html: true },
+    { sel: '.project[data-project="0"] .project__tag', key: 'p1Tag' },
+    { sel: '.project[data-project="1"] .project__top span:last-child', key: 'p2Type' },
+    { sel: '.project[data-project="1"] .project__desc', key: 'p2Desc' },
+    { sel: '.project[data-project="1"] .project__stack', key: 'p2StackLabel', prop: 'aria-label' },
+    { sel: '.project[data-project="1"] .project__link', key: 'p2Link', html: true },
+    { sel: '.project[data-project="1"] .project__tag', key: 'p2Tag' },
+    { sel: '.project[data-project="2"] .project__top span:last-child', key: 'p3Type' },
+    { sel: '.project[data-project="2"] .project__desc', key: 'p3Desc' },
+    { sel: '.project[data-project="2"] .project__stack', key: 'p3StackLabel', prop: 'aria-label' },
+    { sel: '.project[data-project="2"] .project__link', key: 'p3Link', html: true },
+    { sel: '.project[data-project="2"] .project__tag', key: 'p3Tag' },
+    { sel: '.act-3 .kicker', key: 'sysKicker' },
+    { sel: '#system-title', key: 'sysTitle', html: true },
+    { sel: '.act-3__head > p', key: 'sysIntro' },
+    { sel: '.glass:first-child .glass__head span', key: 'clusterSelect' },
+    { sel: '.cluster-grid', key: 'clusterGroupLabel', prop: 'aria-label' },
+    { sel: '.cluster[data-cluster="0"] b', key: 'cluster0Label' },
+    { sel: '.cluster[data-cluster="0"] span', key: 'cluster0Stack' },
+    { sel: '.cluster[data-cluster="1"] b', key: 'cluster1Label' },
+    { sel: '.cluster[data-cluster="1"] span', key: 'cluster1Stack' },
+    { sel: '.cluster[data-cluster="2"] b', key: 'cluster2Label' },
+    { sel: '.cluster[data-cluster="2"] span', key: 'cluster2Stack' },
+    { sel: '.cluster[data-cluster="3"] b', key: 'cluster3Label' },
+    { sel: '.cluster[data-cluster="3"] span', key: 'cluster3Stack' },
+    { sel: '#cluster-status', key: 'clusterStatus0' },
+    { sel: '.glass:first-child .panel-note', key: 'panelNote1' },
+    { sel: '.glass:last-child .glass__head span', key: 'runtimeLabel' },
+    { sel: '.glass:last-child .glass__head b', key: 'runtimeLive' },
+    { sel: '.glass:last-child .data-row:nth-child(1) dt', key: 'rowApp' },
+    { sel: '.glass:last-child .data-row:nth-child(2) dt', key: 'rowData' },
+    { sel: '.glass:last-child .data-row:nth-child(3) dt', key: 'rowAuth' },
+    { sel: '.glass:last-child .data-row:nth-child(4) dt', key: 'rowRealtime' },
+    { sel: '.glass:last-child .data-row:nth-child(5) dt', key: 'rowNative' },
+    { sel: '.glass:last-child .data-row:nth-child(6) dt', key: 'rowDeploy' },
+    { sel: '.glass:last-child .data-row:nth-child(7) dt', key: 'rowRender' },
+    { sel: '.glass:last-child .data-row:nth-child(3) dd', key: 'authValue' },
+    { sel: '.glass:last-child .data-row:nth-child(6) dd', key: 'deployValue' },
+    { sel: '.glass:last-child .panel-note', key: 'panelNote2' },
+    { sel: '.act-3__context span:first-child', key: 'context1', html: true },
+    { sel: '.act-3__context span:last-child', key: 'context2' },
+    { sel: '.contact-head span:first-child', key: 'signalKicker' },
+    { sel: '.contact-head span:last-child', key: 'location' },
+    { sel: '#contact-title', key: 'contactTitle', html: true },
+    { sel: '.contact-copy', key: 'contactCopy' },
+    { sel: '.contact-note', key: 'contactNote' },
+    { sel: '.cta', key: 'ctaLabel', html: true },
+    { sel: '.email-copy__label', key: 'emailLabel' },
+    { sel: '#copy-action', key: 'copy' },
+    { sel: '#domain-status', key: 'domainAria', prop: 'aria-label' },
+    { sel: '#domain-text', key: 'domainChecking' },
+    { sel: '.footer-grid > div:first-child .kicker', key: 'trajectoryLabel' },
+    { sel: '.footer-grid > div:last-child .kicker', key: 'channelsLabel' },
+    { sel: '.timeline li:nth-child(1) b', key: 'tl1Date' },
+    { sel: '.timeline li:nth-child(1) span:first-of-type', key: 'tl1Role' },
+    { sel: '.timeline li:nth-child(1) span:last-of-type', key: 'tl1Place' },
+    { sel: '.timeline li:nth-child(2) b', key: 'tl2Date' },
+    { sel: '.timeline li:nth-child(2) span:first-of-type', key: 'tl2Role' },
+    { sel: '.timeline li:nth-child(2) span:last-of-type', key: 'tl2Place' },
+    { sel: '.timeline li:nth-child(3) b', key: 'tl3Date' },
+    { sel: '.timeline li:nth-child(3) span:first-of-type', key: 'tl3Role' },
+    { sel: '.timeline li:nth-child(3) span:last-of-type', key: 'tl3Place' },
+    { sel: '.timeline li:nth-child(4) b', key: 'tl4Date' },
+    { sel: '.timeline li:nth-child(4) span:first-of-type', key: 'tl4Role' },
+    { sel: '.timeline li:nth-child(4) span:last-of-type', key: 'tl4Place' },
+    { sel: '.footer-links', key: 'footerNavLabel', prop: 'aria-label' },
+    { sel: '.footer-meta > span:first-child', key: 'footerMeta1' },
+    { sel: '.footer-meta a[href="#top"]', key: 'backToTop', html: true },
+    { sel: '.mobile-nav', key: 'sectionsLabel', prop: 'aria-label' },
+    { sel: '.mobile-nav a[data-act-link="0"] span', key: 'mobileCore' },
+    { sel: '.mobile-nav a[data-act-link="1"] span', key: 'mobileWork' },
+    { sel: '.mobile-nav a[data-act-link="2"] span', key: 'mobileSystem' },
+    { sel: '.mobile-nav a[data-act-link="3"] span', key: 'mobileSignal' }
+  ];
+
+  var CURSOR_AR = {
+    VIEW: 'عرض',
+    'VIEW CODE': 'عرض الكود',
+    OPEN: 'فتح',
+    COPY: 'نسخ',
+    EXPLORE: 'استكشاف',
+    SCROLL: 'تمرير',
+    TOP: 'أعلى'
+  };
+
+  function t(key, lang) {
+    var table = I18N[lang] || I18N.en;
+    return table[key] != null ? table[key] : (I18N.en[key] != null ? I18N.en[key] : key);
+  }
+
+  window.__arqamText = t;
+  window.__arqamCursor = function (label) {
+    if (currentLang() !== 'ar') return label;
+    return CURSOR_AR[label] || label;
+  };
+
+  function currentLang() {
+    return root.lang === 'ar' ? 'ar' : 'en';
+  }
+
+  function readStored() {
+    try { return localStorage.getItem(STORE_KEY); } catch (err) { return null; }
+  }
+
+  function writeStored(value) {
+    try { localStorage.setItem(STORE_KEY, value); } catch (err) { /* storage is optional */ }
+  }
+
+  function applyBindings(code) {
+    for (var i = 0; i < BINDINGS.length; i++) {
+      var binding = BINDINGS[i];
+      var nodes = document.querySelectorAll(binding.sel);
+      if (!nodes.length) continue;
+      for (var j = 0; j < nodes.length; j++) {
+        var key = binding.keys ? binding.keys[j] : binding.key;
+        if (!key) continue;
+        var value = t(key, code);
+        if (binding.prop) nodes[j].setAttribute(binding.prop, value);
+        else if (binding.html) nodes[j].innerHTML = value;
+        else nodes[j].textContent = value;
+      }
+    }
+  }
+
+  function applyCursor(code) {
+    var nodes = document.querySelectorAll('[data-cursor]');
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (!el.hasAttribute('data-cursor-en')) {
+        el.setAttribute('data-cursor-en', el.getAttribute('data-cursor'));
+      }
+      var base = el.getAttribute('data-cursor-en');
+      el.setAttribute('data-cursor', code === 'ar' ? (CURSOR_AR[base] || base) : base);
+    }
+  }
+
+  function updateToggle(code) {
+    var toggle = document.getElementById('lang-toggle');
+    if (!toggle) return;
+    var target = code === 'en' ? 'ar' : 'en';
+    toggle.textContent = code === 'en' ? 'ع' : 'EN';
+    toggle.setAttribute('lang', target);
+    toggle.setAttribute('aria-label', t(code === 'en' ? 'switchToAr' : 'switchToEn', code));
+    toggle.setAttribute('title', code === 'en' ? 'العربية' : 'English');
+  }
+
+  function applyLanguage(lang, persist) {
+    var code = lang === 'ar' ? 'ar' : 'en';
+    root.lang = code;
+    root.dir = code === 'ar' ? 'rtl' : 'ltr';
+    root.classList.remove('lang-pending');
+    if (persist) writeStored(code);
+    applyBindings(code);
+    applyCursor(code);
+    updateToggle(code);
+    document.title = t('pageTitle', code);
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', t('metaDesc', code));
+    window.__ARQAM_LANG = code;
+    if (typeof window.__ARQAM_ARM_FALLBACK === 'function') window.__ARQAM_ARM_FALLBACK();
+    window.dispatchEvent(new CustomEvent('arqam:lang', { detail: { lang: code } }));
+  }
+
+  var gate = document.getElementById('lang-gate');
+  var stored = readStored();
+  var pending = !(stored === 'en' || stored === 'ar');
+
+  function finishGate() {
+    if (!gate) return;
+    gate.classList.add('is-closing');
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(function () {
+      gate.hidden = true;
+      gate.setAttribute('aria-hidden', 'true');
+      root.classList.add('lang-set');
+      if (gate.contains(document.activeElement)) document.activeElement.blur();
+    }, reduced ? 0 : 420);
+  }
+
+  var choices = document.querySelectorAll('[data-lang-choice]');
+  for (var i = 0; i < choices.length; i++) {
+    choices[i].addEventListener('click', function () {
+      applyLanguage(this.getAttribute('data-lang-choice'), true);
+      finishGate();
+    });
+  }
+
+  var toggle = document.getElementById('lang-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', function () {
+      applyLanguage(currentLang() === 'en' ? 'ar' : 'en', true);
+    });
+  }
+
+  if (!pending) {
+    applyLanguage(stored, false);
+    root.classList.add('lang-set');
+    if (gate) {
+      gate.hidden = true;
+      gate.setAttribute('aria-hidden', 'true');
+    }
+  } else {
+    if (gate) gate.removeAttribute('aria-hidden');
+    window.setTimeout(function () {
+      if (!gate || !root.classList.contains('lang-pending')) return;
+      var first = gate.querySelector('[data-lang-choice]');
+      if (first) first.focus();
+    }, 90);
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (!root.classList.contains('lang-pending') || !gate) return;
+    if (event.key !== 'Tab') return;
+    var buttons = gate.querySelectorAll('[data-lang-choice]');
+    if (!buttons.length) return;
+    var first = buttons[0];
+    var last = buttons[buttons.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+})();
 </script>
 </body>
 </html>
