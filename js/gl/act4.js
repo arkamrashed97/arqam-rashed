@@ -195,8 +195,8 @@ export function buildActFour() {
         gl_FragColor = vec4(finalCol, clamp(alpha, 0.0, 0.78));
       }`
   });
-  const segX = mobileQuery.matches ? 64 : 112;
-  const segY = mobileQuery.matches ? 42 : 72;
+  const segX = mobileQuery.matches ? 36 : 64;
+  const segY = mobileQuery.matches ? 24 : 42;
   const grid = new THREE.Mesh(new THREE.PlaneGeometry(44, 28, segX, segY), gridMat);
   grid.position.set(0, 0.05, -3.6);
   grid.rotation.x = -0.18;

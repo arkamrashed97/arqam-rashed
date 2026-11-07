@@ -1,15 +1,20 @@
 import * as THREE from 'three';
+import { mobileQuery } from '../core/env.js';
 import { $$ } from '../core/utils.js';
 import { sceneState } from './scene-state.js';
 
+let texturesLoaded = false;
+
 export async function loadProjectTextures() {
-  if (!sceneState.renderer) return;
+  if (texturesLoaded || !sceneState.renderer || mobileQuery.matches) return;
+  texturesLoaded = true;
   const loader = new THREE.TextureLoader();
-  const maxAniso = Math.min(8, sceneState.renderer.capabilities.getMaxAnisotropy());
+  const maxAniso = Math.min(4, sceneState.renderer.capabilities.getMaxAnisotropy());
   const images = $$('.project__img');
-  const jobs = sceneState.planes.map(async (plane) => {
+  for (let i = 0; i < sceneState.planes.length; i++) {
+    const plane = sceneState.planes[i];
     const img = images[plane.index];
-    if (!img || !img.src) return;
+    if (!img || !img.src) continue;
     try {
       const texture = await loader.loadAsync(img.src);
       texture.colorSpace = THREE.SRGBColorSpace;
@@ -29,6 +34,24 @@ export async function loadProjectTextures() {
     } catch (err) {
       plane.material.uniforms.uTexAspect.value = 1.6;
     }
-  });
-  await Promise.allSettled(jobs);
+  }
+}
+
+export function observeProjectTextures() {
+  if (texturesLoaded || mobileQuery.matches) return;
+  const workEl = document.getElementById('work');
+  if (!workEl || !('IntersectionObserver' in window)) {
+    window.setTimeout(() => loadProjectTextures(), 1200);
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    for (let i = 0; i < entries.length; i++) {
+      if (entries[i].isIntersecting) {
+        io.disconnect();
+        loadProjectTextures();
+        return;
+      }
+    }
+  }, { rootMargin: '900px 0px' });
+  io.observe(workEl);
 }

@@ -10,19 +10,19 @@ import { refs, state } from '../core/state.js';
 import { sceneState } from './scene-state.js';
 import { POST_SHADER } from './shaders.js';
 
-const MAX_PIXELS_DESKTOP = 1920 * 1080 * 1.35;
-const MAX_PIXELS_MOBILE = 900 * 900;
+const MAX_PIXELS_DESKTOP = 1920 * 1080 * 1.05;
+const MAX_PIXELS_MOBILE = 800 * 800;
 
 export function getDPR(scale = 1) {
   const raw = (window.devicePixelRatio || 1) * scale;
-  const cap = mobileQuery.matches ? 1.1 : 1.4;
+  const cap = mobileQuery.matches ? 1.0 : 1.25;
   let dpr = Math.min(raw, cap);
   const maxPixels = mobileQuery.matches ? MAX_PIXELS_MOBILE : MAX_PIXELS_DESKTOP;
   const pixels = window.innerWidth * dpr * (window.innerHeight * dpr);
   if (pixels > maxPixels) {
     dpr *= Math.sqrt(maxPixels / pixels);
   }
-  return Math.max(0.75, Number(dpr.toFixed(2)));
+  return Math.max(0.7, Number(dpr.toFixed(2)));
 }
 
 export function setDynamicResolution(scale) {
@@ -70,24 +70,30 @@ export function initGL() {
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
     camera.position.set(0, 0, 8.5);
 
-    const composer = new EffectComposer(renderer);
-    composer.setPixelRatio(dpr);
-    composer.setSize(window.innerWidth, window.innerHeight);
-    composer.addPass(new RenderPass(scene, camera));
+    let composer = null;
+    let bloom = null;
+    let fx = null;
 
-    // Half-resolution bloom cuts fragment shader cost by 75% with identical soft glow
-    const bloom = new UnrealBloomPass(
-      new THREE.Vector2(Math.round(window.innerWidth * 0.5), Math.round(window.innerHeight * 0.5)),
-      0.44,
-      0.58,
-      0.9
-    );
-    composer.addPass(bloom);
+    if (!mobileQuery.matches) {
+      composer = new EffectComposer(renderer);
+      composer.setPixelRatio(dpr);
+      composer.setSize(window.innerWidth, window.innerHeight);
+      composer.addPass(new RenderPass(scene, camera));
 
-    const fx = new ShaderPass(POST_SHADER);
-    fx.uniforms.uResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
-    composer.addPass(fx);
-    composer.addPass(new OutputPass());
+      // Half-resolution bloom cuts fragment shader cost by 75% with identical soft glow
+      bloom = new UnrealBloomPass(
+        new THREE.Vector2(Math.round(window.innerWidth * 0.5), Math.round(window.innerHeight * 0.5)),
+        0.44,
+        0.58,
+        0.9
+      );
+      composer.addPass(bloom);
+
+      fx = new ShaderPass(POST_SHADER);
+      fx.uniforms.uResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
+      composer.addPass(fx);
+      composer.addPass(new OutputPass());
+    }
 
     sceneState.renderer = renderer;
     sceneState.scene = scene;
@@ -129,8 +135,10 @@ export function applyResize() {
 
   sceneState.renderer.setPixelRatio(dpr);
   sceneState.renderer.setSize(w, h);
-  sceneState.composer.setPixelRatio(dpr);
-  sceneState.composer.setSize(w, h);
+  if (sceneState.composer) {
+    sceneState.composer.setPixelRatio(dpr);
+    sceneState.composer.setSize(w, h);
+  }
   sceneState.camera.aspect = w / h;
   sceneState.camera.updateProjectionMatrix();
 

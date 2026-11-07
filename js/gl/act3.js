@@ -22,7 +22,7 @@ export function buildActThree() {
   group.scale.setScalar(mobileQuery.matches ? 0.82 : 1);
   sceneState.scene.add(group);
 
-  const perCluster = mobileQuery.matches ? 340 : 560;
+  const perCluster = mobileQuery.matches ? 220 : 380;
   const count = perCluster * CLUSTER_DEFS.length;
   const positions = new Float32Array(count * 3);
   const sizes = new Float32Array(count);
@@ -152,7 +152,7 @@ export function buildTopologyEdges(positions, clusters, seeds, parent, pointUnif
   const edgePositions = [];
   const edgeClusters = [];
   const edgeSeeds = [];
-  const maxEdges = mobileQuery.matches ? 420 : 950;
+  const maxEdges = mobileQuery.matches ? 280 : 580;
   let edges = 0;
 
   for (let i = 0; i < count && edges < maxEdges; i += 2) {

@@ -209,6 +209,8 @@ class SoundEngine {
     this.loading = new Map();
     this.voices = new Map();
     this.lastPlay = new Map();
+    this.preloadQueue = [];
+    this.preloadRunning = false;
     this.silentEl = null;
     this.supported = Boolean(window.AudioContext || window.webkitAudioContext);
     this.preferenceOff = this.readPreference() === 'off';
@@ -256,25 +258,26 @@ class SoundEngine {
     return ctx;
   }
 
-  /** Pre-decode onboarding gate cues immediately so they play with zero latency. */
+  /**
+   * Lazy-preload onboarding gate cues:
+   * Immediately decode only the 2 primary language selection cues so click feedback is instant,
+   * then stagger hover cues one-by-one during idle time so initial page boot never stalls.
+   */
   preloadGate() {
     if (!this.supported) return;
     if (!this.ctx) this.build();
-    const gateKeys = [
-      'gate-hover-en',
-      'gate-hover-ar',
-      'gate-select-en',
-      'gate-select-ar',
-      'gate-telemetry',
-      'gate-monolith',
-      'gate-coords',
-      'gate-touch',
-      'gate-open'
-    ];
-    gateKeys.forEach((k) => {
+    ['gate-select-en', 'gate-select-ar'].forEach((k) => {
       const def = SFX[k];
       if (def) this.decode(def.url).catch(() => {});
     });
+    this.enqueuePreload([
+      SFX['gate-hover-en']?.url,
+      SFX['gate-hover-ar']?.url,
+      SFX['gate-touch']?.url,
+      SFX['gate-telemetry']?.url,
+      SFX['gate-monolith']?.url,
+      SFX['gate-coords']?.url
+    ], 160);
   }
 
   build() {
@@ -360,16 +363,76 @@ class SoundEngine {
     return job;
   }
 
-  preloadSfx() {
-    const run = () => Object.values(SFX).forEach((def) => this.decode(def.url).catch(() => {}));
-    if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 2000 });
-    else window.setTimeout(run, 800);
+  /**
+   * Staggered single-file background audio preloader.
+   * Decodes at most 1 audio file per idle slice so the main thread and network
+   * are never flooded with 39 simultaneous MP3 decode + RMS normalization jobs.
+   */
+  enqueuePreload(urls, stepDelayMs = 220) {
+    for (let i = 0; i < urls.length; i++) {
+      const url = urls[i];
+      if (url && !this.buffers.has(url) && !this.loading.has(url) && !this.preloadQueue.includes(url)) {
+        this.preloadQueue.push(url);
+      }
+    }
+    if (this.preloadRunning || !this.preloadQueue.length) return;
+    this.preloadRunning = true;
+
+    const pumpNext = () => {
+      if (document.hidden) {
+        this.preloadRunning = false;
+        return;
+      }
+      const nextUrl = this.preloadQueue.shift();
+      if (!nextUrl) {
+        this.preloadRunning = false;
+        return;
+      }
+      this.decode(nextUrl)
+        .catch(() => {})
+        .finally(() => {
+          if (!this.preloadQueue.length) {
+            this.preloadRunning = false;
+            return;
+          }
+          window.setTimeout(() => {
+            if ('requestIdleCallback' in window) {
+              window.requestIdleCallback(pumpNext, { timeout: 1500 });
+            } else {
+              pumpNext();
+            }
+          }, stepDelayMs);
+        });
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(pumpNext, { timeout: 1200 });
+    } else {
+      window.setTimeout(pumpNext, 300);
+    }
   }
 
-  preloadAmbient() {
-    const run = () => AMBIENT.forEach((def) => this.decode(def.url).catch(() => {}));
-    if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 3500 });
-    else window.setTimeout(run, 1800);
+  preloadSfx() {
+    // Prioritize core UI clicks/hovers first, then lazy-drip remaining act cues in the background
+    const priorityKeys = [
+      'hover-tick',
+      'hover-soft',
+      'ui-click',
+      'nav-jump',
+      'lang-switch',
+      'enter-act2'
+    ];
+    const priorityUrls = priorityKeys.map((k) => SFX[k]?.url).filter(Boolean);
+    const restUrls = Object.values(SFX).map((d) => d.url);
+    this.enqueuePreload([...priorityUrls, ...restUrls], 240);
+  }
+
+  preloadAmbientForAct(act) {
+    // Only pre-decode the next adjacent Act's ambient track during idle time
+    const nextDef = AMBIENT.find((a) => a.act === act + 1);
+    if (nextDef) {
+      this.enqueuePreload([nextDef.url], 450);
+    }
   }
 
   /** Turn sound on. Call from a user gesture. Idempotent. */
@@ -385,7 +448,7 @@ class SoundEngine {
       this.master.gain.setTargetAtTime(0.95, now, 0.12);
       this.startAct(this.currentAct, true);
       this.preloadSfx();
-      this.preloadAmbient();
+      this.preloadAmbientForAct(this.currentAct);
       this.emit();
     }
     return true;
@@ -468,6 +531,7 @@ class SoundEngine {
       this.voices.delete(previous);
     }
     this.startAct(act);
+    this.preloadAmbientForAct(act);
     if (announce) this.playNow('enter-act' + (act + 1));
   }
 

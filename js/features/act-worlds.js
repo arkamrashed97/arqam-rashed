@@ -185,6 +185,8 @@ function buildAct1World() {
   return {
     sec,
     svg,
+    inView: true,
+    lastLines: '',
     stars,
     starEls: Array.from(svg.querySelectorAll('.act1-star')),
     ships,
@@ -194,7 +196,7 @@ function buildAct1World() {
 }
 
 function updateAct1World(w, dt, t) {
-  if (!w) return;
+  if (!w || !w.inView) return;
   const rect = w.sec.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
@@ -213,7 +215,10 @@ function updateAct1World(w, dt, t) {
       lines += `<line x1="${st.x}" y1="${st.y}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}" opacity="${(1 - dist / 210).toFixed(2)}"/>`;
     }
   });
-  w.constellationEl.innerHTML = lines;
+  if (lines !== w.lastLines) {
+    w.constellationEl.innerHTML = lines;
+    w.lastLines = lines;
+  }
 
   w.ships.forEach((s, i) => {
     const dx = px - s.x;
@@ -294,6 +299,7 @@ function buildAct2World() {
   return {
     sec,
     svg,
+    inView: false,
     planes,
     planeEls: Array.from(svg.querySelectorAll('.act2-plane')),
     wheelEls: Array.from(svg.querySelectorAll('.act2-wheel'))
@@ -301,7 +307,7 @@ function buildAct2World() {
 }
 
 function updateAct2World(w, dt, t) {
-  if (!w) return;
+  if (!w || !w.inView) return;
   const rect = w.sec.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
@@ -377,6 +383,8 @@ function buildAct3World() {
   return {
     sec,
     svg,
+    inView: false,
+    lastBeams: '',
     drones,
     droneEls: Array.from(svg.querySelectorAll('.act3-drone')),
     beamsEl: svg.querySelector('#act3-beams')
@@ -384,7 +392,7 @@ function buildAct3World() {
 }
 
 function updateAct3World(w, dt, t) {
-  if (!w) return;
+  if (!w || !w.inView) return;
   const rect = w.sec.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
@@ -402,7 +410,10 @@ function updateAct3World(w, dt, t) {
       beams += `<line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}"/>`;
     }
   });
-  w.beamsEl.innerHTML = beams;
+  if (beams !== w.lastBeams) {
+    w.beamsEl.innerHTML = beams;
+    w.lastBeams = beams;
+  }
 }
 
 /* ============================================================================
@@ -440,6 +451,8 @@ function buildAct4World() {
   return {
     sec,
     svg,
+    inView: false,
+    lastRippleSvg: '',
     boats,
     boatEls: Array.from(svg.querySelectorAll('.act4-boat')),
     ripplesEl: svg.querySelector('#act4-ripples'),
@@ -449,7 +462,7 @@ function buildAct4World() {
 }
 
 function updateAct4World(w, dt, t) {
-  if (!w) return;
+  if (!w || !w.inView) return;
   const rect = w.sec.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
@@ -476,7 +489,10 @@ function updateAct4World(w, dt, t) {
     const op = (1 - p) * 0.55;
     rippleSvg += `<ellipse cx="${rp.x.toFixed(1)}" cy="${rp.y.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" stroke="#38BDF8" stroke-width="1.5" fill="none" opacity="${op.toFixed(2)}"/>`;
   }
-  w.ripplesEl.innerHTML = rippleSvg;
+  if (rippleSvg !== w.lastRippleSvg) {
+    w.ripplesEl.innerHTML = rippleSvg;
+    w.lastRippleSvg = rippleSvg;
+  }
 
   w.boats.forEach((b, i) => {
     const x = b.baseX + Math.sin(t * 0.75 + b.phase) * 28;
@@ -862,7 +878,21 @@ function buildAct5FishingWorld() {
     });
   }
 
-  fetchLeaderboard();
+  // Lazy-fetch leaderboard only when Act V (#inquiry) approaches the viewport
+  if ('IntersectionObserver' in window) {
+    const lbObserver = new IntersectionObserver((entries) => {
+      for (let i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          lbObserver.disconnect();
+          fetchLeaderboard();
+          return;
+        }
+      }
+    }, { rootMargin: '700px 0px' });
+    lbObserver.observe(sec);
+  } else {
+    window.setTimeout(fetchLeaderboard, 2500);
+  }
 
   function spawnPopup(screenX, screenY, text, color) {
     const pop = document.createElement('div');
@@ -1013,11 +1043,13 @@ function buildAct5FishingWorld() {
   w.catchFish = catchFish;
   w.escapeFish = escapeFish;
   w.setStatus = setStatus;
+  w.inView = false;
+  w.lastRippleMarkup = '';
   return w;
 }
 
 function updateAct5FishingWorld(w, dt, t) {
-  if (!w) return;
+  if (!w || !w.inView) return;
   const rect = w.svg.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
@@ -1232,7 +1264,10 @@ function updateAct5FishingWorld(w, dt, t) {
     const op = (1 - p) * 0.65;
     rippleMarkup += `<ellipse cx="${r.x.toFixed(1)}" cy="${r.y.toFixed(1)}" rx="${rad.toFixed(1)}" ry="${(rad * 0.42).toFixed(1)}" stroke="${r.color}" stroke-width="1.6" fill="none" opacity="${op.toFixed(2)}"/>`;
   }
-  w.ripplesEl.innerHTML = rippleMarkup;
+  if (rippleMarkup !== w.lastRippleMarkup) {
+    w.ripplesEl.innerHTML = rippleMarkup;
+    w.lastRippleMarkup = rippleMarkup;
+  }
 }
 
 export function initActWorlds() {
@@ -1243,6 +1278,22 @@ export function initActWorlds() {
   worlds.act3 = buildAct3World();
   worlds.act4 = buildAct4World();
   worlds.act5 = buildAct5FishingWorld();
+
+  if ('IntersectionObserver' in window) {
+    const allWorlds = [worlds.act1, worlds.act2, worlds.act3, worlds.act4, worlds.act5].filter(Boolean);
+    const visObserver = new IntersectionObserver((entries) => {
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        const match = allWorlds.find((item) => item.sec === entry.target);
+        if (match) match.inView = entry.isIntersecting;
+      }
+    }, { rootMargin: '250px 0px' });
+    allWorlds.forEach((item) => visObserver.observe(item.sec));
+  } else {
+    [worlds.act1, worlds.act2, worlds.act3, worlds.act4, worlds.act5].forEach((item) => {
+      if (item) item.inView = true;
+    });
+  }
 }
 
 export function updateActWorlds(dt) {

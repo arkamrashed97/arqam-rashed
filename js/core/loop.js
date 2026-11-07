@@ -23,6 +23,13 @@ export function tick() {
   if (document.hidden) return;
 
   const dt = clamp(rawDt, 0.001, 0.05);
+
+  // While onboarding gate (#lang-gate) covers the viewport, only update the custom cursor
+  if (document.documentElement.classList.contains('lang-pending')) {
+    updateCursor(dt);
+    return;
+  }
+
   avgDt = avgDt * 0.92 + dt * 0.08;
 
   state.scroll = window.scrollY;
@@ -45,17 +52,18 @@ export function tick() {
   updateHUD(now);
 
   // Adaptive resolution + post-processing governor keeps transitions smooth on all GPUs
-  if (avgDt > 0.024 && !lowPowerPost) {
+  if (avgDt > 0.021 && !lowPowerPost) {
     lowPowerPost = true;
-    setDynamicResolution(0.8);
-  } else if (avgDt < 0.0175 && lowPowerPost) {
+    setDynamicResolution(0.76);
+  } else if (avgDt < 0.0168 && lowPowerPost) {
     lowPowerPost = false;
     setDynamicResolution(1);
   }
 
   if (sceneState.renderer && !sceneState.glContextLost) {
-    const fastScroll = Math.abs(state.velocitySmooth) > 0.35;
-    if (mobileQuery.matches || lowPowerPost || fastScroll || !sceneState.composer) {
+    const fastScroll = Math.abs(state.velocitySmooth) > 0.28;
+    const lowBloom = sceneState.bloom && sceneState.bloom.strength < 0.085;
+    if (mobileQuery.matches || lowPowerPost || fastScroll || lowBloom || !sceneState.composer) {
       sceneState.renderer.render(sceneState.scene, sceneState.camera);
     } else {
       sceneState.composer.render();

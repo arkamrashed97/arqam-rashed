@@ -11,7 +11,7 @@ import { buildActThree } from './gl/act3.js';
 import { buildActFour } from './gl/act4.js';
 import { initGL, renderStaticFallback, setupResize } from './gl/renderer.js';
 import { sceneState } from './gl/scene-state.js';
-import { loadProjectTextures } from './gl/textures.js';
+import { observeProjectTextures } from './gl/textures.js';
 import { initLanguage } from './i18n/i18n.js';
 import { armAutoStart, initSoundUI } from './audio/index.js';
 import { initGate } from './features/gate.js';
@@ -49,21 +49,37 @@ async function init() {
   window.setTimeout(probeDomain, 2600);
 
   if (initGL()) {
+    // 1. Build only Act I immediately so the initial viewport boots in <200ms without jank
     buildActOne();
-    buildActTwo();
-    buildActThree();
-    buildActFour();
     setupResize();
     startLoop();
+    window.setTimeout(() => finishBoot(), prefersReduced ? 120 : 280);
 
-    try {
-      sceneState.renderer.compile(sceneState.scene, sceneState.camera);
-    } catch (err) {
-      console.warn('Shader precompile skipped', err);
-    }
+    // 2. Stagger Acts II, III, IV + texture observer across idle slices so main thread stays 60fps
+    const runIdle = (fn, delay) => {
+      window.setTimeout(() => {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(() => fn(), { timeout: 900 });
+        } else {
+          fn();
+        }
+      }, delay);
+    };
 
-    window.setTimeout(() => finishBoot(), 7000);
-    loadProjectTextures().finally(() => finishBoot());
+    runIdle(() => {
+      if (!sceneState.planeGroup) {
+        buildActTwo();
+        observeProjectTextures();
+      }
+    }, 90);
+
+    runIdle(() => {
+      if (!sceneState.pointsGroup) buildActThree();
+    }, 220);
+
+    runIdle(() => {
+      if (!sceneState.ringGroup) buildActFour();
+    }, 360);
   } else {
     renderStaticFallback();
     startLoop();

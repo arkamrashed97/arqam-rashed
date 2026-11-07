@@ -20,7 +20,7 @@ export function buildActOne() {
     uAccent: { value: new THREE.Color('#D4FF00') }
   };
 
-  const geometry = new THREE.IcosahedronGeometry(1.42, mobileQuery.matches ? 16 : 22);
+  const geometry = new THREE.IcosahedronGeometry(1.42, mobileQuery.matches ? 9 : 13);
   const material = new THREE.ShaderMaterial({
     uniforms,
     transparent: true,
@@ -46,11 +46,26 @@ export function buildActOne() {
         return n;
       }
 
-      float displaced(vec3 dir){
-        float d = field(dir) * 0.17 * uAmp;
+      float fieldFast(vec3 dir){
+        float t = uTime * 0.18;
+        float n = snoise(dir * 1.55 + vec3(0.0, 0.0, t));
+        n += 0.46 * snoise(dir * 3.25 + vec3(t * 0.7, -t * 0.4, 0.0));
+        return n;
+      }
+
+      float displaced(vec3 dir, out float outNoise){
+        outNoise = field(dir);
+        float d = outNoise * 0.17 * uAmp;
         float mouse = smoothstep(0.74, 0.0, distance(dir, uPointer));
         d -= mouse * uPointerAmt * 0.24;
         d += sin(dot(dir, vec3(0.0, 1.0, 0.0)) * 9.0 + uTime * 2.2) * uVelocity * 0.026;
+        return d;
+      }
+
+      float displacedFast(vec3 dir){
+        float d = fieldFast(dir) * 0.17 * uAmp;
+        float mouse = smoothstep(0.74, 0.0, distance(dir, uPointer));
+        d -= mouse * uPointerAmt * 0.24;
         return d;
       }
 
@@ -61,11 +76,12 @@ export function buildActOne() {
         tangent = normalize(tangent);
         vec3 bitangent = normalize(cross(dir, tangent));
 
-        float d0 = displaced(dir);
-        vec3 pa = normalize(dir + tangent * 0.022);
-        vec3 pb = normalize(dir + bitangent * 0.022);
-        float da = displaced(pa);
-        float db = displaced(pb);
+        float centerNoise = 0.0;
+        float d0 = displaced(dir, centerNoise);
+        vec3 pa = normalize(dir + tangent * 0.024);
+        vec3 pb = normalize(dir + bitangent * 0.024);
+        float da = displacedFast(pa);
+        float db = displacedFast(pb);
 
         vec3 p0 = dir * (1.0 + d0);
         vec3 pA = pa * (1.0 + da);
@@ -77,7 +93,7 @@ export function buildActOne() {
         vNormalW = normalize(mat3(modelMatrix) * dispNormal);
         vViewDir = normalize(cameraPosition - world.xyz);
         vDisp = d0;
-        vNoise = field(dir);
+        vNoise = centerNoise;
 
         gl_Position = projectionMatrix * viewMatrix * world;
       }`,
@@ -157,7 +173,7 @@ export function buildActOne() {
 }
 
 export function buildDust() {
-  const count = mobileQuery.matches ? 260 : 620;
+  const count = mobileQuery.matches ? 160 : 340;
   const positions = new Float32Array(count * 3);
   const rand = mulberry32(9821);
   for (let i = 0; i < count; i++) {
