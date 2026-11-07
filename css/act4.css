@@ -1,0 +1,61 @@
+/* Act IV: gravitational singularity */
+.act-4{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;gap:6vh;
+  padding:calc(var(--hud-h) + 8vh) var(--pad) 5vh;
+}
+.act-4::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:60%;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg) 68%,transparent) 38%,color-mix(in srgb,var(--bg) 92%,transparent));
+}
+.contact-head{
+  display:flex;justify-content:space-between;gap:20px;
+  border-bottom:1px solid var(--line);padding-bottom:12px;
+  font:400 9px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+}
+.contact-title{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(64px,17vw,300px);line-height:.74;letter-spacing:-.05em;text-transform:uppercase;
+  margin:2vh 0;
+  text-shadow:0 0 26px color-mix(in srgb,var(--bg) 82%,transparent),0 0 70px color-mix(in srgb,var(--bg) 55%,transparent);
+}
+.contact-title .line{display:block}
+.contact-title .line:last-child{text-align:right}
+.contact-title .line:last-child span{color:transparent;-webkit-text-stroke:2px var(--ink)}
+.contact-grid{
+  display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:end;
+  border-top:1px solid var(--line);
+  padding:3vh 0 2vh;
+}
+.contact-copy{max-width:34ch;font-size:clamp(17px,1.4vw,22px);line-height:1.4}
+.contact-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.cta{
+  display:inline-flex;align-items:center;gap:18px;min-height:64px;padding:18px 26px;
+  border:2px solid var(--ink);background:var(--ink);color:var(--bg);
+  font:400 clamp(14px,1.2vw,18px)/1 var(--display);letter-spacing:.01em;text-transform:uppercase;
+  transition:background .2s,color .2s;
+}
+.cta:hover,.cta:focus-visible{background:transparent;color:var(--ink)}
+.cta span{transition:transform .2s}
+.cta:hover span,.cta:focus-visible span{transform:translate(3px,-3px)}
+.email-copy{
+  width:100%;min-height:58px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0;text-align:left;
+  font:400 9px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+}
+.email-copy__label{color:var(--muted)}
+.email-copy__value{
+  overflow-wrap:anywhere;font:400 clamp(12px,1.15vw,16px)/1.2 var(--mono);
+  letter-spacing:.03em;text-transform:none;
+}
+.email-copy__action{color:var(--accent-strong);font:400 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.email-copy:hover .email-copy__action{text-decoration:underline;text-underline-offset:3px}
+.email-copy.is-copied .email-copy__action{color:var(--ink)}
+.domain-status{
+  display:flex;align-items:center;gap:10px;min-height:44px;
+  font:400 8.5px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;
+}
+.domain-status__dot{width:6px;height:6px;flex:0 0 auto;background:var(--accent)}
+.domain-status[data-state="checking"] .domain-status__dot{background:var(--muted)}
+.domain-status[data-state="error"] .domain-status__dot{background:var(--ink)}
+.domain-status:hover{color:var(--ink)}
+.contact-note{max-width:30ch;font:400 9.5px/1.55 var(--mono);letter-spacing:.05em;color:var(--muted)}

@@ -1,0 +1,61 @@
+/* No-JS and static fallback states */
+body.no-js .boot{display:none}
+body.no-js .work-track,body.static-work .work-track{
+  display:flex;flex-direction:column;width:100%;
+  padding:12vh var(--pad);gap:28px;transform:none!important;
+}
+body.no-js .work-pin,body.static-work .work-pin{height:auto;display:block;overflow:visible}
+body.no-js .project,body.static-work .project{width:100%;flex:none;height:auto;grid-template-columns:1fr}
+body.no-js .project__body,body.static-work .project__body{border-right:0;border-bottom:1px solid var(--line)}
+body.no-js .project__img{opacity:.92!important}
+
+/* Audio engine HUD toggle */
+.sound-toggle{
+  display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;
+  background:transparent;border:1px solid var(--line);
+  font:400 8.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);transition:all .2s var(--ease);cursor:pointer;
+  touch-action:manipulation;
+}
+.sound-toggle:hover,.sound-toggle:focus-visible{
+  color:var(--accent);border-color:var(--accent);
+}
+.sound-toggle.is-active{
+  color:var(--ink);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.sound-toggle__icon{
+  display:inline-block;font-size:11px;line-height:1;
+  transition:transform .2s var(--ease);
+}
+.sound-toggle.is-active .sound-toggle__icon{
+  color:var(--accent);animation:soundPulse 1.8s infinite ease-in-out;
+}
+@keyframes soundPulse{
+  0%,100%{transform:scale(1);opacity:.85}
+  50%{transform:scale(1.25);opacity:1}
+}
+@media (max-width:480px){
+  .sound-toggle__text{display:none}
+  .sound-toggle{padding:0 8px;min-width:32px;justify-content:center}
+}
+
+/* Enhanced Project Link touch response */
+.project__actions{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  margin-top:14px;position:relative;z-index:40;
+}
+.project__link{
+  position:relative !important;z-index:40 !important;
+  pointer-events:auto !important;touch-action:manipulation !important;
+  cursor:pointer !important;-webkit-tap-highlight-color:rgba(212,255,0,.3);
+}
+.project__deep{
+  display:inline-flex;align-items:center;gap:6px;min-height:44px;
+  background:transparent;border:0;border-bottom:1px solid var(--line);
+  font:400 9px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);transition:all .2s;cursor:pointer;
+  touch-action:manipulation;
+}
+.project__deep:hover,.project__deep:focus-visible{
+  color:var(--accent);border-color:var(--accent);
+}

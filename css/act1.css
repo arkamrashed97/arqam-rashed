@@ -1,0 +1,52 @@
+/* Act I: obsidian monolith */
+.act{position:relative;z-index:2}
+.act-1{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(var(--hud-h) + 4.5vh) var(--pad) 4.6vh;
+}
+.hero-top{
+  display:flex;justify-content:space-between;gap:24px;
+  border-bottom:1px solid var(--line);padding-bottom:12px;
+  font:400 9.5px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+}
+.hero-top__right{text-align:right;color:var(--muted)}
+.hero-top__right b{color:var(--ink);font-weight:400}
+.hero-name{margin:auto 0;padding:2.5vh 0}
+.hero-name h1{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(66px,14vw,250px);line-height:.74;letter-spacing:-.045em;
+  text-transform:uppercase;
+}
+.hero-name .line{display:block;overflow:hidden;padding-bottom:.035em}
+.hero-name .line--2{text-align:right;padding-right:3vw}
+.hero-name .char{display:inline-block;will-change:transform}
+.hero-name__aside{
+  display:flex;justify-content:space-between;gap:20px;margin-top:1.4vh;
+  font:400 8.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+}
+.hero-bottom{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:5vw;align-items:end;
+  border-top:1px solid var(--line);padding-top:14px;
+}
+.hero-copy{
+  max-width:32ch;font-size:clamp(16px,1.35vw,21px);line-height:1.36;letter-spacing:-.012em;
+}
+.hero-copy em{font-family:var(--serif);font-style:italic;color:var(--accent)}
+.hero-facts{display:flex;gap:clamp(16px,3vw,42px);flex-wrap:wrap;justify-content:flex-end}
+.hero-facts div{display:grid;gap:3px}
+.hero-facts b{font-family:var(--display);font-size:clamp(18px,1.6vw,26px);font-weight:400;line-height:1}
+.hero-facts span{font:400 8px/1.3 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.capabilities{
+  display:flex;flex-wrap:wrap;margin-top:22px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  font:400 8.5px/1.2 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+}
+.capabilities li{padding:10px 14px;border-right:1px solid var(--line)}
+.capabilities li:last-child{border-right:0}
+.capabilities li b{font-weight:400;color:var(--ink)}
+.scroll-cue{
+  display:inline-flex;align-items:center;gap:12px;min-height:44px;
+  font:400 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+}
+.scroll-cue span{display:inline-block;transition:transform .2s var(--ease)}
+.scroll-cue:hover span,.scroll-cue:focus-visible span{transform:translateY(4px)}

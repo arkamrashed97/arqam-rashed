@@ -1,0 +1,143 @@
+/* Arabic typesetting & brutalist font hierarchy */
+html[lang="ar"]{
+  --display:'Alexandria','Cairo','Archivo Black',sans-serif;
+  --body:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
+  --mono:'IBM Plex Mono','IBM Plex Sans Arabic',monospace;
+  --serif:'Aref Ruqaa Ink','Amiri',serif;
+}
+html[lang="ar"] *{letter-spacing:normal!important}
+html[lang="ar"] .hero-name h1{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  letter-spacing:-.015em!important;
+  line-height:0.92;
+}
+html[lang="ar"] .hero-name h1 .first,
+html[lang="ar"] .hero-name h1 .last{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+}
+html[lang="ar"] .hero-name h1 span{
+  font-family:var(--display)!important;
+}
+html[lang="ar"] .hero-copy{
+  font-size:clamp(17px,1.5vw,22px);
+  line-height:1.82;
+  font-weight:400;
+}
+html[lang="ar"] em{
+  font-family:var(--serif)!important;
+  font-style:normal!important;
+  font-weight:700!important;
+}
+html[lang="ar"] .hero-copy em,
+html[lang="ar"] .work-intro h2 em,
+html[lang="ar"] .act-3 h2 span,
+html[lang="ar"] .contact-title span{
+  font-family:var(--serif)!important;
+  font-weight:700!important;
+}
+html[lang="ar"] .work-intro h2{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  line-height:1.15;
+}
+html[lang="ar"] .act-3 h2{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  line-height:1.15;
+}
+html[lang="ar"] .contact-title{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  line-height:1.08;
+}
+html[lang="ar"] .contact-title .line:last-child span{
+  font-family:var(--display)!important;
+  -webkit-text-stroke-width:1.5px;
+}
+html[lang="ar"] .project h3{
+  font-family:var(--display)!important;
+  font-weight:800!important;
+  letter-spacing:-.01em!important;
+  line-height:1.2;
+}
+html[lang="ar"] .hud__brand b{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  letter-spacing:.03em!important;
+}
+html[lang="ar"] .cta{
+  font-family:var(--display)!important;
+  font-weight:800!important;
+  line-height:1.5;
+}
+html[lang="ar"] .lang-toggle{
+  font-family:var(--body)!important;
+  font-size:13px;
+  font-weight:600;
+}
+html[lang="ar"] .project__link,
+html[lang="ar"] .lang-option,
+html[lang="ar"] .cluster-btn{
+  font-family:var(--body)!important;
+  font-weight:600;
+}
+html[lang="ar"] .hero-top,
+html[lang="ar"] .hero-name__aside,
+html[lang="ar"] .capabilities,
+html[lang="ar"] .work-intro__foot,
+html[lang="ar"] .cluster-status,
+html[lang="ar"] .panel-note,
+html[lang="ar"] .act-3__context,
+html[lang="ar"] .contact-head,
+html[lang="ar"] .contact-note,
+html[lang="ar"] .footer-meta,
+html[lang="ar"] .domain-status{
+  line-height:1.75;
+}
+html[lang="ar"] .motion-toggle,
+html[lang="ar"] .mobile-nav a,
+html[lang="ar"] .scroll-cue,
+html[lang="ar"] .footer-links a,
+html[lang="ar"] .act-nav a{
+  line-height:1.65;
+}
+/* Right-to-left composition */
+html[dir="rtl"] .skip{left:auto;right:16px}
+html[dir="rtl"] .scroll-progress{transform-origin:100% 50%}
+html[dir="rtl"] .readout{left:auto;right:22px}
+html[dir="rtl"] .hud__brand{direction:ltr}
+html[dir="rtl"] .hero-name h1{direction:ltr}
+html[dir="rtl"] .hero-name .line:first-child{text-align:right}
+html[dir="rtl"] .hero-name .line--2{text-align:left;padding-right:0;padding-left:3vw}
+html[dir="rtl"] .hero-top__right{text-align:left}
+html[dir="rtl"] .capabilities li{border-right:0;border-left:1px solid var(--line)}
+html[dir="rtl"] .capabilities li:last-child{border-left:0}
+html[dir="rtl"] .work-pin{direction:ltr}
+html[dir="rtl"] .work-track > *{direction:rtl}
+html[dir="rtl"] .project__body{border-right:0;border-left:1px solid var(--line)}
+html[dir="rtl"] .project__tag{left:auto;right:10px}
+html[dir="rtl"] .project__cross{right:auto;left:10px}
+html[dir="rtl"] .project h3{direction:ltr;text-align:right}
+html[dir="rtl"] .cluster{text-align:right}
+html[dir="rtl"] .data-row dd{text-align:left}
+html[dir="rtl"] .email-copy{text-align:right}
+html[dir="rtl"] .email-copy__value{direction:ltr;text-align:right}
+html[dir="rtl"] .domain-status{text-align:right}
+html[dir="rtl"] .contact-title .line{text-align:right}
+html[dir="rtl"] .contact-title .line:last-child{text-align:left}
+html[dir="rtl"] .motion-toggle__dot{margin-right:0;margin-left:7px}
+html[dir="rtl"] .boot__bar i{transform-origin:100% 50%}
+html[dir="rtl"] .act-nav{
+  right:auto;left:0;border-left:0;border-right:1px solid var(--line);
+  padding:6px 16px 6px 4px;
+}
+html[dir="rtl"] .act-nav a{padding-left:0;padding-right:14px}
+@media (min-width:1101px){
+  html[dir="rtl"] .act-nav{right:auto;left:0;padding:6px 0}
+  html[dir="rtl"] .act-nav a{padding:0 0 0 14px}
+  html[dir="rtl"] .act-nav:hover,html[dir="rtl"] .act-nav:focus-within{
+    border-left:0;border-right:1px solid var(--line);
+  }
+}
