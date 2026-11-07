@@ -7,8 +7,13 @@
 <meta name="description" content="Arqam Rashed is a full-stack architect and creative developer in Luxor, Egypt. Production platforms, native systems, and real-time interfaces built end to end.">
 <meta name="author" content="Arqam Rashed">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Arqam Rashed / Full-Stack Architect">
-<meta property="og:description" content="Production platforms, native systems, and real-time interfaces built end to end.">
+<meta property="og:site_name" content="Arqam Rashed Portfolio">
+<meta property="og:title" content="Arqam Rashed / Full-Stack Architect & Creative Developer">
+<meta property="og:description" content="Production platforms, native desktop systems, Flutter mobile applications, and real-time interfaces built end to end. Luxor, Egypt.">
+<meta property="og:url" content="https://arkamrashed97.github.io/arqam-rashed/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Arqam Rashed / Full-Stack Architect & Creative Developer">
+<meta name="twitter:description" content="Production platforms, native desktop systems, Flutter mobile applications, and real-time interfaces built end to end. Luxor, Egypt.">
 <meta name="theme-color" content="#070708">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23070708'/%3E%3Cpath d='M14 50 32 14l18 36h-8l-4-9H26l-4 9z' fill='%23D4FF00'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +22,13 @@
 <script>
 (function () {
   var root = document.documentElement;
+  window.haptic = function (ms) {
+    try {
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        navigator.vibrate(ms || 8);
+      }
+    } catch (err) {}
+  };
   var lang = null;
   try { lang = localStorage.getItem('arqam-lang'); } catch (err) { lang = null; }
   if (lang === 'ar' || lang === 'en') {
@@ -300,7 +312,20 @@ body.cursor-hover .cursor-dot{opacity:0}
   background:#070708;color:#E2E2E5;
   overflow:auto;
 }
-.lang-gate[hidden],html.lang-set .lang-gate{display:none}
+.lang-gate[hidden],
+html.lang-set .lang-gate,
+.lang-gate.is-dismissed {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+body.is-ready #boot {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 .lang-gate::before{
   content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
@@ -994,6 +1019,135 @@ body.no-js .work-pin,body.static-work .work-pin{height:auto;display:block;overfl
 body.no-js .project,body.static-work .project{width:100%;flex:none;height:auto;grid-template-columns:1fr}
 body.no-js .project__body,body.static-work .project__body{border-right:0;border-bottom:1px solid var(--line)}
 body.no-js .project__img{opacity:.92!important}
+
+/* Audio engine HUD toggle */
+.sound-toggle{
+  display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;
+  background:transparent;border:1px solid var(--line);
+  font:400 8.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);transition:all .2s var(--ease);cursor:pointer;
+  touch-action:manipulation;
+}
+.sound-toggle:hover,.sound-toggle:focus-visible{
+  color:var(--accent);border-color:var(--accent);
+}
+.sound-toggle.is-active{
+  color:var(--ink);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.sound-toggle__icon{
+  display:inline-block;font-size:11px;line-height:1;
+  transition:transform .2s var(--ease);
+}
+.sound-toggle.is-active .sound-toggle__icon{
+  color:var(--accent);animation:soundPulse 1.8s infinite ease-in-out;
+}
+@keyframes soundPulse{
+  0%,100%{transform:scale(1);opacity:.85}
+  50%{transform:scale(1.25);opacity:1}
+}
+@media (max-width:480px){
+  .sound-toggle__text{display:none}
+  .sound-toggle{padding:0 8px;min-width:32px;justify-content:center}
+}
+
+/* Enhanced Project Link touch response */
+.project__actions{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  margin-top:14px;position:relative;z-index:40;
+}
+.project__link{
+  position:relative !important;z-index:40 !important;
+  pointer-events:auto !important;touch-action:manipulation !important;
+  cursor:pointer !important;-webkit-tap-highlight-color:rgba(212,255,0,.3);
+}
+.project__deep{
+  display:inline-flex;align-items:center;gap:6px;min-height:44px;
+  background:transparent;border:0;border-bottom:1px solid var(--line);
+  font:400 9px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);transition:all .2s;cursor:pointer;
+  touch-action:manipulation;
+}
+.project__deep:hover,.project__deep:focus-visible{
+  color:var(--accent);border-color:var(--accent);
+}
+
+/* Case study modal / drawer */
+.project-modal{
+  position:fixed;inset:0;z-index:600;display:grid;place-items:center;
+  padding:20px;transition:opacity .3s var(--ease);
+}
+.project-modal[hidden]{display:none !important}
+.project-modal__backdrop{
+  position:fixed;inset:0;background:rgba(7,7,8,.85);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  z-index:1;
+}
+.project-modal__sheet{
+  position:relative;z-index:2;width:min(720px,94vw);max-height:88vh;
+  overflow-y:auto;background:#0d0d10;border:1px solid var(--line);
+  padding:clamp(20px,3.5vw,36px);display:grid;gap:20px;
+  box-shadow:0 30px 80px rgba(0,0,0,.7);
+}
+.project-modal__header{
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--line);padding-bottom:12px;
+}
+.project-modal__index{
+  font:400 9px/1.3 var(--mono);letter-spacing:.1em;color:var(--accent);
+}
+.project-modal__close{
+  background:transparent;border:1px solid var(--line);color:var(--ink);
+  width:32px;height:32px;display:grid;place-items:center;cursor:pointer;
+  font-size:13px;transition:all .2s;touch-action:manipulation;
+}
+.project-modal__close:hover{border-color:var(--accent);color:var(--accent)}
+.project-modal__title{
+  font-family:var(--display);font-size:clamp(28px,4.5vw,48px);line-height:.95;
+  letter-spacing:-.03em;text-transform:uppercase;color:var(--ink);margin:0;
+}
+.project-modal__desc{
+  font-size:clamp(14px,1.1vw,16px);line-height:1.6;color:var(--ink);
+}
+.project-modal__metrics{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;
+  padding:14px;border:1px solid var(--line);background:rgba(255,255,255,.02);
+}
+.project-modal__metric b{
+  display:block;font-family:var(--display);font-size:22px;color:var(--accent);
+}
+.project-modal__metric span{
+  font:400 8.5px/1.3 var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;
+}
+.project-modal__section h4{
+  font:400 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 8px;
+}
+.project-modal__section p{
+  font-size:13.5px;line-height:1.65;color:color-mix(in srgb,var(--ink) 85%,transparent);
+}
+.project-modal__footer{
+  display:flex;gap:12px;padding-top:12px;border-top:1px solid var(--line);
+}
+
+/* WhatsApp and vCard buttons in Act IV */
+.cta--wa{
+  border-color:#25D366 !important;color:#25D366 !important;
+}
+.cta--wa:hover,.cta--wa:focus-visible{
+  background:rgba(37,211,102,.12) !important;
+}
+.vcard-btn{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  width:100%;min-height:50px;padding:12px 18px;
+  background:transparent;border:1px solid var(--line);
+  font:400 9.5px/1.3 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink);cursor:pointer;transition:all .2s;touch-action:manipulation;
+}
+.vcard-btn:hover,.vcard-btn:focus-visible{
+  border-color:var(--accent);color:var(--accent);
+}
+.vcard-btn__meta{color:var(--muted);font-size:8.5px}
+
 </style>
 </head>
 <body class="is-booting">
@@ -1066,6 +1220,10 @@ body.no-js .project__img{opacity:.92!important}
     <b id="hud-act-num">01</b> / <span id="hud-act-name">OBSIDIAN MONOLITH</span>
   </div>
   <div class="hud__telemetry">
+    <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Toggle ambient natural soundscape" title="Ambient Sound">
+      <span class="sound-toggle__icon" aria-hidden="true">☊</span>
+      <span class="sound-toggle__text" id="sound-toggle-text">AMBIENT: OFF</span>
+    </button>
     <span class="hud__time" id="clock">CAI 00:00:00</span>
     <span class="hud__fps"><span class="live" id="fps">60</span> FPS</span>
     <svg class="hud__wave" viewBox="0 0 74 20" aria-hidden="true"><polyline id="wave-line" points="0,10 74,10"></polyline></svg>
@@ -1165,7 +1323,10 @@ body.no-js .project__img{opacity:.92!important}
             <ul class="project__stack" aria-label="Sequoia Travel stack">
               <li>Next.js</li><li>React</li><li>TypeScript</li><li>Supabase</li><li>Tailwind</li>
             </ul>
-            <a class="project__link" href="https://sequoiatravel.com" target="_blank" rel="noopener noreferrer" data-cursor="VIEW">OPEN PLATFORM <span aria-hidden="true">↗</span></a>
+            <div class="project__actions">
+              <a class="project__link" href="https://sequoiatravel.com" target="_blank" rel="noopener noreferrer" data-cursor="VIEW" data-lenis-prevent>OPEN PLATFORM <span aria-hidden="true">↗</span></a>
+              <button class="project__deep" type="button" data-case="0" data-cursor="DEEP" data-lenis-prevent>CASE STUDY ↗</button>
+            </div>
           </div>
         </div>
         <div class="project__media" data-media="0">
@@ -1186,7 +1347,10 @@ body.no-js .project__img{opacity:.92!important}
             <ul class="project__stack" aria-label="Arko Click stack">
               <li>Rust</li><li>egui</li><li>Win32 API</li><li>Inno Setup</li>
             </ul>
-            <a class="project__link" href="https://github.com/arkamrashed97/ArkoClick" target="_blank" rel="noopener noreferrer" data-cursor="VIEW CODE">VIEW CODE <span aria-hidden="true">↗</span></a>
+            <div class="project__actions">
+              <a class="project__link" href="https://github.com/arkamrashed97/ArkoClick" target="_blank" rel="noopener noreferrer" data-cursor="VIEW" data-lenis-prevent>VIEW CODE <span aria-hidden="true">↗</span></a>
+              <button class="project__deep" type="button" data-case="1" data-cursor="DEEP" data-lenis-prevent>CASE STUDY ↗</button>
+            </div>
           </div>
         </div>
         <div class="project__media" data-media="1">
@@ -1207,7 +1371,10 @@ body.no-js .project__img{opacity:.92!important}
             <ul class="project__stack" aria-label="RT Supplements stack">
               <li>Next.js</li><li>React</li><li>TypeScript</li><li>Supabase</li><li>Vercel</li>
             </ul>
-            <a class="project__link" href="https://rtsupplements.vercel.app" target="_blank" rel="noopener noreferrer" data-cursor="VIEW">OPEN SYSTEM <span aria-hidden="true">↗</span></a>
+            <div class="project__actions">
+              <a class="project__link" href="https://rtsupplements.vercel.app" target="_blank" rel="noopener noreferrer" data-cursor="VIEW" data-lenis-prevent>OPEN SYSTEM <span aria-hidden="true">↗</span></a>
+              <button class="project__deep" type="button" data-case="2" data-cursor="DEEP" data-lenis-prevent>CASE STUDY ↗</button>
+            </div>
           </div>
         </div>
         <div class="project__media" data-media="2">
@@ -1289,7 +1456,12 @@ body.no-js .project__img{opacity:.92!important}
       <p class="contact-note">Direct line. No form. The reply comes from the person who will build it.</p>
     </div>
     <div class="contact-actions">
-      <a class="cta" data-magnetic href="mailto:arkam2014a@gmail.com?subject=Project%20brief%20for%20Arqam" data-cursor="OPEN">START A PROJECT <span aria-hidden="true">↗</span></a>
+      <a class="cta" data-magnetic href="mailto:arkam2014a@gmail.com?subject=Project%20brief%20for%20Arqam" data-cursor="OPEN" id="cta-email">START A PROJECT <span aria-hidden="true">↗</span></a>
+      <a class="cta cta--wa" data-magnetic href="https://wa.me/201016843477?text=Hello%20Arqam,%20I%20viewed%20your%20portfolio" target="_blank" rel="noopener noreferrer" data-cursor="CHAT" id="cta-wa">WHATSAPP QUICK CHAT <span aria-hidden="true">↗</span></a>
+      <button class="vcard-btn" id="vcard-btn" type="button" data-cursor="SAVE">
+        <span id="vcard-label">SAVE CONTACT CARD</span>
+        <span class="vcard-btn__meta">ARQAM-RASHED.VCF ↓</span>
+      </button>
       <button class="email-copy" id="email-copy" type="button" data-copy="arkam2014a@gmail.com" data-cursor="COPY">
         <span class="email-copy__label">EMAIL</span>
         <span class="email-copy__value">arkam2014a@gmail.com</span>
@@ -1453,6 +1625,8 @@ function whenLanguageReady() {
       return;
     }
     window.addEventListener('arqam:lang', () => resolve(), { once: true });
+    // Resolve background scene prep after 250ms so Three.js renders under gate without stalling
+    window.setTimeout(() => resolve(), 250);
   });
 }
 
@@ -1730,6 +1904,9 @@ function finishBoot() {
     measureLayout();
     ScrollTrigger.refresh();
   };
+
+  window.__ARQAM_FINISH_BOOT = finishBoot;
+  window.__ARQAM_RUN_INTRO = runIntro;
 
   if (!state.motion) {
     paintBoot(100);
@@ -3447,6 +3624,9 @@ function tick() {
 
   state.actMix = computeActMix();
   updatePalette();
+  if (window.__ARQAM_AUDIO) {
+    window.__ARQAM_AUDIO.onTick(state.actMix, state.velocitySmooth);
+  }
   updateScene(dt);
   updateCursor(dt);
   updateHUD(now);
@@ -3877,7 +4057,7 @@ init().catch((err) => {
     { sel: '#contact-title', key: 'contactTitle', html: true },
     { sel: '.contact-copy', key: 'contactCopy' },
     { sel: '.contact-note', key: 'contactNote' },
-    { sel: '.cta', key: 'ctaLabel', html: true },
+    { sel: '#cta-email', key: 'ctaLabel', html: true },
     { sel: '.email-copy__label', key: 'emailLabel' },
     { sel: '#copy-action', key: 'copy' },
     { sel: '#domain-status', key: 'domainAria', prop: 'aria-label' },
@@ -4001,19 +4181,48 @@ init().catch((err) => {
   function finishGate() {
     if (!gate) return;
     gate.classList.add('is-closing');
+    gate.style.pointerEvents = 'none';
+    gate.style.opacity = '0';
+    root.classList.remove('lang-pending');
+    root.classList.add('lang-set');
+
+    // Immediately unlock body so user transitions directly into portfolio!
+    document.body.classList.remove('is-booting');
+    document.body.classList.add('is-ready');
+    var bootEl = document.getElementById('boot');
+    if (bootEl) {
+      bootEl.style.opacity = '0';
+      bootEl.style.visibility = 'hidden';
+      bootEl.style.pointerEvents = 'none';
+      bootEl.hidden = true;
+      bootEl.setAttribute('aria-hidden', 'true');
+      bootEl.style.display = 'none';
+    }
+    if (typeof window.__ARQAM_FINISH_BOOT === 'function') {
+      try { window.__ARQAM_FINISH_BOOT(); } catch (e) {}
+    }
+    if (typeof window.__ARQAM_RUN_INTRO === 'function') {
+      try { window.__ARQAM_RUN_INTRO(); } catch (e) {}
+    }
+    if (window.__ARQAM_AUDIO) {
+      window.__ARQAM_AUDIO.playTactile(620, 0.08, 0.12);
+    }
+
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.setTimeout(function () {
       gate.hidden = true;
+      gate.classList.add('is-dismissed');
+      gate.style.display = 'none';
       gate.setAttribute('aria-hidden', 'true');
-      root.classList.add('lang-set');
       if (gate.contains(document.activeElement)) document.activeElement.blur();
-    }, reduced ? 0 : 420);
+    }, reduced ? 0 : 320);
   }
 
   var choices = document.querySelectorAll('[data-lang-choice]');
   for (var i = 0; i < choices.length; i++) {
     choices[i].addEventListener('click', function () {
-      haptic(10);
+      if (typeof window.haptic === 'function') window.haptic(10);
+      else if (typeof haptic === 'function') { try { haptic(10); } catch (e) {} }
       applyLanguage(this.getAttribute('data-lang-choice'), true);
       finishGate();
     });
@@ -4022,7 +4231,8 @@ init().catch((err) => {
   var toggle = document.getElementById('lang-toggle');
   if (toggle) {
     toggle.addEventListener('click', function () {
-      haptic(10);
+      if (typeof window.haptic === 'function') window.haptic(10);
+      else if (typeof haptic === 'function') { try { haptic(10); } catch (e) {} }
       applyLanguage(currentLang() === 'en' ? 'ar' : 'en', true);
     });
   }
@@ -4060,5 +4270,557 @@ init().catch((err) => {
   });
 })();
 </script>
+
+<!-- Project Architecture Case Study Modal -->
+<div id="project-modal" class="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+  <div class="project-modal__backdrop" id="modal-backdrop"></div>
+  <div class="project-modal__sheet">
+    <div class="project-modal__header">
+      <div class="project-modal__index" id="modal-index">01 / ARCHITECTURE</div>
+      <button class="project-modal__close" id="modal-close" type="button" aria-label="Close modal">✕</button>
+    </div>
+    <div class="project-modal__body">
+      <h3 id="modal-title" class="project-modal__title">SEQUOIA TRAVEL</h3>
+      <p id="modal-desc" class="project-modal__desc"></p>
+      
+      <div class="project-modal__metrics" id="modal-metrics">
+        <!-- Injected dynamically -->
+      </div>
+
+      <div class="project-modal__section">
+        <h4 id="modal-arch-title">SYSTEM ARCHITECTURE & CHOICES</h4>
+        <p id="modal-arch-text"></p>
+      </div>
+
+      <div class="project-modal__footer">
+        <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="cta">VISIT LIVE PLATFORM ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ==========================================================================
+   ARQAM RASHED - NATURAL AMBIENT AUDIO ENGINE & INTERACTIVE FEATURES
+   Physical acoustic modeling: procedural pink noise wind, grounding sub-bass
+   chords, spatial crystalline resonance, zero-harshness micro-haptic clicks.
+   ========================================================================== */
+
+(function () {
+  'use strict';
+
+  class NaturalAudioEngine {
+    constructor() {
+      this.ctx = null;
+      this.masterGain = null;
+      this.ambientGain = null;
+      this.sfxGain = null;
+      this.enabled = false;
+      this.windFilter = null;
+      this.rootOsc = null;
+      this.fifthOsc = null;
+      this.octaveOsc = null;
+      this.chordGain = null;
+      this.chordFilter = null;
+      this.lastAct = -1;
+    }
+
+    init() {
+      if (this.ctx) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        this.ctx = new AudioCtx();
+
+        // Master gain with 0-pop ramping
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.setValueAtTime(0.0001, this.ctx.currentTime);
+        this.masterGain.connect(this.ctx.destination);
+
+        this.ambientGain = this.ctx.createGain();
+        this.ambientGain.gain.setValueAtTime(0.75, this.ctx.currentTime);
+        this.ambientGain.connect(this.masterGain);
+
+        this.sfxGain = this.ctx.createGain();
+        this.sfxGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+        this.sfxGain.connect(this.masterGain);
+
+        this.buildAtmosphere();
+      } catch (err) {
+        console.warn('Audio context init deferred', err);
+      }
+    }
+
+    buildAtmosphere() {
+      if (!this.ctx) return;
+      // 1. Organic Pink Noise Generator (Luxor sandstone night wind simulation)
+      const bufferSize = this.ctx.sampleRate * 2;
+      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.018;
+        b6 = white * 0.115926;
+      }
+
+      const noiseSource = this.ctx.createBufferSource();
+      noiseSource.buffer = noiseBuffer;
+      noiseSource.loop = true;
+
+      this.windFilter = this.ctx.createBiquadFilter();
+      this.windFilter.type = 'bandpass';
+      this.windFilter.frequency.setValueAtTime(220, this.ctx.currentTime);
+      this.windFilter.Q.setValueAtTime(1.2, this.ctx.currentTime);
+
+      noiseSource.connect(this.windFilter);
+      this.windFilter.connect(this.ambientGain);
+      noiseSource.start();
+
+      // 2. Harmonic Resonant Chord (Grounding 55Hz fundamental, peaceful, non-intrusive)
+      this.rootOsc = this.ctx.createOscillator();
+      this.rootOsc.type = 'sine';
+      this.rootOsc.frequency.setValueAtTime(55, this.ctx.currentTime); // A1
+
+      this.fifthOsc = this.ctx.createOscillator();
+      this.fifthOsc.type = 'sine';
+      this.fifthOsc.frequency.setValueAtTime(82.5, this.ctx.currentTime); // E2
+
+      this.octaveOsc = this.ctx.createOscillator();
+      this.octaveOsc.type = 'sine';
+      this.octaveOsc.frequency.setValueAtTime(110, this.ctx.currentTime); // A2
+
+      this.chordFilter = this.ctx.createBiquadFilter();
+      this.chordFilter.type = 'lowpass';
+      this.chordFilter.frequency.setValueAtTime(280, this.ctx.currentTime);
+
+      this.chordGain = this.ctx.createGain();
+      this.chordGain.gain.setValueAtTime(0.16, this.ctx.currentTime);
+
+      this.rootOsc.connect(this.chordFilter);
+      this.fifthOsc.connect(this.chordFilter);
+      this.octaveOsc.connect(this.chordFilter);
+      this.chordFilter.connect(this.chordGain);
+      this.chordGain.connect(this.ambientGain);
+
+      this.rootOsc.start();
+      this.fifthOsc.start();
+      this.octaveOsc.start();
+    }
+
+    onTick(actMix, velocity) {
+      if (!this.ctx || !this.enabled) return;
+      const now = this.ctx.currentTime;
+      // Determine dominant act
+      let dominant = 0;
+      if (actMix.m3 > 0.45) dominant = 3;
+      else if (actMix.m2 > 0.45) dominant = 2;
+      else if (actMix.m1 > 0.45) dominant = 1;
+
+      if (dominant !== this.lastAct) {
+        this.lastAct = dominant;
+        this.setAct(dominant);
+      }
+
+      // Dynamic wind sweep driven by scroll speed
+      if (this.windFilter) {
+        const velMod = Math.min(Math.abs(velocity || 0) * 12, 180);
+        const baseFreq = dominant === 0 ? 220 : dominant === 1 ? 340 : dominant === 2 ? 180 : 130;
+        this.windFilter.frequency.setTargetAtTime(baseFreq + velMod, now, 0.25);
+      }
+    }
+
+    setAct(actIndex) {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      if (actIndex === 0) {
+        // Act I: Ancient monolith sandstone resonance
+        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(55, now, 0.5);
+        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(82.5, now, 0.5);
+        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.18, now, 0.5);
+        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(280, now, 0.5);
+      } else if (actIndex === 1) {
+        // Act II: Kinetic editorial warm breeze
+        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(73.42, now, 0.5);
+        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(110, now, 0.5);
+        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.12, now, 0.5);
+        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(360, now, 0.5);
+      } else if (actIndex === 2) {
+        // Act III: Spatial glass crystalline focus chord (216Hz - 324Hz)
+        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(108, now, 0.5);
+        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(162, now, 0.5);
+        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.22, now, 0.5);
+        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(540, now, 0.5);
+      } else if (actIndex === 3) {
+        // Act IV: Deep gravitational calm
+        if (this.rootOsc) this.rootOsc.frequency.setTargetAtTime(43.65, now, 0.5);
+        if (this.fifthOsc) this.fifthOsc.frequency.setTargetAtTime(65.41, now, 0.5);
+        if (this.chordGain) this.chordGain.gain.setTargetAtTime(0.15, now, 0.5);
+        if (this.chordFilter) this.chordFilter.frequency.setTargetAtTime(220, now, 0.5);
+      }
+    }
+
+    playTactile(freq = 520, decay = 0.06, volume = 0.08) {
+      if (!this.ctx || !this.enabled) return;
+      try {
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.45, now + decay);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+
+        gain.gain.setValueAtTime(volume, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.start(now);
+        osc.stop(now + decay);
+      } catch (e) {}
+    }
+
+    playChime(note = 660) {
+      if (!this.ctx || !this.enabled) return;
+      try {
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(note, now);
+        osc.frequency.exponentialRampToValueAtTime(note * 0.98, now + 0.35);
+
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } catch (e) {}
+    }
+
+    toggle() {
+      this.init();
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+      this.enabled = !this.enabled;
+      if (this.masterGain && this.ctx) {
+        const now = this.ctx.currentTime;
+        if (this.enabled) {
+          this.masterGain.gain.cancelScheduledValues(now);
+          this.masterGain.gain.linearRampToValueAtTime(0.55, now + 1.2);
+          this.playTactile(680, 0.08, 0.14);
+        } else {
+          this.masterGain.gain.cancelScheduledValues(now);
+          this.masterGain.gain.linearRampToValueAtTime(0.0001, now + 0.7);
+        }
+      }
+      try {
+        localStorage.setItem('arqam-sound', this.enabled ? 'on' : 'off');
+      } catch (e) {}
+      this.updateUI();
+      return this.enabled;
+    }
+
+    updateUI() {
+      const btn = document.getElementById('sound-toggle');
+      if (!btn) return;
+      btn.setAttribute('aria-pressed', String(this.enabled));
+      btn.classList.toggle('is-active', this.enabled);
+      const label = document.getElementById('sound-toggle-text');
+      if (label) {
+        const isAr = document.documentElement.lang === 'ar';
+        label.textContent = this.enabled 
+          ? (isAr ? 'الصوت: يعمل' : 'AMBIENT: ON')
+          : (isAr ? 'الصوت: صامت' : 'AMBIENT: OFF');
+      }
+    }
+  }
+
+  const audio = new NaturalAudioEngine();
+  window.__ARQAM_AUDIO = audio;
+
+  const soundBtn = document.getElementById('sound-toggle');
+  if (soundBtn) {
+    soundBtn.addEventListener('click', () => {
+      if (typeof window.haptic === 'function') window.haptic(10);
+      audio.toggle();
+    });
+  }
+
+  // Restore sound preference if previously enabled by user
+  try {
+    if (localStorage.getItem('arqam-sound') === 'on') {
+      const autoResume = () => {
+        audio.toggle();
+        window.removeEventListener('pointerdown', autoResume);
+        window.removeEventListener('keydown', autoResume);
+      };
+      window.addEventListener('pointerdown', autoResume, { once: true });
+      window.addEventListener('keydown', autoResume, { once: true });
+    }
+  } catch (e) {}
+
+  /* ==========================================================================
+     PROJECT LINKS & TOUCH ACTION GUARANTEE
+     ========================================================================== */
+  function setupProjectLinks() {
+    const links = document.querySelectorAll('.project__link');
+    links.forEach(function (link) {
+      link.setAttribute('data-lenis-prevent', 'true');
+      link.addEventListener('click', function (e) {
+        if (audio) audio.playTactile(720, 0.05, 0.1);
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('#')) {
+          e.stopPropagation();
+          const win = window.open(href, '_blank', 'noopener,noreferrer');
+          if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = href;
+          }
+        }
+      });
+    });
+  }
+  setupProjectLinks();
+
+  /* ==========================================================================
+     PROJECT ARCHITECTURE CASE STUDY MODAL
+     ========================================================================== */
+  const CASE_STUDIES = [
+    {
+      index: '01 / ARCHITECTURE CASE STUDY',
+      title: 'SEQUOIA TRAVEL',
+      type: 'TOURISM MANAGEMENT & BOOKING ENGINE / PRODUCTION',
+      desc: 'Customer and administrative booking portal, real-time staff chat, multi-currency payment pipeline, and an AI concierge grounded in live inventories and reservation records.',
+      metrics: [
+        { val: '<120ms', label: 'Global Edge TTFB' },
+        { val: '99.98%', label: 'Verified Uptime' },
+        { val: '100%', label: 'RBAC Strict Isolation' }
+      ],
+      archTitle: 'CORE ARCHITECTURAL DECISIONS',
+      archText: 'Built on Next.js App Router with Supabase PostgreSQL. Row Level Security (RLS) ensures strict tenant data separation across customer, agent, and super-admin portals. AI context injection fetches live hotel availability, dynamic seasonal pricing, and active bookings via transactional edge functions with zero hallucinations.',
+      link: 'https://sequoiatravel.com',
+      btnText: 'VISIT SEQUOIATRAVEL.COM ↗',
+      // Arabic version
+      ar: {
+        index: '01 / دراسة المعمارية الفنية',
+        title: 'SEQUOIA TRAVEL',
+        type: 'إدارة سياحية سحابية ومحرك حجوزات فوري / منصة حية',
+        desc: 'بوابات تفاعلية للعملاء ولوحة تحكم متقدمة للإدارة، محرك حجوزات فوري متعدد العملات، محادثة إدارية لحظية، ومساعد ذكاء اصطناعي مرتبط بالبيانات والأسعار الحية.',
+        metrics: [
+          { val: '<120ms', label: 'زمن الاستجابة السحابي' },
+          { val: '99.98%', label: 'نسبة التوافر والجاهزية' },
+          { val: '100%', label: 'عزل الصلاحيات المحكم' }
+        ],
+        archTitle: 'القرارات المعمارية والهندسية',
+        archText: 'معمارية سحابية كاملة تعتمد على Next.js App Router وSupabase PostgreSQL مع قواعد Row Level Security لعزل بيانات كل مستخدم بدقة متناهية. مساعد الذكاء الاصطناعي يستعلم لحظياً عن التوافر والأسعار الفعلية عبر Edge Functions لضمان موثوقية بنسبة 100% وبدون أي تخمين.',
+        btnText: 'زيارة المنصة الحية ↗'
+      }
+    },
+    {
+      index: '02 / ARCHITECTURE CASE STUDY',
+      title: 'ARKO CLICK',
+      type: 'NATIVE WINDOWS AUTOMATION / OPEN SOURCE / MIT',
+      desc: 'Native lightweight Windows automation tool designed to interact with background, occluded, or minimized windows without hijacking the physical mouse or keyboard.',
+      metrics: [
+        { val: '0.00%', label: 'Idle CPU Usage' },
+        { val: 'μs', label: 'Microsecond Precision' },
+        { val: 'SHA-256', label: 'Encrypted Integrity' }
+      ],
+      archTitle: 'LOW-LEVEL WIN32 & SCHEDULER DESIGN',
+      archText: 'Implemented via direct Win32 API PostMessage and SendMessage dispatch. Rather than relying on standard busy-wait polling loops, a calibrated min-heap priority scheduler allows the application to sleep with 0.00% CPU overhead between events. Binary auto-updates are cryptographically verified with SHA-256 signatures before staging.',
+      link: 'https://github.com/arkamrashed97/arko-click',
+      btnText: 'VIEW GITHUB REPOSITORY ↗',
+      // Arabic version
+      ar: {
+        index: '02 / دراسة المعمارية الفنية',
+        title: 'ARKO CLICK',
+        type: 'أتمتة سطح المكتب لنظام Windows / مفتوح المصدر / MIT',
+        desc: 'أداة أصلية خفيفة لنظام Windows توجه النقرات والإدخال إلى النوافذ الخلفية أو المخفية دون تحريك الماوس الفعلي ودون سحب التركيز من المستخدم.',
+        metrics: [
+          { val: '0.00%', label: 'استهلاك المعالج بالخمول' },
+          { val: 'μs', label: 'دقة توقيت بالميكروثانية' },
+          { val: 'SHA-256', label: 'تحقق مشفر للتحديثات' }
+        ],
+        archTitle: 'هندسة Win32 وجدولة المعالج',
+        archText: 'توجيه الإدخال المباشر للنوافذ المستهدفة عبر دوال PostMessage وSendMessage على مستوى نظام Windows. استخدام خوارزمية Min-Heap عالية الدقة في جدولة العمليات دون أي استهلاك يُذكر للطاقة في وضع الخمول، مع نظام فحص أمني مشفر للتحديثات التلقائية.',
+        btnText: 'مستودع الكود على GitHub ↗'
+      }
+    },
+    {
+      index: '03 / ARCHITECTURE CASE STUDY',
+      title: 'RT SUPPLEMENTS',
+      type: 'RETAIL & INVENTORY MANAGEMENT / PRODUCTION',
+      desc: 'Complete inventory management, sales auditing, and point-of-sale system for dietary supplement retail stores with real-time analytics and simulated sandbox training.',
+      metrics: [
+        { val: '<50ms', label: 'Barcode Lookup' },
+        { val: '100%', label: 'Stock Integrity' },
+        { val: 'SANDBOX', label: 'Safe Demo Simulation' }
+      ],
+      archTitle: 'DATA CONSISTENCY & AUDIT LOGGING',
+      archText: 'Designed for high reliability in retail point-of-sale environments. Features atomic transaction handling for inventory depletion, preventing duplicate checkout or phantom stock. A sandboxed Demo Mode initializes mock memory state, permitting staff training without altering production financial or stock tables.',
+      link: 'https://rtsupplements.vercel.app',
+      btnText: 'VISIT RTSUPPLEMENTS.VERCEL.APP ↗',
+      // Arabic version
+      ar: {
+        index: '03 / دراسة المعمارية الفنية',
+        title: 'RT SUPPLEMENTS',
+        type: 'إدارة مبيعات ومخازن المكملات الغذائية / منصة إنتاجية حية',
+        desc: 'نظام متكامل لإدارة المخازن، فواتير المبيعات، ومراقبة المخزون لمحلات المكملات الغذائية مع وضع تجريبي محاكي لتدريب الموظفين دون التأثير على البيانات الحقيقية.',
+        metrics: [
+          { val: '<50ms', label: 'استعلام الباركود' },
+          { val: '100%', label: 'دقة جرد المخزون' },
+          { val: 'محاكاة', label: 'بيئة تدريب معزولة' }
+        ],
+        archTitle: 'معمارية البيانات ومنع التعارض',
+        archText: 'معالجة ذرية (Atomic Transactions) لحركات الصرف والبيع لمنع تضارب المخزون عند تسجيل المبيعات السريعة. يتضمن النظام وضع تدريب افتراضي يعزل الحركات التجريبية تماماً عن جداول الأرباح والمخازن الحقيقية.',
+        btnText: 'استعراض النظام الحي ↗'
+      }
+    }
+  ];
+
+  const modal = document.getElementById('project-modal');
+  const modalIndex = document.getElementById('modal-index');
+  const modalClose = document.getElementById('modal-close');
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDesc = document.getElementById('modal-desc');
+  const modalMetrics = document.getElementById('modal-metrics');
+  const modalArchTitle = document.getElementById('modal-arch-title');
+  const modalArchText = document.getElementById('modal-arch-text');
+  const modalLink = document.getElementById('modal-link');
+
+  function openCaseStudy(idx) {
+    const data = CASE_STUDIES[idx];
+    if (!data || !modal) return;
+    const isAr = document.documentElement.lang === 'ar';
+    const localized = isAr ? data.ar : data;
+
+    modalIndex.textContent = localized.index;
+    modalTitle.textContent = localized.title;
+    modalDesc.textContent = localized.desc;
+    modalArchTitle.textContent = localized.archTitle;
+    modalArchText.textContent = localized.archText;
+    modalLink.href = data.link;
+    modalLink.textContent = localized.btnText;
+
+    modalMetrics.innerHTML = localized.metrics.map(m => `
+      <div class="project-modal__metric">
+        <b>${m.val}</b>
+        <span>${m.label}</span>
+      </div>
+    `).join('');
+
+    modal.hidden = false;
+    modal.removeAttribute('aria-hidden');
+    document.body.style.overflow = 'hidden';
+    if (audio) audio.playChime(580);
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (audio) audio.playTactile(440, 0.05, 0.08);
+  }
+
+  document.querySelectorAll('[data-case]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-case'), 10);
+      openCaseStudy(idx);
+    });
+  });
+
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hidden) closeModal();
+  });
+
+  /* ==========================================================================
+     VCARD CONTACT GENERATOR & DIRECT WHATSAPP ACTION
+     ========================================================================== */
+  const vcardBtn = document.getElementById('vcard-btn');
+  if (vcardBtn) {
+    vcardBtn.addEventListener('click', () => {
+      if (typeof window.haptic === 'function') window.haptic(14);
+      if (audio) audio.playTactile(820, 0.07, 0.12);
+
+      const vcardData = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'FN:Arqam Rashed',
+        'N:Rashed;Arqam;;;',
+        'TITLE:Full-Stack Architect & Creative Developer',
+        'ORG:Software Architecture & Systems Engineering',
+        'TEL;TYPE=CELL,VOICE;VALUE=uri:tel:+201016843477',
+        'EMAIL;TYPE=INTERNET,PREF:arkam2014a@gmail.com',
+        'URL:https://arkamrashed97.github.io/arqam-rashed/',
+        'ADR;TYPE=WORK:;;Luxor;Luxor;;;Egypt',
+        'NOTE:Specialized in Enterprise Systems, Next.js, Python, Flutter, SQLite, WebGL.',
+        'REV:' + new Date().toISOString(),
+        'END:VCARD'
+      ].join('\r\n');
+
+      const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Arqam-Rashed.vcf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // Update dynamic elements on language switch
+  window.addEventListener('arqam:lang', (e) => {
+    const lang = e.detail.lang;
+    const isAr = lang === 'ar';
+    if (audio) audio.updateUI();
+
+    const vcardLabel = document.getElementById('vcard-label');
+    if (vcardLabel) {
+      vcardLabel.textContent = isAr ? 'حفظ بطاقة جهة الاتصال' : 'SAVE CONTACT CARD';
+    }
+    const ctaWa = document.getElementById('cta-wa');
+    if (ctaWa) {
+      const waText = isAr 
+        ? 'محادثة مباشرة عبر واتساب' 
+        : 'WHATSAPP QUICK CHAT';
+      ctaWa.innerHTML = waText + ' <span aria-hidden="true">↗</span>';
+      const encodedMsg = isAr 
+        ? encodeURIComponent('مرحباً أرقم، اطلعت على معرض أعمالك وأرغب في مناقشة مشروع برمجي معك.')
+        : encodeURIComponent('Hello Arqam, I viewed your portfolio and would like to discuss a project with you.');
+      ctaWa.href = 'https://wa.me/201016843477?text=' + encodedMsg;
+    }
+    document.querySelectorAll('[data-case]').forEach(btn => {
+      btn.textContent = isAr ? 'تفاصيل المعمارية ↗' : 'CASE STUDY ↗';
+    });
+  });
+
+})();
+</script>
+
 </body>
 </html>
