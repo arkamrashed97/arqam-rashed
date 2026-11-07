@@ -1128,13 +1128,14 @@ body.no-js .project__img{opacity:.92!important}
     <li><b>NEXT.JS</b></li>
     <li>REACT</li>
     <li>TYPESCRIPT</li>
-    <li>SUPABASE</li>
-    <li>POSTGRESQL</li>
-    <li>RUST</li>
+    <li>FLUTTER / DART</li>
     <li>PYTHON</li>
+    <li>SQLITE</li>
+    <li>POSTGRESQL</li>
+    <li>SUPABASE</li>
+    <li>HOTEL &amp; CLINIC ERP</li>
+    <li>WIN32 / RUST</li>
     <li>THREE.JS</li>
-    <li>WIN32</li>
-    <li>LLM SYSTEMS</li>
   </ul>
 </section>
 
@@ -1232,16 +1233,16 @@ body.no-js .project__img{opacity:.92!important}
       <h3 class="glass__head"><span>CLUSTER SELECT</span><b id="cluster-label">FRONTEND</b></h3>
       <div class="cluster-grid" role="group" aria-label="System clusters">
         <button class="cluster" type="button" data-cluster="0" aria-pressed="true">
-          <b>01 / FRONTEND</b><span>Next.js / React / TypeScript</span>
+          <b>01 / WEB &amp; MOBILE</b><span>Next.js / React / Flutter / Dart</span>
         </button>
         <button class="cluster" type="button" data-cluster="1" aria-pressed="false">
-          <b>02 / DATA</b><span>Supabase / Postgres / RLS</span>
+          <b>02 / DATA &amp; STORAGE</b><span>Postgres / Supabase / SQLite</span>
         </button>
         <button class="cluster" type="button" data-cluster="2" aria-pressed="false">
-          <b>03 / SYSTEMS</b><span>Rust / Win32 / egui</span>
+          <b>03 / SYSTEMS</b><span>Python / Rust / Win32</span>
         </button>
         <button class="cluster" type="button" data-cluster="3" aria-pressed="false">
-          <b>04 / AI + OPS</b><span>LLM APIs / Python / automation</span>
+          <b>04 / ENTERPRISE ERP</b><span>Hotels, Clinics &amp; Retail / AI</span>
         </button>
       </div>
       <p class="cluster-status" id="cluster-status" role="status" aria-live="polite">FRONTEND CLUSTER ACTIVE</p>
@@ -1251,12 +1252,14 @@ body.no-js .project__img{opacity:.92!important}
     <div class="glass">
       <h3 class="glass__head"><span>RUNTIME / VERIFIED</span><b>LIVE</b></h3>
       <dl>
-        <div class="data-row"><dt>Application</dt><dd>Next.js App Router</dd></div>
-        <div class="data-row"><dt>Data</dt><dd>Supabase / PostgreSQL</dd></div>
-        <div class="data-row"><dt>Auth</dt><dd>Role-based access</dd></div>
-        <div class="data-row"><dt>Realtime</dt><dd>Supabase subscriptions</dd></div>
-        <div class="data-row"><dt>Native</dt><dd>Rust / Win32</dd></div>
-        <div class="data-row"><dt>Deploy</dt><dd>Vercel / custom DNS</dd></div>
+        <div class="data-row"><dt>Web Platform</dt><dd>Next.js App Router / React</dd></div>
+        <div class="data-row"><dt>Mobile Apps</dt><dd>Flutter / Dart (iOS &amp; Android)</dd></div>
+        <div class="data-row"><dt>Enterprise ERP</dt><dd>Hotels, Clinics &amp; Retail Solutions</dd></div>
+        <div class="data-row"><dt>Cloud Data</dt><dd>Supabase / PostgreSQL / RLS</dd></div>
+        <div class="data-row"><dt>Local Storage</dt><dd>SQLite / Python Data Pipelines</dd></div>
+        <div class="data-row"><dt>Desktop Native</dt><dd>Rust / Win32 Low-Level APIs</dd></div>
+        <div class="data-row"><dt>Security &amp; Auth</dt><dd>Granular Role-Based Access (RBAC)</dd></div>
+        <div class="data-row"><dt>Deploy</dt><dd>Vercel / Custom Production DNS</dd></div>
         <div class="data-row"><dt>Render</dt><dd><span id="fps-2">60</span> FPS / <span id="gpu-mode">WEBGL2</span></dd></div>
       </dl>
       <p class="panel-note">Custom GLSL shaders run on WebGL2. WebGPU capability is detected for telemetry, but this shader path stays on GLSL.</p>
@@ -3563,7 +3566,7 @@ init().catch((err) => {
       heroTopRight: '<b>LUXOR, EGYPT</b> / 25.6872 N, 32.6396 E',
       heroAside1: 'PORTFOLIO / 2026',
       heroAside2: 'SCROLL VELOCITY / LIVE',
-      heroCopy: 'I build the schema, the interface, and the systems that keep them running. Production web platforms, native Windows tools, and real-time surfaces, <em>owned end to end.</em>',
+      heroCopy: 'I architect the infrastructure, the interfaces, and the core systems behind them. Production web platforms, cross-platform mobile apps (Flutter), desktop tools, and enterprise management systems (Hotels, Clinics & Retail) — <em>owned end to end.</em>',
       scrollCue: 'SCROLL TO MUTATE <span aria-hidden="true">↓</span>',
       fact1: 'Production platforms',
       fact2: 'Open-source release',
@@ -3596,26 +3599,28 @@ init().catch((err) => {
       sysIntro: 'The stack is not a list of logos. It is the path a request takes from the browser to the database and back. Select a cluster to trace it through the topology.',
       clusterSelect: 'CLUSTER SELECT',
       clusterGroupLabel: 'System clusters',
-      cluster0Label: '01 / FRONTEND',
-      cluster0Stack: 'Next.js / React / TypeScript',
-      cluster1Label: '02 / DATA',
-      cluster1Stack: 'Supabase / Postgres / RLS',
+      cluster0Label: '01 / WEB & MOBILE',
+      cluster0Stack: 'Next.js / React / Flutter / Dart',
+      cluster1Label: '02 / DATA & STORAGE',
+      cluster1Stack: 'Postgres / Supabase / SQLite',
       cluster2Label: '03 / SYSTEMS',
-      cluster2Stack: 'Rust / Win32 / egui',
-      cluster3Label: '04 / AI + OPS',
-      cluster3Stack: 'LLM APIs / Python / automation',
-      clusterStatus0: 'FRONTEND CLUSTER ACTIVE / NEXT.JS + REACT + TYPESCRIPT',
-      clusterStatus1: 'DATA CLUSTER ACTIVE / SUPABASE + POSTGRES + RLS',
-      clusterStatus2: 'SYSTEMS CLUSTER ACTIVE / RUST + WIN32 + EGUI',
-      clusterStatus3: 'AI + OPS CLUSTER ACTIVE / LLM APIS + PYTHON + AUTOMATION',
+      cluster2Stack: 'Python / Rust / Win32',
+      cluster3Label: '04 / ENTERPRISE ERP',
+      cluster3Stack: 'Hotels, Clinics & Retail / AI',
+      clusterStatus0: 'WEB & MOBILE CLUSTER ACTIVE / NEXT.JS + REACT + FLUTTER + DART',
+      clusterStatus1: 'DATA & STORAGE CLUSTER ACTIVE / POSTGRESQL + SUPABASE + SQLITE',
+      clusterStatus2: 'SYSTEMS CLUSTER ACTIVE / PYTHON + RUST + WIN32',
+      clusterStatus3: 'ENTERPRISE ERP CLUSTER ACTIVE / HOTELS, CLINICS & RETAIL + AI',
       panelNote1: 'The graph is live, not a diagram. Selecting a cluster pulls its nodes forward and marks its edges in the 3D topology.',
       runtimeLabel: 'RUNTIME / VERIFIED',
       runtimeLive: 'LIVE',
-      rowApp: 'Application',
-      rowData: 'Data',
-      rowAuth: 'Auth',
-      rowRealtime: 'Realtime',
-      rowNative: 'Native',
+      rowApp: 'Web Platform',
+      rowMobile: 'Mobile Apps',
+      rowEnterprise: 'Enterprise ERP',
+      rowData: 'Cloud Data',
+      rowEmbedded: 'Local Storage',
+      rowNative: 'Desktop Native',
+      rowAuth: 'Security & Auth',
       rowDeploy: 'Deploy',
       rowRender: 'Render',
       authValue: 'Role-based access',
@@ -3691,7 +3696,7 @@ init().catch((err) => {
       heroTopRight: '<b>الأقصر، مصر</b> / 25.6872° شمالاً، 32.6396° شرقاً',
       heroAside1: 'سجل الأعمال / 2026',
       heroAside2: 'سرعة التمرير / قياس حي',
-      heroCopy: 'أهندس البنية التحتية، وأبني الواجهات والأنظمة الحية التي تقودها. منصات سحابية عالية الأداء، أدوات مكتبية متقدمة، وواجهات لحظية؛ <em>مسؤولية تنفيذية كاملة بلا وسطاء.</em>',
+      heroCopy: 'أهندس البنية التحتية، وأبني الواجهات والأنظمة الحية التي تقودها. منصات سحابية، تطبيقات موبايل (Flutter)، أنظمة إدارة متكاملة للفنادق والعيادات والمتاجر، وأدوات مكتبية متقدمة؛ <em>مسؤولية تنفيذية كاملة بلا وسطاء.</em>',
       scrollCue: 'مرّر لاكتشاف الفصول <span aria-hidden=true>↓</span>',
       fact1: 'منصات إنتاجية حية',
       fact2: 'مشروع مفتوح المصدر',
@@ -3725,27 +3730,29 @@ init().catch((err) => {
       sysIntro: 'التقنيات ليست مجرد شعارات؛ بل هي المسار الذي يسلكه الطلب من متصفح المستخدم إلى قاعدة البيانات والعودة. اختر مجموعة لتتبع مسارها في المعمارية ثلاثية الأبعاد.',
       clusterSelect: 'تحديد المكون المعماري',
       clusterGroupLabel: 'مجموعات المعمارية',
-      cluster0Label: '01 / الواجهات التفاعلية',
-      cluster0Stack: 'Next.js / React / TypeScript',
-      cluster1Label: '02 / البيانات والبنية التحتية',
-      cluster1Stack: 'Supabase / Postgres / RLS',
-      cluster2Label: '03 / الأنظمة وبرمجيات الأداء',
-      cluster2Stack: 'Rust / Win32 / egui',
-      cluster3Label: '04 / الذكاء الاصطناعي والأتمتة',
-      cluster3Stack: 'LLM APIs / Python / Automation',
-      clusterStatus0: 'الواجهة التفاعلية نشطة / NEXT.JS + REACT + TYPESCRIPT',
-      clusterStatus1: 'طبقة البيانات نشطة / SUPABASE + POSTGRES + RLS',
-      clusterStatus2: 'أنظمة سطح المكتب نشطة / RUST + WIN32 + EGUI',
-      clusterStatus3: 'الذكاء الاصطناعي والأتمتة نشطة / LLM APIS + PYTHON',
+      cluster0Label: '01 / الويب والموبايل',
+      cluster0Stack: 'Next.js / React / Flutter / Dart',
+      cluster1Label: '02 / البيانات والتخزين',
+      cluster1Stack: 'Postgres / Supabase / SQLite',
+      cluster2Label: '03 / الأنظمة والأتمتة',
+      cluster2Stack: 'Python / Rust / Win32',
+      cluster3Label: '04 / الأنظمة المؤسسية والذكاء الاصطناعي',
+      cluster3Stack: 'الفنادق، العيادات، المتاجر / LLM APIs',
+      clusterStatus0: 'الويب والموبايل نشط / NEXT.JS + REACT + FLUTTER + DART',
+      clusterStatus1: 'طبقة البيانات نشطة / POSTGRESQL + SUPABASE + SQLITE',
+      clusterStatus2: 'الأنظمة نشطة / PYTHON + RUST + WIN32',
+      clusterStatus3: 'الأنظمة المؤسسية نشطة / إدارة الفنادق والعيادات والمتاجر (ERP)',
       panelNote1: 'المخطط حي وتفاعلي وليس مجرد رسم ثابت. اختيار أي مجموعة يبرز عقدها ويرسم مساراتها في الفضاء ثلاثي الأبعاد.',
       runtimeLabel: 'بيئة التشغيل / موثقة',
       runtimeLive: 'حالة حية',
-      rowApp: 'التطبيق',
-      rowData: 'البيانات',
-      rowAuth: 'المصادقة',
-      rowRealtime: 'التزامن اللحظي',
-      rowNative: 'الأنظمة الأصلية',
-      rowDeploy: 'الاستضافة',
+      rowApp: 'المنصات السحابية',
+      rowMobile: 'تطبيقات الموبايل',
+      rowEnterprise: 'الأنظمة المؤسسية (ERP)',
+      rowData: 'البيانات السحابية',
+      rowEmbedded: 'قواعد البيانات المدمجة',
+      rowNative: 'برمجيات سطح المكتب',
+      rowAuth: 'الأمان والمصادقة',
+      rowDeploy: 'الاستضافة والنشر',
       rowRender: 'المحرك الرسومي',
       authValue: 'صلاحيات وصول محكمة (RBAC)',
       deployValue: 'Vercel / نطاق مخصص DNS',
@@ -3852,14 +3859,16 @@ init().catch((err) => {
     { sel: '.glass:last-child .glass__head span', key: 'runtimeLabel' },
     { sel: '.glass:last-child .glass__head b', key: 'runtimeLive' },
     { sel: '.glass:last-child .data-row:nth-child(1) dt', key: 'rowApp' },
-    { sel: '.glass:last-child .data-row:nth-child(2) dt', key: 'rowData' },
-    { sel: '.glass:last-child .data-row:nth-child(3) dt', key: 'rowAuth' },
-    { sel: '.glass:last-child .data-row:nth-child(4) dt', key: 'rowRealtime' },
-    { sel: '.glass:last-child .data-row:nth-child(5) dt', key: 'rowNative' },
-    { sel: '.glass:last-child .data-row:nth-child(6) dt', key: 'rowDeploy' },
-    { sel: '.glass:last-child .data-row:nth-child(7) dt', key: 'rowRender' },
-    { sel: '.glass:last-child .data-row:nth-child(3) dd', key: 'authValue' },
-    { sel: '.glass:last-child .data-row:nth-child(6) dd', key: 'deployValue' },
+    { sel: '.glass:last-child .data-row:nth-child(2) dt', key: 'rowMobile' },
+    { sel: '.glass:last-child .data-row:nth-child(3) dt', key: 'rowEnterprise' },
+    { sel: '.glass:last-child .data-row:nth-child(4) dt', key: 'rowData' },
+    { sel: '.glass:last-child .data-row:nth-child(5) dt', key: 'rowEmbedded' },
+    { sel: '.glass:last-child .data-row:nth-child(6) dt', key: 'rowNative' },
+    { sel: '.glass:last-child .data-row:nth-child(7) dt', key: 'rowAuth' },
+    { sel: '.glass:last-child .data-row:nth-child(8) dt', key: 'rowDeploy' },
+    { sel: '.glass:last-child .data-row:nth-child(9) dt', key: 'rowRender' },
+    { sel: '.glass:last-child .data-row:nth-child(7) dd', key: 'authValue' },
+    { sel: '.glass:last-child .data-row:nth-child(8) dd', key: 'deployValue' },
     { sel: '.glass:last-child .panel-note', key: 'panelNote2' },
     { sel: '.act-3__context span:first-child', key: 'context1', html: true },
     { sel: '.act-3__context span:last-child', key: 'context2' },
