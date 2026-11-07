@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23070708'/%3E%3Cpath d='M14 50 32 14l18 36h-8l-4-9H26l-4 9z' fill='%23D4FF00'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800;900&family=Amiri:ital,wght@0,700;1,700&family=Archivo+Black&family=Archivo:wght@300;400;500;600&family=Aref+Ruqaa+Ink:wght@700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <script>
 (function () {
   var root = document.documentElement;
@@ -416,38 +416,91 @@ body.cursor-hover .cursor-dot{opacity:0}
 .lang-toggle:hover,.lang-toggle:focus-visible{border-color:var(--accent);color:var(--accent-strong);background:color-mix(in srgb,var(--accent) 8%,transparent)}
 html[lang="ar"] .lang-toggle{font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;font-size:13px;font-weight:600}
 
-/* Arabic typesetting */
+/* Arabic typesetting & brutalist font hierarchy */
 html[lang="ar"]{
-  --display:'Archivo Black','IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
-  --body:'Archivo','IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
-  --mono:'IBM Plex Mono','IBM Plex Sans Arabic','Noto Sans Arabic',monospace;
-  --serif:'Instrument Serif','IBM Plex Sans Arabic','Noto Sans Arabic',serif;
+  --display:'Alexandria','Cairo','Archivo Black',sans-serif;
+  --body:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
+  --mono:'IBM Plex Mono','IBM Plex Sans Arabic',monospace;
+  --serif:'Aref Ruqaa Ink','Amiri',serif;
 }
 html[lang="ar"] *{letter-spacing:normal!important}
-html[lang="ar"] .hero-name h1,
-html[lang="ar"] .hero-name h1 *{letter-spacing:-.045em!important}
-html[lang="ar"] .project h3,
-html[lang="ar"] .project h3 *{letter-spacing:-.035em!important}
-html[lang="ar"] .project[data-project="2"] h3{letter-spacing:-.045em!important}
-html[lang="ar"] .hud__brand b{letter-spacing:.12em!important}
-html[lang="ar"] .work-intro h2,
-html[lang="ar"] .act-3 h2,
-html[lang="ar"] .contact-title{font-weight:700;line-height:1.04}
-html[lang="ar"] .contact-title{line-height:1.1}
-html[lang="ar"] .contact-title .line:last-child span{-webkit-text-stroke-width:1px}
-html[lang="ar"] .cta{font-weight:600;line-height:1.5}
+html[lang="ar"] .hero-name h1{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  letter-spacing:-.015em!important;
+  line-height:0.92;
+}
+html[lang="ar"] .hero-name h1 .first,
+html[lang="ar"] .hero-name h1 .last{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+}
+html[lang="ar"] .hero-name h1 span{
+  font-family:var(--display)!important;
+}
+html[lang="ar"] .hero-copy{
+  font-size:clamp(17px,1.5vw,22px);
+  line-height:1.82;
+  font-weight:400;
+}
+html[lang="ar"] em{
+  font-family:var(--serif)!important;
+  font-style:normal!important;
+  font-weight:700!important;
+}
 html[lang="ar"] .hero-copy em,
-html[lang="ar"] .work-intro h2 em{font-style:normal}
-html[lang="ar"] .hero-copy{font-size:clamp(17px,1.45vw,22px)}
-html[lang="ar"] .hero-copy,
-html[lang="ar"] .work-intro p,
-html[lang="ar"] .act-3__head p,
-html[lang="ar"] .contact-copy,
-html[lang="ar"] .contact-note{line-height:1.78}
-html[lang="ar"] .data-row,
-html[lang="ar"] .glass__head,
-html[lang="ar"] .project__top,
-html[lang="ar"] .kicker,
+html[lang="ar"] .work-intro h2 em,
+html[lang="ar"] .act-3 h2 span,
+html[lang="ar"] .contact-title span{
+  font-family:var(--serif)!important;
+  font-weight:700!important;
+}
+html[lang="ar"] .work-intro h2{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  line-height:1.15;
+}
+html[lang="ar"] .act-3 h2{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  line-height:1.15;
+}
+html[lang="ar"] .contact-title{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  line-height:1.08;
+}
+html[lang="ar"] .contact-title .line:last-child span{
+  font-family:var(--display)!important;
+  -webkit-text-stroke-width:1.5px;
+}
+html[lang="ar"] .project h3{
+  font-family:var(--display)!important;
+  font-weight:800!important;
+  letter-spacing:-.01em!important;
+  line-height:1.2;
+}
+html[lang="ar"] .hud__brand b{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  letter-spacing:.03em!important;
+}
+html[lang="ar"] .cta{
+  font-family:var(--display)!important;
+  font-weight:800!important;
+  line-height:1.5;
+}
+html[lang="ar"] .lang-toggle{
+  font-family:var(--body)!important;
+  font-size:13px;
+  font-weight:600;
+}
+html[lang="ar"] .project__link,
+html[lang="ar"] .lang-option,
+html[lang="ar"] .cluster-btn{
+  font-family:var(--body)!important;
+  font-weight:600;
+}
 html[lang="ar"] .hero-top,
 html[lang="ar"] .hero-name__aside,
 html[lang="ar"] .capabilities,
@@ -459,14 +512,16 @@ html[lang="ar"] .contact-head,
 html[lang="ar"] .contact-note,
 html[lang="ar"] .timeline li,
 html[lang="ar"] .footer-meta,
-html[lang="ar"] .domain-status{line-height:1.7}
+html[lang="ar"] .domain-status{
+  line-height:1.75;
+}
 html[lang="ar"] .motion-toggle,
 html[lang="ar"] .mobile-nav a,
 html[lang="ar"] .scroll-cue,
-html[lang="ar"] .project__link,
 html[lang="ar"] .footer-links a,
-html[lang="ar"] .act-nav a{line-height:1.65}
-
+html[lang="ar"] .act-nav a{
+  line-height:1.65;
+}
 /* Right-to-left composition */
 html[dir="rtl"] .skip{left:auto;right:16px}
 html[dir="rtl"] .scroll-progress{transform-origin:100% 50%}
@@ -1517,6 +1572,7 @@ let scrollEngineStarted = false;
 /* Scroll engine */
 function initScroll() {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
 
   if (typeof Lenis !== 'undefined' && !prefersReduced) {
     lenis = new Lenis({
@@ -1524,8 +1580,9 @@ function initScroll() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 1,
-      touchMultiplier: 1.15,
-      syncTouch: false
+      touchMultiplier: 1,
+      syncTouch: false,
+      smoothTouch: false
     });
     lenis.on('scroll', (e) => {
       state.scroll = e.scroll;
@@ -1533,7 +1590,7 @@ function initScroll() {
       ScrollTrigger.update();
     });
     gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
     window.__lenis = lenis;
   } else {
     let lastY = window.scrollY;
@@ -1822,7 +1879,10 @@ function setCluster(index) {
 }
 
 refs.clusterBtns.forEach((btn) => {
-  btn.addEventListener('click', () => setCluster(btn.dataset.cluster));
+  btn.addEventListener('click', () => {
+    haptic(8);
+    setCluster(btn.dataset.cluster);
+  });
 });
 
 /* Email copy and physical burst */
@@ -1897,7 +1957,7 @@ async function copyEmail() {
   }, 2600);
 }
 
-refs.emailCopy.addEventListener('click', copyEmail);
+refs.emailCopy.addEventListener('click', (e) => { haptic(12); copyEmail(e); });
 
 /* Live domain probe */
 let domainStatus = { css: 'checking', key: 'domainChecking' };
@@ -1949,7 +2009,7 @@ function applyMotion(on, announce) {
   }
 }
 
-refs.motionToggle.addEventListener('click', () => applyMotion(!state.motion, true));
+refs.motionToggle.addEventListener('click', () => { haptic(10); applyMotion(!state.motion, true); });
 
 function initMotionPreference() {
   let stored = null;
@@ -2163,8 +2223,19 @@ const POST_SHADER = {
     }`
 };
 
+function haptic(ms) {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(ms || 8);
+    }
+  } catch (err) {}
+}
+
 function getDPR() {
-  return Math.min(window.devicePixelRatio || 1, mobileQuery.matches ? 1.45 : 1.8);
+  if (mobileQuery.matches) {
+    return Math.min(window.devicePixelRatio || 1, 1.15);
+  }
+  return Math.min(window.devicePixelRatio || 1, 1.8);
 }
 
 function initGL() {
@@ -3377,8 +3448,12 @@ function tick() {
   updateCursor(dt);
   updateHUD(now);
 
-  if (sceneState.composer && !sceneState.glContextLost) {
-    sceneState.composer.render();
+  if (sceneState.renderer && !sceneState.glContextLost) {
+    if (mobileQuery.matches) {
+      sceneState.renderer.render(sceneState.scene, sceneState.camera);
+    } else if (sceneState.composer) {
+      sceneState.composer.render();
+    }
   }
 }
 
@@ -3582,17 +3657,17 @@ init().catch((err) => {
       backToTop: 'BACK TO TOP <span aria-hidden="true">↑</span>'
     },
     ar: {
-      pageTitle: 'أرقم راشد / مهندس Full-Stack',
-      metaDesc: 'أرقم راشد، مهندس Full-Stack ومطوّر إبداعي في الأقصر، مصر. منصات إنتاج، أنظمة أصلية، وواجهات لحظية مبنية من البداية للنهاية.',
+      pageTitle: 'أرقم راشد / مهندس برمجيات ونظم شاملة',
+      metaDesc: 'أرقم راشد، مهندس معماري للبرمجيات ومطور تجارب إبداعية في الأقصر، مصر. منصات سحابية عالية الأداء، تطبيقات سطح مكتب، وواجهات لحظية متكاملة.',
       skip: 'تخطَّ إلى المحتوى',
       bootTop1: 'أرقم راشد / معرض الأعمال 2026',
-      bootTop2: 'بدء النظام / الإصدار 01',
-      boot1: '01 تجهيز تظليل الرؤوس',
-      boot2: '02 بناء تأثيرات ما بعد المعالجة',
-      boot3: '03 معايرة مؤشر الحركة',
-      boot4: '04 تشغيل محرك التمرير',
-      boot5: '05 ضبط الشبكة الطباعية',
-      location: 'الأقصر، مصر / 25.6872 شمال، 32.6396 شرق',
+      bootTop2: 'تهيئة النظام / إصدار 01',
+      boot1: '01 بناء شيدرز التجسيم ثلاثي الأبعاد (Vertex Shaders)',
+      boot2: '02 ضبط المعالجة البصرية وتأثيرات الإضاءة',
+      boot3: '03 معايرة حركة المؤشر التفاعلي',
+      boot4: '04 تشغيل محرك التمرير الفيزيائي',
+      boot5: '05 مطابقة الشبكة الطباعية والتخطيط',
+      location: 'الأقصر، مصر / 25.6872° شمالاً، 32.6396° شرقاً',
       hudPortfolio: '/ معرض الأعمال 2026',
       motionOn: 'الحركة مفعّلة',
       motionOff: 'الحركة متوقفة',
@@ -3601,113 +3676,114 @@ init().catch((err) => {
       actsLabel: 'الفصول',
       sectionsLabel: 'الأقسام',
       navCore: 'النواة',
-      navWork: 'الأعمال',
-      navSystem: 'النظام',
+      navWork: 'المشاريع',
+      navSystem: 'المعمارية',
       navSignal: 'التواصل',
       mobileCore: '01 / النواة',
-      mobileWork: '02 / الأعمال',
-      mobileSystem: '03 / النظام',
+      mobileWork: '02 / المشاريع',
+      mobileSystem: '03 / المعمارية',
       mobileSignal: '04 / التواصل',
-      actName0: 'المونوليث الأسود',
-      actName1: 'تحرير سويسري',
-      actName2: 'نظام مكاني',
-      actName3: 'التفرد',
-      heroTopLeft: 'مهندس Full-Stack / مطوّر إبداعي',
-      heroTopRight: '<b>الأقصر، مصر</b> / 25.6872 شمال، 32.6396 شرق',
-      heroAside1: 'معرض الأعمال / 2026',
-      heroAside2: 'سرعة التمرير / مباشر',
-      heroCopy: 'أبني المخطط، والواجهة، والأنظمة التي تُبقيها تعمل. منصات ويب إنتاجية، أدوات Windows أصلية، وواجهات لحظية، <em>من البداية للنهاية.</em>',
-      scrollCue: 'مرّر للتحول <span aria-hidden="true">↓</span>',
-      fact1: 'منصات إنتاج',
-      fact2: 'إصدار مفتوح المصدر',
-      fact3: 'مشاريع منجزة',
-      heroFactsLabel: 'سجل المشاريع',
-      capLabel: 'القدرات الأساسية',
+      actName0: 'النواة الصلبة / The Monolith',
+      actName1: 'الدقة السويسرية',
+      actName2: 'المعمارية المكانية',
+      actName3: 'نقطة التفرد',
+      heroTopLeft: 'مهندس معماري للبرمجيات / مطوّر تجارب إبداعية',
+      heroTopRight: '<b>الأقصر، مصر</b> / 25.6872° شمالاً، 32.6396° شرقاً',
+      heroAside1: 'سجل الأعمال / 2026',
+      heroAside2: 'سرعة التمرير / قياس حي',
+      heroCopy: 'أهندس البنية التحتية، وأبني الواجهات والأنظمة الحية التي تقودها. منصات سحابية عالية الأداء، أدوات مكتبية متقدمة، وواجهات لحظية؛ <em>مسؤولية تنفيذية كاملة بلا وسطاء.</em>',
+      scrollCue: 'مرّر لاكتشاف الفصول <span aria-hidden=true>↓</span>',
+      fact1: 'منصات إنتاجية حية',
+      fact2: 'مشروع مفتوح المصدر',
+      fact3: 'أنظمة مكتملة التسليم',
+      heroFactsLabel: 'سجل الإنجاز',
+      capLabel: 'القدرات التقنية',
       heroName: 'أرقم راشد',
-      workKicker: 'الفصل الثاني / أعمال مختارة',
-      workTitle: 'مبني<br><em>ليبقى.</em>',
-      workIntro: 'ثلاثة أنظمة، مسلّمة من البداية للنهاية. منصتان إنتاجيتان وإصدار سطح مكتب مفتوح المصدر. المخطط، المصادقة، الواجهة، والنشر: دون تسليم لأي طرف.',
-      workFoot1: '03 مشاريع / 02 منصتان إنتاجيتان / 01 إصدار مفتوح المصدر',
-      workFoot2: 'المحور الأفقي / تمرير',
-      p1Type: 'إدارة سياحة / إنتاج',
-      p1Desc: 'بوابات للعملاء والإدارة، محرك حجوزات، محادثة إدارية لحظية، ومساعد ذكاء اصطناعي يعتمد على الخدمات والأسعار والحجوزات الحية. مصادقة بالأدوار، تصميم مخطط، نشر، وDNS، من البداية للنهاية.',
-      p1Link: 'افتح المنصة <span aria-hidden="true">↗</span>',
-      p1StackLabel: 'مكدس Sequoia Travel',
-      p1Tag: 'مباشر / SEQUOIATRAVEL.COM',
-      p2Type: 'أتمتة ويندوز / مفتوح المصدر',
-      p2Desc: 'أتمتة أصلية لويندوز ترسل الإدخال إلى نوافذ مخفية أو مغطاة دون تحريك الماوس. Win32 PostMessage، وجدولة min-heap دون استهلاك CPU في الخمول، وتحديثات تلقائية موثقة بـ SHA-256، وواجهة ثنائية اللغة تدعم RTL.',
-      p2Link: 'عرض الكود <span aria-hidden="true">↗</span>',
-      p2StackLabel: 'مكدس Arko Click',
-      p2Tag: 'مفتوح المصدر / MIT / GITHUB',
-      p3Type: 'إدارة تجزئة / إنتاج',
-      p3Desc: 'إدارة مخزون ومبيعات وتقارير مخزون لتجزئة المكملات. وضع تجريبي مدمج يختبر كل ميزة على سجلات محاكاة قبل لمس البيانات الحقيقية.',
-      p3Link: 'افتح النظام <span aria-hidden="true">↗</span>',
-      p3StackLabel: 'مكدس RT Supplements',
-      p3Tag: 'مباشر / RTSUPPLEMENTS.VERCEL.APP',
+      workKicker: 'الفصل الثاني / مشاريع مختارة',
+      workTitle: 'صُنعت<br><em>لتبقى.</em>',
+      workIntro: 'ثلاثة أنظمة مكتملة التسليم من الفكرة للإنتاج. منصتان سحابيتان ومشروع مفتوح المصدر لسطح المكتب. قواعد البيانات، أنظمة المصادقة، هندسة الواجهات، والاستضافة: إشراف كامل دون تسليم لأطراف ثالثة.',
+      deployment: 'النشر والاستضافة',
+      workFoot1: '03 مشاريع رئيسية / 02 منصة حية / 01 مشروع مفتوح المصدر',
+      workFoot2: 'محور التصفح / سحب أفقي',
+      p1Type: 'إدارة سياحية سحابية / منصة إنتاجية حية',
+      p1Desc: 'بوابات تفاعلية للعملاء ولوحة تحكم متقدمة للإدارة، محرك حجوزات فوري، محادثة إدارية لحظية، ومساعد ذكاء اصطناعي مرتبط بالبيانات والأسعار الحية. صلاحيات محكمة (RBAC)، معمارية بيانات سريعة، ونشر سحابي مؤمّن.',
+      p1Link: 'زيارة المنصة الحية <span aria-hidden=true>↗</span>',
+      p1StackLabel: 'تقنيات Sequoia Travel',
+      p1Tag: 'منصة حية / SEQUOIATRAVEL.COM',
+      p2Type: 'أتمتة سطح المكتب / مفتوح المصدر',
+      p2Desc: 'أداة أصلية خفيفة لنظام Windows توجه النقرات والإدخال إلى النوافذ الخلفية أو المخفية دون تحريك الماوس الفعلي. تعتمد على Win32 API وجدولة Min-Heap باستهلاك 0% من المعالج في الخمول، مع تحديثات مشفرة بـ SHA-256 وواجهة ثنائية اللغة تدعم RTL.',
+      p2Link: 'مستودع الكود على GitHub <span aria-hidden=true>↗</span>',
+      p2StackLabel: 'تقنيات Arko Click',
+      p2Tag: 'مفتوح المصدر / رخصة MIT',
+      p3Type: 'إدارة ومتابعة المخزون / منصة إنتاجية حية',
+      p3Desc: 'نظام تجاري سحابي متكامل لإدارة المخزون والمبيعات وإصدار التقارير اللحظية لقطاع المكملات الغذائية. يتضمن نمط تجربة تفاعلي مدمج (Demo Mode) لاختبار كافة الميزات الحسابية على بيانات افتراضية قبل اعتمادها.',
+      p3Link: 'فتح النظام التجريبي <span aria-hidden=true>↗</span>',
+      p3StackLabel: 'تقنيات RT Supplements',
+      p3Tag: 'منصة حية / RTSUPPLEMENTS.VERCEL.APP',
       sysKicker: 'الفصل الثالث / معمارية النظام',
-      sysTitle: 'كل طبقة<br><span>بيدي.</span>',
-      sysIntro: 'المكدس ليس قائمة شعارات. إنه المسار الذي يقطعه الطلب من المتصفح إلى قاعدة البيانات وعودًا. اختر مجموعة لاقتفاء أثرها عبر الطوبولوجيا.',
-      clusterSelect: 'اختيار المجموعة',
-      clusterGroupLabel: 'مجموعات النظام',
-      cluster0Label: '01 / الواجهة',
+      sysTitle: 'كل طبقة<br><span>مبنية بإتقان.</span>',
+      sysIntro: 'التقنيات ليست مجرد شعارات؛ بل هي المسار الذي يسلكه الطلب من متصفح المستخدم إلى قاعدة البيانات والعودة. اختر مجموعة لتتبع مسارها في المعمارية ثلاثية الأبعاد.',
+      clusterSelect: 'تحديد المكون المعماري',
+      clusterGroupLabel: 'مجموعات المعمارية',
+      cluster0Label: '01 / الواجهات التفاعلية',
       cluster0Stack: 'Next.js / React / TypeScript',
-      cluster1Label: '02 / البيانات',
+      cluster1Label: '02 / البيانات والبنية التحتية',
       cluster1Stack: 'Supabase / Postgres / RLS',
-      cluster2Label: '03 / الأنظمة',
+      cluster2Label: '03 / الأنظمة وبرمجيات الأداء',
       cluster2Stack: 'Rust / Win32 / egui',
-      cluster3Label: '04 / الذكاء والتشغيل',
-      cluster3Stack: 'LLM APIs / Python / automation',
-      clusterStatus0: 'مجموعة الواجهة نشطة / NEXT.JS + REACT + TYPESCRIPT',
-      clusterStatus1: 'مجموعة البيانات نشطة / SUPABASE + POSTGRES + RLS',
-      clusterStatus2: 'مجموعة الأنظمة نشطة / RUST + WIN32 + EGUI',
-      clusterStatus3: 'مجموعة الذكاء والتشغيل نشطة / LLM APIS + PYTHON + AUTOMATION',
-      panelNote1: 'الرسم حي، وليس مخططًا. اختيار مجموعة يسحب عقدها إلى المقدمة ويحدد حوافها في الطوبولوجيا ثلاثية الأبعاد.',
-      runtimeLabel: 'التشغيل / موثّق',
-      runtimeLive: 'مباشر',
+      cluster3Label: '04 / الذكاء الاصطناعي والأتمتة',
+      cluster3Stack: 'LLM APIs / Python / Automation',
+      clusterStatus0: 'الواجهة التفاعلية نشطة / NEXT.JS + REACT + TYPESCRIPT',
+      clusterStatus1: 'طبقة البيانات نشطة / SUPABASE + POSTGRES + RLS',
+      clusterStatus2: 'أنظمة سطح المكتب نشطة / RUST + WIN32 + EGUI',
+      clusterStatus3: 'الذكاء الاصطناعي والأتمتة نشطة / LLM APIS + PYTHON',
+      panelNote1: 'المخطط حي وتفاعلي وليس مجرد رسم ثابت. اختيار أي مجموعة يبرز عقدها ويرسم مساراتها في الفضاء ثلاثي الأبعاد.',
+      runtimeLabel: 'بيئة التشغيل / موثقة',
+      runtimeLive: 'حالة حية',
       rowApp: 'التطبيق',
       rowData: 'البيانات',
       rowAuth: 'المصادقة',
-      rowRealtime: 'اللحظي',
-      rowNative: 'الأصلي',
-      rowDeploy: 'النشر',
-      rowRender: 'العرض',
-      authValue: 'وصول حسب الدور',
-      deployValue: 'Vercel / DNS مخصص',
-      panelNote2: 'تظليل GLSL مخصص يعمل على WebGL2. تُكتشف قدرة WebGPU للقياس، لكن مسار التظليل يبقى على GLSL.',
-      context1: '<b>سياق العمل الحالي</b> / Bosta، عمليات لوجستية',
-      context2: 'أدوات داخلية مبنية بـ Next.js + Supabase',
-      signalKicker: 'الفصل الرابع / الإشارة',
-      contactTitle: '<span class="line">لنبنِ</span><span class="line"><span>الآن.</span></span>',
-      contactCopy: 'لديك منصة، أداة داخلية، أو نظام يجب أن يصمد تحت الاستخدام الحقيقي؟ أرسل القيود، الموعد النهائي، والمكدس الذي تعمل عليه بالفعل.',
-      contactNote: 'خط مباشر. بلا نموذج. الرد يأتي من الشخص الذي سيبنيها.',
-      ctaLabel: 'ابدأ مشروعًا <span aria-hidden="true">↗</span>',
-      emailLabel: 'البريد',
+      rowRealtime: 'التزامن اللحظي',
+      rowNative: 'الأنظمة الأصلية',
+      rowDeploy: 'الاستضافة',
+      rowRender: 'المحرك الرسومي',
+      authValue: 'صلاحيات وصول محكمة (RBAC)',
+      deployValue: 'Vercel / نطاق مخصص DNS',
+      panelNote2: 'محركات التظليل (Custom GLSL) تعمل على WebGL2، مع استشعار التوافق مع WebGPU للحفاظ على استقرار الفريمات.',
+      context1: '<b>بيئة العمل الحالية</b> / بوسطة (Bosta)، العمليات اللوجستية',
+      context2: 'أدوات داخلية مبنية بواسطة Next.js + Supabase',
+      signalKicker: 'الفصل الرابع / التواصل والتعاون',
+      contactTitle: '<span class="line">فلنبدأ</span><span class="line"><span>البناء.</span></span>',
+      contactCopy: 'هل لديك منصة، أداة داخلية، أو نظام برمجي معقد يحتاج إلى معمارية قوية تصمد أمام ضغط الاستخدام الحقيقي؟ شاركني متطلباتك والجدول الزمني.',
+      contactNote: 'خط تواصل مباشر دون استمارات وسطية. الرد يأتي مباشرة من المهندس الذي سيبني النظام بيده.',
+      ctaLabel: 'ابدأ مشروعك الآن <span aria-hidden="true">↗</span>',
+      emailLabel: 'البريد الإلكتروني',
       copy: 'نسخ',
-      copied: 'تم النسخ',
+      copied: 'تم النسخ بنجاح',
       select: 'تحديد',
-      domainAria: 'تحقق من حالة arqamrashed.com',
-      domainChecking: 'ARQAMRASHED.COM / جارٍ الفحص',
-      domainTimeout: 'ARQAMRASHED.COM / غير متاح / انتهت المهلة',
-      domainPending: 'ARQAMRASHED.COM / غير متاح / DNS معلّق',
-      domainLive: 'ARQAMRASHED.COM / مباشر / HTTP OK',
-      domainOrigin: 'ARQAMRASHED.COM / مباشر / هذا النطاق',
-      trajectoryLabel: 'المسار / أدوار حقيقية',
-      channelsLabel: 'القنوات / موثّقة',
+      domainAria: 'التحقق من حالة نطاق arqamrashed.com الحية',
+      domainChecking: 'ARQAMRASHED.COM / جاري الفحص',
+      domainTimeout: 'ARQAMRASHED.COM / تعذر الاتصال / انتهت المهلة',
+      domainPending: 'ARQAMRASHED.COM / قيد الإعداد / بانتظار ربط DNS',
+      domainLive: 'ARQAMRASHED.COM / مباشر / متصل بنجاح',
+      domainOrigin: 'ARQAMRASHED.COM / النطاق الحالي',
+      trajectoryLabel: 'المسار المهني / خبرة ميدانية موثقة',
+      channelsLabel: 'قنوات التواصل / موثقة',
       footerNavLabel: 'روابط التواصل والمشاريع',
-      tl1Date: '2025 / الآن',
-      tl1Role: 'Bosta، أخصائي عمليات. أدوات داخلية لتتبع الشحنات والتقارير.',
+      tl1Date: '2025 / حتى الآن',
+      tl1Role: 'بوسطة (Bosta) - أخصائي عمليات لوجستية؛ تطوير أدوات داخلية لتتبع الشحنات والتقارير اللحظية.',
       tl1Place: 'مصر',
       tl2Date: '2024 / 2025',
-      tl2Role: 'Grand Memphis Hotel، استقبال. حجوزات عالية الحجم وعمليات ضيوف.',
+      tl2Role: 'فندق جراند ممفيس - إدارة الاستقبال والعمليات الفندقية وتنسيق الحجوزات عالية الكثافة.',
       tl2Place: 'الأقصر',
       tl3Date: '2022 / 2024',
-      tl3Role: 'AHE، مساعد إداري / موارد بشرية. علاقات الموظفين وإدارة المكتب.',
+      tl3Role: 'شركة AHE - مساعد إداري وموارد بشرية؛ علاقات الموظفين والعمليات التنظيمية.',
       tl3Place: 'القاهرة',
       tl4Date: '2017 / 2021',
-      tl4Role: 'Luxor University، بكالوريوس سياحة وفنادق.',
+      tl4Role: 'جامعة الأقصر - بكالوريوس إدارة الفنادق والسياحة.',
       tl4Place: 'الأقصر',
       footerMeta1: 'أرقم راشد / الأقصر، مصر / 2026',
-      backToTop: 'إلى الأعلى <span aria-hidden="true">↑</span>'
+      backToTop: 'العودة للأعلى <span aria-hidden="true">↑</span>'
     }
   };
 
@@ -3928,6 +4004,7 @@ init().catch((err) => {
   var choices = document.querySelectorAll('[data-lang-choice]');
   for (var i = 0; i < choices.length; i++) {
     choices[i].addEventListener('click', function () {
+      haptic(10);
       applyLanguage(this.getAttribute('data-lang-choice'), true);
       finishGate();
     });
@@ -3936,6 +4013,7 @@ init().catch((err) => {
   var toggle = document.getElementById('lang-toggle');
   if (toggle) {
     toggle.addEventListener('click', function () {
+      haptic(10);
       applyLanguage(currentLang() === 'en' ? 'ar' : 'en', true);
     });
   }
