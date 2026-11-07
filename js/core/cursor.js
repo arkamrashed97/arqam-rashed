@@ -14,11 +14,11 @@ import { cursorLabel } from '../i18n/i18n.js';
  */
 
 const ACT_CURSOR_COLORS = [
-  '#D4FF00', // Act I: Acid Lime Green
-  '#FF9500', // Act II: Kinetic Amber Gold
-  '#00F0FF', // Act III: Quantum Cyan
-  '#C084FC', // Act IV: Water-Silk Violet-Aqua
-  '#10B981'  // Act V: Emerald Fishing Lagoon
+  '#D4FF00', // Act I: Stealth Carbon + Acid Lime Laser Edge
+  '#F59E0B', // Act II: Brushed Tungsten + Molten Bronze-Gold
+  '#00E5FF', // Act III: Gunmetal Chrome + Cyber Ice-Cyan
+  '#38BDF8', // Act IV: Deep Titanium + Electric Cobalt-Steel
+  '#10B981'  // Act V: Carbon-Steel + Anodized Emerald
 ];
 
 export const cursorState = {
@@ -42,124 +42,82 @@ export const cursorState = {
 
 function buildCursorSvg() {
   return `
-  <svg class="cursor__svg" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <svg class="cursor__svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <filter id="cur-glow-0" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3.5" flood-color="#80FF00" flood-opacity="0.85"/>
+      <filter id="cur-shadow" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#000000" flood-opacity="0.85"/>
       </filter>
-      <filter id="cur-glow-1" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3.5" flood-color="#FF8800" flood-opacity="0.85"/>
-      </filter>
-      <filter id="cur-glow-2" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3.5" flood-color="#00F0FF" flood-opacity="0.85"/>
-      </filter>
-      <filter id="cur-glow-3" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3.5" flood-color="#C084FC" flood-opacity="0.85"/>
-      </filter>
-      <filter id="cur-glow-4" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3.2" flood-color="#10B981" flood-opacity="0.85"/>
-      </filter>
-
-      <linearGradient id="cur-fill-0" x1="20" y1="12" x2="64" y2="74" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#EEFF66"/>
-        <stop offset="48%" stop-color="#9EFF00"/>
-        <stop offset="100%" stop-color="#38B000"/>
+      <linearGradient id="blade-carbon" x1="6" y1="6" x2="34" y2="38" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#1E242B"/>
+        <stop offset="55%" stop-color="#0B0E12"/>
+        <stop offset="100%" stop-color="#050608"/>
       </linearGradient>
-      <linearGradient id="cur-ring-0" x1="8" y1="58" x2="86" y2="28" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#D4FF00"/>
-        <stop offset="50%" stop-color="#F6FF99"/>
-        <stop offset="100%" stop-color="#6BFF00"/>
-      </linearGradient>
-
-      <linearGradient id="cur-fill-1" x1="20" y1="12" x2="66" y2="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#FFE875"/>
-        <stop offset="50%" stop-color="#FF8800"/>
-        <stop offset="100%" stop-color="#C83E00"/>
-      </linearGradient>
-
-      <linearGradient id="cur-fill-2" x1="20" y1="12" x2="66" y2="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#CFFAFE"/>
-        <stop offset="50%" stop-color="#00F0FF"/>
-        <stop offset="100%" stop-color="#0369A1"/>
-      </linearGradient>
-
-      <linearGradient id="cur-fill-3" x1="20" y1="12" x2="66" y2="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#F5D0FE"/>
-        <stop offset="52%" stop-color="#C084FC"/>
-        <stop offset="100%" stop-color="#38BDF8"/>
+      <linearGradient id="blade-tungsten" x1="6" y1="6" x2="34" y2="38" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#292524"/>
+        <stop offset="60%" stop-color="#0F0E0D"/>
+        <stop offset="100%" stop-color="#070606"/>
       </linearGradient>
     </defs>
 
-    <!-- ACT I: All-Green Orbital Pointer + 4-Point Star (Matches Uploaded Image) -->
-    <g class="cursor__variant cursor__variant--0" filter="url(#cur-glow-0)">
-      <!-- Back half of orbital swoosh ring -->
-      <path class="cursor__orbit" d="M15 58 C 4 49, 24 32, 54 27 C 79 23, 91 31, 74 43" stroke="#52CC00" stroke-width="4.5" stroke-linecap="round" opacity="0.65"/>
-      <!-- Main rounded arrow body (All Green with dark outer contour & neon inner rim) -->
-      <path d="M23 13 L29 66 L41 53 L52 74 L63 68 L52 47 L69 43 Z" fill="url(#cur-fill-0)" stroke="#071A00" stroke-width="5.5" stroke-linejoin="round"/>
-      <path d="M23 13 L29 66 L41 53 L52 74 L63 68 L52 47 L69 43 Z" fill="none" stroke="#F4FF9E" stroke-width="2.2" stroke-linejoin="round"/>
-      <!-- Front glowing orbital swoosh crossing over the arrow -->
-      <path class="cursor__orbit" d="M13 54 C 7 63, 35 55, 62 42 C 83 32, 88 24, 68 25" stroke="url(#cur-ring-0)" stroke-width="4.2" stroke-linecap="round"/>
-      <path d="M15 55 C 12 61, 36 53, 62 41 C 80 33, 84 26, 70 26" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.85"/>
-      <!-- 4-point green star sparkle -->
-      <g class="cursor__sparkle">
-        <path d="M59 11 L61.8 20.2 L71 23 L61.8 25.8 L59 35 L56.2 25.8 L47 23 L56.2 20.2 Z" fill="#B8FF00" stroke="#071A00" stroke-width="1.8" stroke-linejoin="round"/>
-        <circle cx="59" cy="23" r="2.6" fill="#FFFFFF"/>
-      </g>
+    <!-- ACT I: Stealth Carbon Monolith Blade + Acid-Lime Laser Bevel -->
+    <g class="cursor__variant cursor__variant--0" filter="url(#cur-shadow)">
+      <!-- Micro target crosshair at exact tip (6,6) -->
+      <path d="M2 6 H4.5 M7.5 6 H10 M6 2 V4.5 M6 7.5 V10" stroke="#D4FF00" stroke-width="1" opacity="0.8"/>
+      <!-- Angular stealth arrowhead -->
+      <path d="M6 6 L13 36 L19.5 26.5 L26.5 39 L30.5 36.5 L23.5 24 L35 21 Z" fill="url(#blade-carbon)" stroke="#D4FF00" stroke-width="1.35" stroke-linejoin="miter" stroke-miterlimit="6"/>
+      <!-- Inner metallic spine facet -->
+      <path d="M7.8 8.2 L32 20.5 L21.5 22.8 Z" fill="#D4FF00" fill-opacity="0.18"/>
+      <line x1="6" y1="6" x2="21.5" y2="25" stroke="#D4FF00" stroke-width="0.9" opacity="0.65"/>
+      <!-- Sharp technical telemetry bracket -->
+      <path class="cursor__orbit" d="M31 9 L36 9 L36 14" stroke="#D4FF00" stroke-width="1.2"/>
     </g>
 
-    <!-- ACT II: Amber-Gold Origami Paper Glider Pointer -->
-    <g class="cursor__variant cursor__variant--1" filter="url(#cur-glow-1)">
-      <path class="cursor__orbit" d="M14 56 C 10 64, 38 54, 66 39 C 84 29, 86 21, 66 23" stroke="#FFB800" stroke-width="3.6" stroke-dasharray="6 4" stroke-linecap="round"/>
-      <path d="M22 13 L30 67 L42 50 L62 63 L48 44 L71 38 Z" fill="url(#cur-fill-1)" stroke="#1F0A00" stroke-width="5" stroke-linejoin="round"/>
-      <path d="M22 13 L42 50 L48 44 Z" fill="#FFF0A8" opacity="0.72"/>
-      <path d="M22 13 L30 67 L42 50 L62 63 L48 44 L71 38 Z" fill="none" stroke="#FFE885" stroke-width="2" stroke-linejoin="round"/>
-      <g class="cursor__sparkle">
-        <path d="M60 12 L62.5 19.5 L70 22 L62.5 24.5 L60 32 L57.5 24.5 L50 22 L57.5 19.5 Z" fill="#FFD000" stroke="#1F0A00" stroke-width="1.6"/>
-      </g>
+    <!-- ACT II: Supersonic Tungsten Delta-Dart + Molten Bronze-Gold Bevel -->
+    <g class="cursor__variant cursor__variant--1" filter="url(#cur-shadow)">
+      <path d="M2 6 H4.5 M6 2 V4.5" stroke="#F59E0B" stroke-width="1.1"/>
+      <!-- Supersonic swept delta wing blade -->
+      <path d="M6 6 L12 37 L18.5 25.5 L23 30 L27 23 L37 19.5 Z" fill="url(#blade-tungsten)" stroke="#F59E0B" stroke-width="1.35" stroke-linejoin="miter" stroke-miterlimit="6"/>
+      <!-- Starboard metallic bevel -->
+      <path d="M6 6 L37 19.5 L21 21.5 Z" fill="#F59E0B" fill-opacity="0.22"/>
+      <line x1="6" y1="6" x2="18.5" y2="25.5" stroke="#FDE68A" stroke-width="0.9" opacity="0.7"/>
+      <!-- Angular Mach-cone ticks -->
+      <path class="cursor__orbit" d="M29 8 L35 10.5 M31 12.5 L35 14" stroke="#F59E0B" stroke-width="1.2"/>
     </g>
 
-    <!-- ACT III: Quantum Cyan Crystal Prism Pointer -->
-    <g class="cursor__variant cursor__variant--2" filter="url(#cur-glow-2)">
-      <ellipse class="cursor__orbit" cx="44" cy="43" rx="34" ry="13" transform="rotate(-24 44 43)" stroke="#00F0FF" stroke-width="2.6" stroke-dasharray="10 5"/>
-      <path d="M23 13 L27 65 L41 53 L53 73 L63 67 L51 47 L69 42 Z" fill="url(#cur-fill-2)" stroke="#021824" stroke-width="5" stroke-linejoin="round"/>
-      <path d="M23 13 L41 53 L69 42 Z" fill="#E0F2FE" opacity="0.45"/>
-      <path d="M23 13 L27 65 L41 53 L53 73 L63 67 L51 47 L69 42 Z" fill="none" stroke="#A5F3FC" stroke-width="2" stroke-linejoin="round"/>
-      <g class="cursor__sparkle">
-        <path d="M60 12 L62.5 19.5 L70 22 L62.5 24.5 L60 32 L57.5 24.5 L50 22 L57.5 19.5 Z" fill="#00F0FF" stroke="#021824" stroke-width="1.6"/>
-        <circle cx="60" cy="22" r="2.4" fill="#FFFFFF"/>
-      </g>
+    <!-- ACT III: Gunmetal Split-Caliper Vector + Cyber Ice-Cyan Reticle -->
+    <g class="cursor__variant cursor__variant--2" filter="url(#cur-shadow)">
+      <!-- Rotating micro-hex lock-on reticle around tip -->
+      <polygon class="cursor__reticle" points="6,1.5 9.9,3.7 9.9,8.3 6,10.5 2.1,8.3 2.1,3.7" stroke="#00E5FF" stroke-width="0.9" fill="none" opacity="0.75"/>
+      <!-- Split-blade cybernetic pointer -->
+      <path d="M6 6 L12.5 36 L18 27 L15 16 L24.5 19.5 L35 20 Z" fill="url(#blade-carbon)" stroke="#00E5FF" stroke-width="1.35" stroke-linejoin="miter" stroke-miterlimit="6"/>
+      <path d="M20.5 23 L26.5 37 L30.5 35 L24.5 21 Z" fill="#0B131A" stroke="#00E5FF" stroke-width="1.2" stroke-linejoin="miter"/>
+      <circle cx="6" cy="6" r="1.3" fill="#FFFFFF"/>
     </g>
 
-    <!-- ACT IV: Violet-Aqua Water-Silk Droplet Pointer -->
-    <g class="cursor__variant cursor__variant--3" filter="url(#cur-glow-3)">
-      <ellipse class="cursor__orbit" cx="45" cy="45" rx="34" ry="14" transform="rotate(-22 45 45)" stroke="#38BDF8" stroke-width="3" opacity="0.85"/>
-      <ellipse cx="45" cy="45" rx="24" ry="9" transform="rotate(-22 45 45)" stroke="#F0ABFC" stroke-width="1.6" opacity="0.7"/>
-      <path d="M23 13 C 25 34, 27 52, 29 65 L 41 53 L 52 73 L 62 67 L 51 47 L 68 42 C 52 33, 36 23, 23 13 Z" fill="url(#cur-fill-3)" stroke="#17072B" stroke-width="5" stroke-linejoin="round"/>
-      <path d="M23 13 C 25 34, 27 52, 29 65 L 41 53 L 52 73 L 62 67 L 51 47 L 68 42 Z" fill="none" stroke="#F5D0FE" stroke-width="2" stroke-linejoin="round"/>
-      <g class="cursor__sparkle">
-        <path d="M60 12 L62.5 19.5 L70 22 L62.5 24.5 L60 32 L57.5 24.5 L50 22 L57.5 19.5 Z" fill="#E879F9" stroke="#17072B" stroke-width="1.6"/>
-      </g>
+    <!-- ACT IV: Deep Titanium Spearhead + Electric Steel-Blue Rangefinder -->
+    <g class="cursor__variant cursor__variant--3" filter="url(#cur-shadow)">
+      <!-- Sharp architectural spearhead -->
+      <path d="M6 6 L13.5 36.5 L20 26 L27 36.5 L30.5 34 L23.5 23.5 L35.5 19.5 Z" fill="url(#blade-carbon)" stroke="#38BDF8" stroke-width="1.35" stroke-linejoin="miter" stroke-miterlimit="6"/>
+      <path d="M6 6 L35.5 19.5 L21.5 22.5 Z" fill="#38BDF8" fill-opacity="0.22"/>
+      <line x1="6" y1="6" x2="20" y2="26" stroke="#E0F2FE" stroke-width="0.9" opacity="0.75"/>
+      <!-- Precision rangefinder corner arc -->
+      <path class="cursor__orbit" d="M26 7 A 14 14 0 0 1 37 16" stroke="#38BDF8" stroke-width="1.2" stroke-dasharray="3 2"/>
     </g>
 
-    <!-- ACT V: Emerald & Gold Fishing Rod + Swaying Hook & Bobber -->
-    <g class="cursor__variant cursor__variant--4" filter="url(#cur-glow-4)">
-      <!-- Curved carbon-gold fishing rod blank -->
-      <path d="M78 74 Q 54 42 23 14" stroke="#041E16" stroke-width="7.5" stroke-linecap="round"/>
-      <path d="M78 74 Q 54 42 23 14" stroke="#10B981" stroke-width="4.2" stroke-linecap="round"/>
-      <path d="M78 74 Q 65 57 56 46" stroke="#F59E0B" stroke-width="5.2" stroke-linecap="round"/>
-      <!-- Golden rod line guides -->
-      <circle cx="46" cy="34" r="2.6" fill="#FBBF24" stroke="#041E16" stroke-width="1.2"/>
-      <circle cx="34" cy="23" r="2.2" fill="#FBBF24" stroke="#041E16" stroke-width="1.2"/>
-      <circle cx="23" cy="14" r="2.8" fill="#FDE68A" stroke="#041E16" stroke-width="1.4"/>
-      <!-- Dynamic swaying fishing line, bobber & silver J-hook -->
+    <!-- ACT V: Tactical Carbon Rod Tip + Metallic Grapple Hook -->
+    <g class="cursor__variant cursor__variant--4" filter="url(#cur-shadow)">
+      <!-- Carbon-steel angled rod tip -->
+      <path d="M38 34 L16 14 L6 6" stroke="#091310" stroke-width="4" stroke-linecap="square"/>
+      <path d="M38 34 L16 14 L6 6" stroke="#10B981" stroke-width="1.8" stroke-linecap="square"/>
+      <path d="M38 34 L27 24" stroke="#94A3B8" stroke-width="2.6" stroke-linecap="square"/>
+      <!-- Precision line guide rings -->
+      <rect x="15" y="13" width="3" height="3" transform="rotate(42 16.5 14.5)" fill="#091310" stroke="#10B981" stroke-width="1"/>
+      <circle cx="6" cy="6" r="2" fill="#091310" stroke="#10B981" stroke-width="1.2"/>
+      <!-- Swaying tactical line & angular metallic grapple hook -->
       <g id="cursor-hook-rig">
-        <path id="cursor-fishing-line" d="M23 14 Q 18 38 23 58" stroke="#A7F3D0" stroke-width="1.6" stroke-dasharray="3 2" fill="none"/>
-        <!-- Bobber float -->
-        <ellipse cx="23" cy="44" rx="4.5" ry="6" fill="#EF4444" stroke="#041E16" stroke-width="1.5"/>
-        <path d="M18.8 44 A 4.5 5.5 0 0 0 27.2 44 Z" fill="#FFFFFF"/>
-        <line x1="23" y1="36" x2="23" y2="39" stroke="#FBBF24" stroke-width="2" stroke-linecap="round"/>
-        <!-- Gleaming silver J-Hook -->
-        <path d="M23 56 L23 68 C 23 74, 15 74, 15 68 C 15 65, 17 64, 18.5 65.5" stroke="#E2E8F0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path id="cursor-fishing-line" d="M6 6 L6 26" stroke="#10B981" stroke-width="1.1" stroke-dasharray="2 1.5"/>
+        <polygon points="6,16 8.5,19.5 6,23 3.5,19.5" fill="#091310" stroke="#10B981" stroke-width="1.1"/>
+        <path d="M6 23 L6 33 L1.5 33 L1.5 28.5 L3.8 30.2" stroke="#E2E8F0" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
       </g>
     </g>
   </svg>`;
@@ -210,7 +168,7 @@ function stepCursor(dt) {
   cursorState.hookSwingVel *= Math.pow(0.08, dt);
   cursorState.hookSwing = clamp(cursorState.hookSwing + cursorState.hookSwingVel * dt * 12, -32, 32);
   if (cursorState.hookGroup && cursorState.act === 4) {
-    cursorState.hookGroup.setAttribute('transform', `rotate(${cursorState.hookSwing.toFixed(1)} 23 14)`);
+    cursorState.hookGroup.setAttribute('transform', `rotate(${cursorState.hookSwing.toFixed(1)} 6 6)`);
   }
 
   applyTransform();

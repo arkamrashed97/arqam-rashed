@@ -18,76 +18,88 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const FISH_SPECIES = [
   {
     id: 'tilapia',
-    nameEn: 'NILE TILAPIA',
-    nameAr: 'بلطي نيلي فضي',
-    pts: 10,
-    speed: 58,
-    scale: 0.92,
-    body: '#2DD4BF',
-    belly: '#99F6E4',
-    fin: '#0D9488',
-    stripe: '#115E59'
-  },
-  {
-    id: 'clown',
-    nameEn: 'CORAL CLOWNFISH',
-    nameAr: 'سمكة المهرج المرجانية',
-    pts: 20,
-    speed: 72,
+    nameEn: 'SILVER NILE PERCH',
+    nameAr: 'قشر بياض نيلي فضي',
+    pts: 15,
+    speed: 64,
     scale: 0.88,
-    body: '#FB923C',
-    belly: '#FFFFFF',
-    fin: '#EA580C',
-    stripe: '#FFFFFF'
-  },
-  {
-    id: 'tang',
-    nameEn: 'ROYAL BLUE TANG',
-    nameAr: 'تانج ملكي أزرق',
-    pts: 35,
-    speed: 84,
-    scale: 0.98,
+    minY: 105,
+    maxY: 175,
     body: '#38BDF8',
-    belly: '#0284C7',
-    fin: '#FACC15',
+    belly: '#E0F2FE',
+    fin: '#0284C7',
     stripe: '#0369A1'
   },
   {
+    id: 'barracuda',
+    nameEn: 'STEALTH BARRACUDA',
+    nameAr: 'باراكودا فولاذية',
+    pts: 25,
+    speed: 82,
+    scale: 0.94,
+    minY: 115,
+    maxY: 205,
+    body: '#94A3B8',
+    belly: '#F1F5F9',
+    fin: '#10B981',
+    stripe: '#334155'
+  },
+  {
+    id: 'tang',
+    nameEn: 'COBALT VECTOR FIN',
+    nameAr: 'سمكة الكوبالت المضيئة',
+    pts: 40,
+    speed: 90,
+    scale: 0.98,
+    minY: 160,
+    maxY: 255,
+    body: '#0EA5E9',
+    belly: '#7DD3FC',
+    fin: '#F59E0B',
+    stripe: '#075985'
+  },
+  {
     id: 'koi',
-    nameEn: 'IMPERIAL GOLDEN KOI',
-    nameAr: 'كوي ذهبي إمبراطوري',
-    pts: 50,
-    speed: 92,
-    scale: 1.12,
-    body: '#FBBF24',
-    belly: '#FEF08A',
-    fin: '#EF4444',
-    stripe: '#DC2626'
+    nameEn: 'IMPERIAL BRONZE KOI',
+    nameAr: 'كوي برونزي ملكي',
+    pts: 60,
+    speed: 98,
+    scale: 1.08,
+    minY: 185,
+    maxY: 280,
+    body: '#F59E0B',
+    belly: '#FEF3C7',
+    fin: '#D97706',
+    stripe: '#78350F'
   },
   {
     id: 'angler',
-    nameEn: 'NEON ABYSS ANGLER',
-    nameAr: 'سمكة الأعماق المضيئة',
-    pts: 80,
-    speed: 105,
+    nameEn: 'CYBER ABYSS ANGLER',
+    nameAr: 'صياد الأعماق السيبراني',
+    pts: 95,
+    speed: 112,
     scale: 1.06,
-    body: '#C084FC',
-    belly: '#E879F9',
-    fin: '#00F0FF',
-    stripe: '#7E22CE',
+    minY: 235,
+    maxY: 325,
+    body: '#06B6D4',
+    belly: '#67E8F9',
+    fin: '#00E5FF',
+    stripe: '#164E63',
     lantern: true
   },
   {
     id: 'pharaoh',
-    nameEn: 'LUXOR PHARAOH GOLD',
-    nameAr: 'سمكة الفرعون الذهبية',
-    pts: 150,
-    speed: 124,
-    scale: 1.24,
-    body: '#FDE047',
-    belly: '#FFFBEB',
-    fin: '#F59E0B',
-    stripe: '#D97706',
+    nameEn: 'SOVEREIGN GOLD LEVIATHAN',
+    nameAr: 'سمكة الذهب السيادية',
+    pts: 160,
+    speed: 128,
+    scale: 1.18,
+    minY: 255,
+    maxY: 335,
+    body: '#EAB308',
+    belly: '#FEF9C3',
+    fin: '#D4FF00',
+    stripe: '#854D0E',
     crown: true
   }
 ];
@@ -142,20 +154,19 @@ function buildAct1World() {
 
   const shipShapes = {
     cruiser: `
-      <path class="thruster" d="M-24 0 L-46 -6 L-38 0 L-46 6 Z" fill="#D4FF00" opacity="0.9"/>
-      <path d="M26 0 L-16 -14 L-10 -4 L-22 -4 L-22 4 L-10 4 L-16 14 Z" fill="#11160B" stroke="#D4FF00" stroke-width="1.8" stroke-linejoin="round"/>
-      <ellipse cx="4" cy="0" rx="7" ry="3.2" fill="#E8FF80"/>
+      <path class="thruster" d="M-24 0 L-46 -5 L-38 0 L-46 5 Z" fill="#D4FF00" opacity="0.9"/>
+      <path d="M28 0 L-16 -13 L-10 -4 L-22 -4 L-22 4 L-10 4 L-16 13 Z" fill="#0B0E11" stroke="#D4FF00" stroke-width="1.5" stroke-linejoin="miter"/>
+      <polygon points="8,0 -4,-3 -4,3" fill="#E8FF80"/>
     `,
     saucer: `
-      <ellipse cx="-24" cy="0" rx="12" ry="3.5" fill="#D4FF00" opacity="0.75"/>
-      <ellipse cx="0" cy="2" rx="22" ry="7.5" fill="#11160B" stroke="#D4FF00" stroke-width="1.8"/>
-      <path d="M-11 0 C -8 -10, 8 -10, 11 0 Z" fill="#B8FF00" opacity="0.85"/>
-      <circle cx="-12" cy="2" r="1.8" fill="#FFFFFF"/><circle cx="0" cy="3" r="1.8" fill="#FFFFFF"/><circle cx="12" cy="2" r="1.8" fill="#FFFFFF"/>
+      <path class="thruster" d="M-22 -5 L-42 -8 L-34 -5 Z M-22 5 L-42 8 L-34 5 Z" fill="#D4FF00" opacity="0.85"/>
+      <path d="M30 0 L6 -12 L-20 -9 L-14 0 L-20 9 L6 12 Z" fill="#0B0E11" stroke="#D4FF00" stroke-width="1.5" stroke-linejoin="miter"/>
+      <line x1="-12" y1="0" x2="20" y2="0" stroke="#E8FF80" stroke-width="1.2"/>
     `,
     interceptor: `
       <path class="thruster" d="M-20 -4 L-40 -7 L-32 -4 Z M-20 4 L-40 7 L-32 4 Z" fill="#B8FF00"/>
-      <path d="M28 0 L-18 -16 L-12 0 L-18 16 Z" fill="#0D1308" stroke="#E2FF4D" stroke-width="1.7" stroke-linejoin="round"/>
-      <path d="M12 0 L-8 -5 L-5 0 L-8 5 Z" fill="#D4FF00"/>
+      <path d="M28 0 L-18 -15 L-12 0 L-18 15 Z" fill="#0B0E11" stroke="#E2FF4D" stroke-width="1.5" stroke-linejoin="miter"/>
+      <path d="M12 0 L-8 -4 L-5 0 L-8 4 Z" fill="#D4FF00"/>
     `
   };
 
@@ -413,10 +424,10 @@ function buildAct4World() {
   boats.forEach((_, idx) => {
     boatsMarkup += `
       <g class="act4-boat" data-boat="${idx}">
-        <ellipse cx="0" cy="9" rx="28" ry="6" stroke="#38BDF8" stroke-width="1.2" fill="none" opacity="0.45"/>
-        <path d="M-24 4 L24 4 L15 12 L-15 12 Z" fill="rgba(192,132,252,0.28)" stroke="#E879F9" stroke-width="1.5" stroke-linejoin="round"/>
-        <path d="M0 4 L0 -14 L13 2 Z" fill="rgba(56,189,248,0.32)" stroke="#38BDF8" stroke-width="1.3" stroke-linejoin="round"/>
-        <path d="M0 4 L0 -10 L-10 2 Z" fill="rgba(240,171,252,0.35)" stroke="#F0ABFC" stroke-width="1.2" stroke-linejoin="round"/>
+        <ellipse cx="0" cy="9" rx="28" ry="5" stroke="#38BDF8" stroke-width="1" fill="none" opacity="0.4"/>
+        <path d="M-26 4 L26 4 L16 11 L-16 11 Z" fill="rgba(15,23,42,0.85)" stroke="#38BDF8" stroke-width="1.4" stroke-linejoin="miter"/>
+        <path d="M0 4 L0 -15 L14 2 Z" fill="rgba(56,189,248,0.22)" stroke="#38BDF8" stroke-width="1.2" stroke-linejoin="miter"/>
+        <path d="M-2 4 L-2 -10 L-12 2 Z" fill="rgba(148,163,184,0.25)" stroke="#94A3B8" stroke-width="1.1" stroke-linejoin="miter"/>
       </g>`;
   });
 
@@ -476,31 +487,34 @@ function updateAct4World(w, dt, t) {
 }
 
 /* ============================================================================
- * ACT V: Interactive Fishing Rod & Swimming Fish Mini-Game
+ * ACT V: Tactical Cyber-Lagoon Fishing Arena (4-Stage Realistic Mechanics)
+ *   Stage 1 (Cast / Lure): Position hook at depth (Shallow / Mid / Abyss)
+ *   Stage 2 (Approach / Nibble): Nearby fish approaches in front of its nose and tests the lure
+ *   Stage 3 (Strike Window / Bite!): Bobber plunges, rod bends under load, strike ring flashes (1.45s window)
+ *   Stage 4 (Reel In vs. Escape): Click/Tap during the strike window to hook & reel in; too early or too late = fish escapes!
  * ========================================================================== */
 function buildFishSvgMarkup(sp) {
   const crown = sp.crown
-    ? `<path d="M-4 -14 L0 -22 L5 -15 L10 -22 L12 -13 Z" fill="#FDE047" stroke="#78350F" stroke-width="1"/>`
+    ? `<polygon points="-2,-13 2,-21 6,-14 11,-21 13,-12" fill="#D4FF00" stroke="#042F2E" stroke-width="1"/>`
     : '';
   const lantern = sp.lantern
-    ? `<path d="M16 -8 Q 28 -22 32 -10" stroke="#00F0FF" stroke-width="1.5" fill="none"/><circle cx="32" cy="-10" r="3.5" fill="#00F0FF"/>`
+    ? `<path d="M16 -7 L26 -17 L31 -9" stroke="#00E5FF" stroke-width="1.4" fill="none"/><polygon points="31,-13 34,-9 31,-5 28,-9" fill="#00E5FF"/>`
     : '';
   return `
     <g class="fish-inner">
-      <!-- Articulated wagging tail -->
-      <path class="fish-tail" d="M-22 0 L-38 -13 L-33 0 L-38 13 Z" fill="${sp.fin}" stroke="#042F2E" stroke-width="1.4" stroke-linejoin="round"/>
-      <!-- Dorsal & ventral fins -->
-      <path d="M-8 -11 Q 0 -21 10 -10 Z" fill="${sp.fin}"/>
-      <path d="M-6 10 Q 2 18 8 9 Z" fill="${sp.fin}"/>
-      <!-- Main fish body -->
-      <ellipse cx="0" cy="0" rx="24" ry="12.5" fill="${sp.body}" stroke="#042F2E" stroke-width="1.6"/>
-      <path d="M-16 4 Q 0 13 18 3 Q 4 11 -16 4 Z" fill="${sp.belly}" opacity="0.75"/>
-      <!-- Decorative stripes -->
-      <path d="M-6 -11 Q -2 0 -6 11 M4 -11 Q 8 0 4 11" stroke="${sp.stripe}" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.75"/>
-      <!-- Eye & mouth -->
-      <circle cx="14" cy="-3.5" r="3.2" fill="#FFFFFF"/>
-      <circle cx="15" cy="-3.5" r="1.6" fill="#020617"/>
-      <path d="M21 2 Q 17 4 15 1.5" stroke="#042F2E" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+      <!-- Sharp articulated tail fin -->
+      <polygon class="fish-tail" points="-21,0 -37,-12 -31,0 -37,12" fill="${sp.fin}" stroke="#042F2E" stroke-width="1.3" stroke-linejoin="miter"/>
+      <!-- Angular dorsal & ventral fins -->
+      <polygon points="-9,-10 1,-19 11,-9" fill="${sp.fin}"/>
+      <polygon points="-6,9 2,17 9,8" fill="${sp.fin}"/>
+      <!-- Streamlined armored fish body -->
+      <path d="M-23 0 L-12 -11 L11 -11 L25 0 L11 11 L-12 11 Z" fill="${sp.body}" stroke="#042F2E" stroke-width="1.5" stroke-linejoin="miter"/>
+      <path d="M-14 4 L10 4 L21 0 L10 9 L-12 9 Z" fill="${sp.belly}" opacity="0.65"/>
+      <!-- Technical gill & armor stripes -->
+      <path d="M-6 -9 L-3 0 L-6 9 M3 -9 L6 0 L3 9" stroke="${sp.stripe}" stroke-width="2" fill="none" opacity="0.8"/>
+      <!-- Precision eye -->
+      <polygon points="12,-4 16,-4 17,-1.5 13,-1.5" fill="#F8FAFC"/>
+      <rect x="14" y="-3.5" width="2" height="2" fill="#020617"/>
       ${crown}
       ${lantern}
     </g>`;
@@ -510,7 +524,6 @@ function buildAct5FishingWorld() {
   const sec = document.getElementById('inquiry');
   if (!sec) return null;
 
-  // Read persisted high score & player name
   let bestScore = 0;
   let savedPlayerName = '';
   try {
@@ -520,7 +533,11 @@ function buildAct5FishingWorld() {
     bestScore = 0;
   }
 
-  // 1. Insert the Bilingual Fishing Scoreboard HUD bar + Supabase Leaderboard above the inquiry container
+  // Create dedicated self-contained Tactical Fishing Arena (HUD + Lagoon Tank) above .inquiry-container
+  const arena = document.createElement('div');
+  arena.className = 'fishing-arena';
+  arena.id = 'fishing-arena';
+
   const hud = document.createElement('div');
   hud.className = 'fishing-hud';
   hud.id = 'fishing-hud';
@@ -545,7 +562,7 @@ function buildAct5FishingWorld() {
         </div>
       </div>
       <div class="fishing-hud__actions">
-        <span class="fishing-catch-pill" id="fish-status-pill">MOVE ROD NEAR FISH OR CLICK WATER TO CAST 🎣</span>
+        <span class="fishing-catch-pill" id="fish-status-pill">POSITION HOOK NEAR FISH → WAIT FOR BITE → CLICK TO REEL! 🎣</span>
         <button type="button" class="fishing-bait-btn" id="fish-bait-btn" data-cursor="BAIT" data-sfx="none">DROP BAIT 🪱</button>
       </div>
     </div>
@@ -561,40 +578,34 @@ function buildAct5FishingWorld() {
     </div>
   `;
 
-  const inquiryContainer = sec.querySelector('.inquiry-container');
-  if (inquiryContainer) {
-    sec.insertBefore(hud, inquiryContainer);
-  } else {
-    sec.appendChild(hud);
-  }
-
-  // 2. Create the Interactive Lagoon SVG Stage
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'fishing-pond');
   svg.setAttribute('id', 'fishing-pond');
-  svg.setAttribute('viewBox', '0 0 1440 900');
-  svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  svg.setAttribute('viewBox', '0 0 1000 350');
+  svg.setAttribute('preserveAspectRatio', 'none');
   svg.setAttribute('aria-hidden', 'true');
 
-  // Spawn 11 swimming fish across the 6 species
+  // Spawn 11 swimming fish distributed across their natural depth lanes
   const fishes = [];
   let fishesMarkup = '';
   for (let i = 0; i < 11; i++) {
     const sp = FISH_SPECIES[i % FISH_SPECIES.length];
     const dir = i % 2 === 0 ? 1 : -1;
-    const x = 110 + ((i * 137) % 1220);
-    const y = 95 + ((i * 79) % 720);
+    const x = 80 + ((i * 93) % 840);
+    const y = sp.minY + ((i * 37) % Math.max(20, sp.maxY - sp.minY));
     fishes.push({
       idx: i,
       sp,
       x,
       y,
-      vx: dir * sp.speed * (0.85 + (i % 3) * 0.12),
-      vy: (i % 2 === 0 ? 1 : -1) * 14,
+      vx: dir * sp.speed * (0.88 + (i % 3) * 0.08),
+      vy: 0,
       dir,
-      phase: i * 0.9,
-      state: 'swim', // 'swim' | 'bite' | 'caught'
-      biteTimer: 0,
+      phase: i * 0.95,
+      state: 'swim', // 'swim' | 'nibble' | 'bite' | 'caught' | 'escape'
+      timer: 0,
+      nibbleCount: 0,
+      targetNibbles: 1 + (i % 2),
       catchProgress: 0
     });
     fishesMarkup += `<g class="pond-fish" data-fish="${i}" transform="translate(${x} ${y}) scale(${dir * sp.scale} ${sp.scale})">${buildFishSvgMarkup(sp)}</g>`;
@@ -603,73 +614,113 @@ function buildAct5FishingWorld() {
   svg.innerHTML = `
     <defs>
       <radialGradient id="lagoon-glow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#10B981" stop-opacity="0.24"/>
+        <stop offset="0%" stop-color="#10B981" stop-opacity="0.26"/>
         <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
       </radialGradient>
     </defs>
-    <!-- Ambient underwater swaying kelp & bubbles -->
+
+    <!-- Upper Dock / Air Zone (y = 0..72) & Water Surface Line (y = 72) -->
+    <line x1="0" y1="72" x2="1000" y2="72" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.65"/>
+    <path id="pond-surface-wave" d="M0 72 Q 250 68 500 72 T 1000 72" stroke="#34D399" stroke-width="1.2" fill="none" opacity="0.5"/>
+
+    <!-- Depth Sonar Grid Lines & Labels -->
+    <g stroke="rgba(16,185,129,0.14)" stroke-width="1" stroke-dasharray="4 6">
+      <line x1="0" y1="155" x2="1000" y2="155"/>
+      <line x1="0" y1="245" x2="1000" y2="245"/>
+    </g>
+    <g fill="rgba(167,243,208,0.38)" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5">
+      <text x="14" y="64">SURFACE DOCK // CARBON RIG 01</text>
+      <text x="14" y="90">05M SHALLOW</text>
+      <text x="14" y="170">15M MID-WATER</text>
+      <text x="14" y="260">30M ABYSSAL ZONE (HIGH PTS)</text>
+    </g>
+
     <g id="pond-ripples"></g>
-    <g id="pond-bubbles"></g>
     <g id="pond-fishes">${fishesMarkup}</g>
-    <!-- Live fishing rod, line, bobber & silver hook inside the lagoon (visible on mobile & desktop) -->
+
+    <!-- Dock-mounted Tactical Carbon Rod, Surface Bobber, Monofilament Line & Submerged Hook -->
     <g id="pond-rig">
-      <circle id="pond-lure-aura" cx="1180" cy="360" r="56" fill="url(#lagoon-glow)"/>
-      <g id="pond-rod" transform="translate(1180 160)">
-        <path d="M95 -85 Q 48 -42 0 0" stroke="#041E16" stroke-width="9" stroke-linecap="round" fill="none"/>
-        <path d="M95 -85 Q 48 -42 0 0" stroke="#10B981" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M95 -85 Q 72 -64 54 -48" stroke="#F59E0B" stroke-width="6.5" stroke-linecap="round" fill="none"/>
-        <circle cx="38" cy="-33" r="3" fill="#FBBF24" stroke="#041E16" stroke-width="1.2"/>
-        <circle cx="18" cy="-16" r="2.6" fill="#FBBF24" stroke="#041E16" stroke-width="1.2"/>
-        <circle cx="0" cy="0" r="3.4" fill="#FDE68A" stroke="#041E16" stroke-width="1.4"/>
+      <circle id="pond-lure-aura" cx="520" cy="195" r="46" fill="url(#lagoon-glow)"/>
+      <!-- Strike tension ring around hook (visible when a fish is biting!) -->
+      <circle id="pond-strike-ring" cx="520" cy="195" r="24" stroke="#FBBF24" stroke-width="2.2" stroke-dasharray="6 3" fill="rgba(251,191,36,0.12)" opacity="0"/>
+      <!-- Fishing line from rod tip (rodTipX, rodTipY) through surface bobber down to submerged hook -->
+      <path id="pond-line" d="M520 38 L520 72 L520 195" stroke="#A7F3D0" stroke-width="1.5" fill="none" opacity="0.88"/>
+      <!-- Dock-mounted carbon-steel rod above water surface -->
+      <g id="pond-rod" transform="translate(520 38)">
+        <path id="pond-rod-shaft" d="M88 -34 Q 42 -18 0 0" stroke="#051814" stroke-width="7" stroke-linecap="square" fill="none"/>
+        <path id="pond-rod-core" d="M88 -34 Q 42 -18 0 0" stroke="#10B981" stroke-width="3.2" stroke-linecap="square" fill="none"/>
+        <path d="M88 -34 L60 -23" stroke="#94A3B8" stroke-width="4.5" stroke-linecap="square"/>
+        <rect x="-2.5" y="-2.5" width="5" height="5" fill="#051814" stroke="#10B981" stroke-width="1.2"/>
       </g>
-      <path id="pond-line" d="M1180 160 Q 1160 260 1180 360" stroke="#A7F3D0" stroke-width="1.8" stroke-dasharray="5 3" fill="none" opacity="0.82"/>
-      <g id="pond-bobber" transform="translate(1180 325)">
-        <ellipse cx="0" cy="0" rx="6.5" ry="8.5" fill="#EF4444" stroke="#042F2E" stroke-width="1.8"/>
-        <path d="M-6.2 0 A 6.5 8 0 0 0 6.2 0 Z" fill="#FFFFFF"/>
-        <line x1="0" y1="-12" x2="0" y2="-7" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round"/>
+      <!-- Surface Bobber floating at y = 72 -->
+      <g id="pond-bobber" transform="translate(520 72)">
+        <polygon points="0,-9 5,0 0,9 -5,0" fill="#091915" stroke="#10B981" stroke-width="1.5"/>
+        <line x1="0" y1="-14" x2="0" y2="-9" stroke="#D4FF00" stroke-width="2"/>
       </g>
-      <g id="pond-hook" transform="translate(1180 360)">
-        <path d="M0 -32 L0 0 C 0 11, -12 11, -12 2 C -12 -3, -8 -4, -6 -1" stroke="#F8FAFC" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-        <circle cx="0" cy="-32" r="2.5" fill="#FBBF24"/>
+      <!-- Submerged Metallic Grapple Hook at (hookX, hookY) -->
+      <g id="pond-hook" transform="translate(520 195)">
+        <polygon points="0,-12 3,-7 0,-2 -3,-7" fill="#10B981"/>
+        <path d="M0 -2 L0 10 L-8 10 L-8 4 L-4.5 6.5" stroke="#F8FAFC" stroke-width="2.1" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
       </g>
-      <text id="pond-bite-alert" x="1180" y="305" text-anchor="middle" fill="#FDE047" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="700" opacity="0">! BITE / غمزت !</text>
+      <text id="pond-bite-alert" x="520" y="162" text-anchor="middle" fill="#FDE047" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1" opacity="0">⚡ STRIKE! CLICK / TAP NOW! ⚡</text>
     </g>
   `;
-  sec.insertBefore(svg, sec.firstChild);
+
+  arena.appendChild(hud);
+  arena.appendChild(svg);
+
+  const inquiryContainer = sec.querySelector('.inquiry-container');
+  if (inquiryContainer) {
+    sec.insertBefore(arena, inquiryContainer);
+  } else {
+    sec.appendChild(arena);
+  }
 
   const w = {
     sec,
+    arena,
     svg,
     hud,
     fishes,
     fishEls: Array.from(svg.querySelectorAll('.pond-fish')),
     tailEls: Array.from(svg.querySelectorAll('.fish-tail')),
     ripplesEl: svg.querySelector('#pond-ripples'),
-    bubblesEl: svg.querySelector('#pond-bubbles'),
+    surfaceWaveEl: svg.querySelector('#pond-surface-wave'),
     rodEl: svg.querySelector('#pond-rod'),
+    rodShaftEl: svg.querySelector('#pond-rod-shaft'),
+    rodCoreEl: svg.querySelector('#pond-rod-core'),
     lineEl: svg.querySelector('#pond-line'),
     bobberEl: svg.querySelector('#pond-bobber'),
     hookEl: svg.querySelector('#pond-hook'),
     auraEl: svg.querySelector('#pond-lure-aura'),
+    strikeRingEl: svg.querySelector('#pond-strike-ring'),
     biteAlertEl: svg.querySelector('#pond-bite-alert'),
     scoreEl: document.getElementById('fish-score'),
     caughtEl: document.getElementById('fish-caught'),
     comboEl: document.getElementById('fish-combo'),
     bestEl: document.getElementById('fish-best'),
     statusPill: document.getElementById('fish-status-pill'),
-    rodX: 1180,
-    rodY: 160,
-    hookX: 1180,
-    hookY: 360,
+    rodX: 520,
+    rodY: 38,
+    hookX: 520,
+    hookY: 195,
+    targetX: 520,
+    targetY: 195,
     score: 0,
     caught: 0,
     combo: 1,
     best: bestScore,
     lastCatchTime: 0,
     baitBoostTimer: 0,
-    ripples: [],
-    bubbles: []
+    ripples: []
   };
+
+  function setStatus(enText, arText, isBite = false) {
+    if (!w.statusPill) return;
+    const ar = document.documentElement.lang === 'ar';
+    w.statusPill.textContent = ar ? arText : enText;
+    w.statusPill.classList.toggle('is-bite', Boolean(isBite));
+  }
 
   function syncHudLanguage() {
     const ar = document.documentElement.lang === 'ar';
@@ -689,10 +740,12 @@ function buildAct5FishingWorld() {
     if (nameInput) nameInput.placeholder = ar ? 'اكتب اسمك فقط لحفظ السكور...' : 'Your name to save score...';
     if (saveBtn) saveBtn.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
     if (boardTitle) boardTitle.textContent = ar ? '🏆 لوحة المتصدرين:' : '🏆 TOP ANGLERS:';
-    if (w.statusPill && w.caught === 0) {
-      w.statusPill.textContent = ar
-        ? 'حرّك الصنارة قرب السمك أو اضغط في الماء للصيد 🎣'
-        : 'MOVE ROD NEAR FISH OR CLICK WATER TO CAST 🎣';
+    if (w.caught === 0) {
+      setStatus(
+        'POSITION HOOK NEAR FISH → WAIT FOR BITE → CLICK TO REEL! 🎣',
+        'قرّب الخطاف للسمكة ← انتظر الغمزة ← اضغط فوراً لسحبها! 🎣',
+        false
+      );
     }
   }
   syncHudLanguage();
@@ -750,12 +803,12 @@ function buildAct5FishingWorld() {
     if (!playerName) {
       sound.play('form-error');
       nameInputEl.focus();
-      w.statusPill.textContent = ar ? 'اكتب اسمك أولاً لحفظ السكور! ✍️' : 'ENTER YOUR NAME FIRST TO SAVE SCORE! ✍️';
+      setStatus('ENTER YOUR NAME FIRST TO SAVE SCORE! ✍️', 'اكتب اسمك أولاً لحفظ السكور! ✍️');
       return;
     }
     if (scoreToSave <= 0) {
       sound.play('form-error');
-      w.statusPill.textContent = ar ? 'اصطد سمكة واحدة على الأقل قبل حفظ السكور! 🐟' : 'CATCH AT LEAST 1 FISH BEFORE SAVING! 🐟';
+      setStatus('CATCH AT LEAST 1 FISH BEFORE SAVING! 🐟', 'اصطد سمكة واحدة على الأقل قبل حفظ السكور! 🐟');
       return;
     }
 
@@ -777,15 +830,16 @@ function buildAct5FishingWorld() {
       if (res.ok && data && Array.isArray(data.scores)) {
         renderLeaderboard(data.scores);
         sound.play('form-success');
-        w.statusPill.textContent = ar
-          ? `تم تسجيل سكورك (${scoreToSave}) باسم "${playerName}" في لوحة الشرف! 🏆`
-          : `SCORE (${scoreToSave}) SAVED FOR "${playerName}" ON LEADERBOARD! 🏆`;
+        setStatus(
+          `SCORE (${scoreToSave}) SAVED FOR "${playerName}" ON LEADERBOARD! 🏆`,
+          `تم تسجيل سكورك (${scoreToSave}) باسم "${playerName}" في لوحة الشرف! 🏆`
+        );
       } else {
         throw new Error('Save failed');
       }
     } catch (err) {
       sound.play('form-error');
-      w.statusPill.textContent = ar ? 'تعذر الاتصال، حاول مرة أخرى' : 'COULD NOT REACH SERVER, TRY AGAIN';
+      setStatus('COULD NOT REACH SERVER, TRY AGAIN', 'تعذر الاتصال، حاول مرة أخرى');
     } finally {
       saveBtnEl.disabled = false;
       saveBtnEl.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
@@ -825,7 +879,7 @@ function buildAct5FishingWorld() {
     f.state = 'caught';
     f.catchProgress = 0;
     const now = performance.now();
-    if (now - w.lastCatchTime < 6500) {
+    if (now - w.lastCatchTime < 9000) {
       w.combo = Math.min(5, w.combo + 1);
     } else {
       w.combo = 1;
@@ -847,50 +901,91 @@ function buildAct5FishingWorld() {
 
     const ar = document.documentElement.lang === 'ar';
     const fishName = ar ? f.sp.nameAr : f.sp.nameEn;
-    w.statusPill.textContent = ar
-      ? `تم صيد ${fishName} (+${gained} نقطة)! 🐟`
-      : `CAUGHT ${fishName} (+${gained} PTS)! 🐟`;
+    setStatus(
+      `REEL SUCCESS! CAUGHT ${fishName} (+${gained} PTS)! 🐟`,
+      `صيد ناجح! تم سحب ${fishName} (+${gained} نقطة)! 🐟`,
+      false
+    );
 
-    haptic(22);
+    haptic(24);
     sound.play('reel-in');
     window.setTimeout(() => sound.play('fish-catch'), 110);
 
-    w.ripples.push({ x: f.x, y: f.y, age: 0, color: f.sp.body });
-    const rect = w.sec.getBoundingClientRect();
-    const sx = clientX || rect.left + (f.x / 1440) * rect.width;
-    const sy = clientY || rect.top + (f.y / 900) * rect.height;
+    w.ripples.push({ x: f.x, y: 72, age: 0, color: f.sp.body });
+    const rect = w.svg.getBoundingClientRect();
+    const sx = clientX || rect.left + (f.x / 1000) * rect.width;
+    const sy = clientY || rect.top + (f.y / 350) * rect.height;
     spawnPopup(sx, sy, `+${gained} ${fishName}`, f.sp.body);
   }
 
-  // Clicking or tapping in Act V (outside form controls) casts the hook or reels in biting fish!
-  sec.addEventListener('pointerdown', (e) => {
-    if (e.target instanceof Element && e.target.closest('input, select, textarea, button, a, label')) return;
-    const rect = w.sec.getBoundingClientRect();
-    const px = ((e.clientX - rect.left) / Math.max(1, rect.width)) * 1440;
-    const py = ((e.clientY - rect.top) / Math.max(1, rect.height)) * 900;
-    w.rodX = px;
-    w.rodY = Math.max(40, py - 95);
+  function escapeFish(f, reasonEn, reasonAr) {
+    f.state = 'escape';
+    f.timer = 1.3;
+    f.dir = f.x < w.hookX ? -1 : 1;
+    f.vx = f.dir * f.sp.speed * 2.7;
+    f.vy = (Math.random() - 0.5) * 45;
+    w.combo = 1;
+    w.comboEl.textContent = 'x1';
+    sound.play('water-plop');
+    w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#EF4444' });
+    setStatus(reasonEn, reasonAr, false);
+  }
+
+  // Pointer move inside #fishing-pond smoothly steers the rod along the top dock and hook depth in the water
+  svg.addEventListener('pointermove', (e) => {
+    const rect = w.svg.getBoundingClientRect();
+    const px = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
+    const py = clamp(((e.clientY - rect.top) / Math.max(1, rect.height)) * 350, 92, 332);
+    w.targetX = px;
+    w.targetY = py;
+  });
+
+  // Clicking or tapping inside #fishing-pond:
+  // - If a fish is currently BITING (state === 'bite'), strikes & reels it in!
+  // - If a fish is only NIBBLING (state === 'nibble'), spooks the fish (pulled too early)!
+  // - Otherwise casts the hook to the clicked spot in the water!
+  svg.addEventListener('pointerdown', (e) => {
+    const rect = w.svg.getBoundingClientRect();
+    const px = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
+    const py = clamp(((e.clientY - rect.top) / Math.max(1, rect.height)) * 350, 92, 332);
+
+    const bitingFish = w.fishes.find((f) => f.state === 'bite');
+    if (bitingFish) {
+      catchFish(bitingFish, e.clientX, e.clientY);
+      return;
+    }
+
+    const nibblingFish = w.fishes.find((f) => f.state === 'nibble');
+    if (nibblingFish && Math.hypot(px - w.hookX, py - w.hookY) < 95) {
+      escapeFish(
+        nibblingFish,
+        'TOO EARLY! WAIT UNTIL IT BITES THE HOOK! ⚠️',
+        'سحبت الصنارة بدري! انتظر حتى تغمز السمكة بقوة! ⚠️'
+      );
+      return;
+    }
+
+    // Cast hook to new water coordinates
+    w.targetX = px;
+    w.targetY = py;
     w.hookX = px;
     w.hookY = py;
-    w.ripples.push({ x: px, y: py, age: 0, color: '#10B981' });
-
-    // Check if any fish is biting or directly under the cast point
-    let caughtAny = false;
-    for (let i = 0; i < w.fishes.length; i++) {
-      const f = w.fishes[i];
-      if (f.state === 'caught') continue;
-      const d = Math.hypot(f.x - px, f.y - py);
-      if (f.state === 'bite' || d < 78) {
-        catchFish(f, e.clientX, e.clientY);
-        caughtAny = true;
-        break;
-      }
-    }
-    if (!caughtAny) {
-      sound.play('cast-line');
-      window.setTimeout(() => sound.play('water-plop'), 140);
-    }
+    w.ripples.push({ x: px, y: 72, age: 0, color: '#10B981' });
+    w.ripples.push({ x: px, y: py, age: 0.08, color: '#34D399' });
+    sound.play('cast-line');
+    window.setTimeout(() => sound.play('water-plop'), 130);
   });
+
+  // Also allow clicking the status pill when it flashes STRIKE! on mobile
+  if (w.statusPill) {
+    w.statusPill.addEventListener('click', (e) => {
+      const bitingFish = w.fishes.find((f) => f.state === 'bite');
+      if (bitingFish) {
+        e.stopPropagation();
+        catchFish(bitingFish, e.clientX, e.clientY);
+      }
+    });
+  }
 
   const baitBtn = document.getElementById('fish-bait-btn');
   if (baitBtn) {
@@ -898,146 +993,244 @@ function buildAct5FishingWorld() {
       e.stopPropagation();
       haptic(14);
       sound.play('water-plop');
-      w.baitBoostTimer = 6.0;
+      w.baitBoostTimer = 7.0;
       for (let k = 0; k < 3; k++) {
         w.ripples.push({
-          x: w.hookX + (Math.random() - 0.5) * 90,
-          y: w.hookY + (Math.random() - 0.5) * 60,
+          x: w.hookX + (Math.random() - 0.5) * 60,
+          y: w.hookY + (Math.random() - 0.5) * 40,
           age: k * 0.12,
           color: '#FBBF24'
         });
       }
-      const ar = document.documentElement.lang === 'ar';
-      w.statusPill.textContent = ar
-        ? 'تم رمي الطُعم! الأسماك تتجمع حول الصنارة الآن 🪱✨'
-        : 'BAIT DROPPED! FISH SWARMING TOWARD YOUR HOOK 🪱✨';
+      setStatus(
+        'BAIT ACTIVE! FISH ARE ATTRACTED — WAIT FOR THE BITE THEN CLICK! 🪱',
+        'تم رمي الطُعم! السمك يقترب — انتظر الغمزة ثم اضغط لسحبها! 🪱',
+        false
+      );
     });
   }
 
   w.catchFish = catchFish;
+  w.escapeFish = escapeFish;
+  w.setStatus = setStatus;
   return w;
 }
 
 function updateAct5FishingWorld(w, dt, t) {
   if (!w) return;
-  const rect = w.sec.getBoundingClientRect();
+  const rect = w.svg.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
   if (w.baitBoostTimer > 0) w.baitBoostTimer = Math.max(0, w.baitBoostTimer - dt);
 
-  if (state.pointerMoved && state.pointerY >= rect.top && state.pointerY <= rect.bottom) {
-    const targetX = ((state.pointerX - rect.left) / Math.max(1, rect.width)) * 1440;
-    const targetY = ((state.pointerY - rect.top) / Math.max(1, rect.height)) * 900;
-    w.rodX = lerp(w.rodX, targetX, Math.min(1, dt * 16));
-    w.rodY = lerp(w.rodY, Math.max(30, targetY - 75), Math.min(1, dt * 16));
-    w.hookX = lerp(w.hookX, targetX, Math.min(1, dt * 9));
-    w.hookY = lerp(w.hookY, targetY + 24, Math.min(1, dt * 9));
+  // Smoothly move dock-mounted rod horizontally (rodY stays anchored at y = 38 above water!)
+  w.rodX = lerp(w.rodX, w.targetX, Math.min(1, dt * 14));
+  w.hookX = lerp(w.hookX, w.targetX, Math.min(1, dt * 7.5));
+  w.hookY = lerp(w.hookY, w.targetY, Math.min(1, dt * 7.5));
+
+  // Animate surface wave
+  const waveY = 72 + Math.sin(t * 2.2) * 2.5;
+  if (w.surfaceWaveEl) {
+    w.surfaceWaveEl.setAttribute('d', `M0 72 Q 250 ${waveY.toFixed(1)} 500 72 T 1000 72`);
   }
 
-  // Update fishing rod, line, bobber, and hook SVG transforms
-  const midX = (w.rodX + w.hookX) * 0.5 + Math.sin(t * 2.5) * 14;
-  const midY = (w.rodY + w.hookY) * 0.5 + 26;
-  if (w.rodEl) {
-    const rodTilt = clamp((w.hookX - w.rodX) * 0.12, -22, 22);
-    w.rodEl.setAttribute('transform', `translate(${w.rodX.toFixed(1)} ${w.rodY.toFixed(1)}) rotate(${rodTilt.toFixed(1)})`);
-  }
-  w.lineEl.setAttribute('d', `M${w.rodX.toFixed(1)} ${w.rodY.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} ${w.hookX.toFixed(1)} ${w.hookY.toFixed(1)}`);
+  // Check if any fish is currently engaged ('nibble' or 'bite')
+  let activeFish = w.fishes.find((f) => f.state === 'nibble' || f.state === 'bite');
 
-  let anyBiting = false;
   w.fishes.forEach((f, i) => {
-    const tailAngle = Math.sin(t * (f.state === 'bite' ? 18 : 8.5) + f.phase) * 16;
-    w.tailEls[i].setAttribute('transform', `rotate(${tailAngle.toFixed(1)} -22 0)`);
+    const tailSpeed = f.state === 'bite' ? 22 : f.state === 'escape' ? 20 : f.state === 'nibble' ? 13 : 8;
+    const tailAngle = Math.sin(t * tailSpeed + f.phase) * 15;
+    w.tailEls[i].setAttribute('transform', `rotate(${tailAngle.toFixed(1)} -21 0)`);
 
+    // 1. CAUGHT: Reel fish up to the rod tip at (rodX, 55)
     if (f.state === 'caught') {
-      f.catchProgress += dt * 2.2;
-      f.x = lerp(f.x, w.rodX, Math.min(1, dt * 12));
-      f.y = lerp(f.y, w.rodY, Math.min(1, dt * 12));
+      f.catchProgress += dt * 2.4;
+      f.x = lerp(f.x, w.rodX, Math.min(1, dt * 14));
+      f.y = lerp(f.y, 58, Math.min(1, dt * 14));
       const shrink = Math.max(0.05, 1 - f.catchProgress);
       w.fishEls[i].setAttribute(
         'transform',
-        `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(-65) scale(${(f.sp.scale * shrink).toFixed(2)})`
+        `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(-70) scale(${(f.sp.scale * shrink).toFixed(2)})`
       );
       if (f.catchProgress >= 1) {
-        // Respawn a fresh fish entering from the left or right edge
         f.state = 'swim';
         f.catchProgress = 0;
         f.dir = Math.random() > 0.5 ? 1 : -1;
-        f.x = f.dir > 0 ? -70 : 1510;
-        f.y = 110 + Math.random() * 680;
+        f.x = f.dir > 0 ? -60 : 1060;
+        f.y = f.sp.minY + Math.random() * (f.sp.maxY - f.sp.minY);
+        f.vx = f.dir * f.sp.speed;
+        f.vy = 0;
+      }
+      return;
+    }
+
+    // 2. ESCAPE: Fish darts away rapidly after a missed strike or early pull
+    if (f.state === 'escape') {
+      f.timer -= dt;
+      f.x += f.vx * dt;
+      f.y = clamp(f.y + f.vy * dt, 92, 334);
+      if (f.timer <= 0 || f.x < -80 || f.x > 1080) {
+        f.state = 'swim';
+        if (f.x < -80) { f.x = -50; f.dir = 1; }
+        if (f.x > 1080) { f.x = 1050; f.dir = -1; }
         f.vx = f.dir * f.sp.speed;
       }
+      const tilt = clamp(f.vy * 0.18, -18, 18);
+      w.fishEls[i].setAttribute(
+        'transform',
+        `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${(f.dir * f.sp.scale).toFixed(2)} ${f.sp.scale.toFixed(2)})`
+      );
       return;
     }
 
     const dx = w.hookX - f.x;
     const dy = w.hookY - f.y;
     const dist = Math.hypot(dx, dy);
-    const attractRadius = w.baitBoostTimer > 0 ? 480 : 210;
 
-    if (dist < 38) {
-      if (f.state !== 'bite') {
-        f.state = 'bite';
-        f.biteTimer = 0;
-        sound.play('fish-bite');
-        w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#FDE047' });
+    // 3. BITE (STRIKE WINDOW!): Fish is on the hook! Player has 1.45s to Click/Tap!
+    if (f.state === 'bite') {
+      f.timer += dt;
+      // If player drags hook too far away without clicking, fish breaks off
+      if (dist > 145) {
+        w.escapeFish(f, 'LINE SNAPPED! KEEP HOOK STEADY & CLICK! ⚡', 'انقطع الخيط! اضغط على السمكة وقت الغمزة! ⚡');
+        activeFish = null;
+        return;
       }
-      anyBiting = true;
-      f.biteTimer += dt;
-      f.x = lerp(f.x, w.hookX - f.dir * 16, Math.min(1, dt * 14));
-      f.y = lerp(f.y, w.hookY + Math.sin(t * 20) * 4, Math.min(1, dt * 14));
-      // Auto-reel after 0.55s of holding the hook steadily on the biting fish!
-      if (f.biteTimer > 0.55) {
-        w.catchFish(f);
+      // Fish tugs aggressively on the hook
+      f.x = lerp(f.x, w.hookX - f.dir * 18, Math.min(1, dt * 15));
+      f.y = lerp(f.y, w.hookY + Math.sin(t * 26) * 5, Math.min(1, dt * 15));
+      if (f.timer > 1.45) {
+        w.escapeFish(
+          f,
+          '💨 FISH ESCAPED! CLICK / TAP FASTER WHEN IT BITES!',
+          '💨 فلتت السمكة! اضغط أسرع أول ما تغمز الصنارة!'
+        );
+        activeFish = null;
+        return;
       }
-    } else if (dist < attractRadius) {
-      f.state = 'swim';
-      const pull = w.baitBoostTimer > 0 ? 1.65 : 1.15;
-      f.vx = lerp(f.vx, (dx / dist) * f.sp.speed * pull, dt * 3.5);
-      f.vy = lerp(f.vy, (dy / dist) * f.sp.speed * pull, dt * 3.5);
-      f.dir = f.vx >= 0 ? 1 : -1;
-      f.x += f.vx * dt;
-      f.y += f.vy * dt;
-    } else {
-      f.state = 'swim';
-      f.vx = lerp(f.vx, f.dir * f.sp.speed, dt * 1.5);
-      f.vy = Math.sin(t * 1.6 + f.phase) * 18;
-      f.x += f.vx * dt;
-      f.y += f.vy * dt;
-      if (f.x > 1520) { f.dir = -1; f.vx = -f.sp.speed; }
-      if (f.x < -80) { f.dir = 1; f.vx = f.sp.speed; }
-      f.y = clamp(f.y, 80, 830);
+      w.fishEls[i].setAttribute(
+        'transform',
+        `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(${(f.dir * -12).toFixed(1)}) scale(${(f.dir * f.sp.scale).toFixed(2)} ${f.sp.scale.toFixed(2)})`
+      );
+      return;
     }
 
-    const tilt = clamp(f.vy * 0.22, -18, 18);
+    // 4. NIBBLE: Fish approaches hook and tests the bait before biting
+    if (f.state === 'nibble') {
+      if (dist > 165) {
+        f.state = 'swim';
+        activeFish = null;
+      } else {
+        f.timer += dt;
+        const targetStandOff = 22 + Math.sin(f.timer * 9) * 7;
+        f.dir = dx >= 0 ? 1 : -1;
+        f.x = lerp(f.x, w.hookX - f.dir * targetStandOff, Math.min(1, dt * 6));
+        f.y = lerp(f.y, w.hookY + Math.cos(f.timer * 7) * 4, Math.min(1, dt * 6));
+
+        // Transition from nibble to full BITE strike after ~0.85s!
+        if (f.timer >= 0.85) {
+          f.state = 'bite';
+          f.timer = 0;
+          haptic(20);
+          sound.play('fish-bite');
+          w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#FBBF24' });
+          w.ripples.push({ x: w.hookX, y: 72, age: 0, color: '#FDE047' });
+          w.setStatus(
+            '⚡ BITE! CLICK OR TAP NOW TO REEL IT IN! ⚡',
+            '⚡ غمزت الصنارة! اضغط الآن فوراً لسحب السمكة! ⚡',
+            true
+          );
+        }
+        w.fishEls[i].setAttribute(
+          'transform',
+          `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(0) scale(${(f.dir * f.sp.scale).toFixed(2)} ${f.sp.scale.toFixed(2)})`
+        );
+        return;
+      }
+    }
+
+    // 5. SWIM: Normal patrol in its depth lane; check if hook is in front of its vision cone
+    const inFront = (f.dir > 0 && dx > -15) || (f.dir < 0 && dx < 15) || w.baitBoostTimer > 0;
+    const detectRadius = w.baitBoostTimer > 0 ? 220 : 115;
+    if (!activeFish && inFront && dist < detectRadius && Math.abs(dy) < 65) {
+      f.state = 'nibble';
+      f.timer = 0;
+      activeFish = f;
+      w.setStatus(
+        'A FISH IS TESTING YOUR BAIT... WAIT FOR THE BITE! 👀',
+        'سمكة تقترب وتختبر الطُعم... انتظر الغمزة القوية! 👀',
+        false
+      );
+    }
+
+    f.vx = lerp(f.vx, f.dir * f.sp.speed, dt * 2);
+    const laneCenter = (f.sp.minY + f.sp.maxY) * 0.5;
+    f.vy = Math.sin(t * 1.5 + f.phase) * 14 + (laneCenter - f.y) * 0.35;
+    f.x += f.vx * dt;
+    f.y = clamp(f.y + f.vy * dt, f.sp.minY, f.sp.maxY);
+    if (f.x > 1050) { f.dir = -1; f.vx = -f.sp.speed; }
+    if (f.x < -50) { f.dir = 1; f.vx = f.sp.speed; }
+
+    const tilt = clamp(f.vy * 0.2, -14, 14);
     w.fishEls[i].setAttribute(
       'transform',
       `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${(f.dir * f.sp.scale).toFixed(2)} ${f.sp.scale.toFixed(2)})`
     );
   });
 
-  const bobOffset = anyBiting ? Math.sin(t * 26) * 6 + 5 : Math.sin(t * 3.2) * 3;
-  w.bobberEl.setAttribute('transform', `translate(${w.hookX.toFixed(1)} ${(w.hookY - 34 + bobOffset).toFixed(1)})`);
+  // Render physical rod bend, surface bobber dip, and strike tension ring
+  const isBiting = Boolean(activeFish && activeFish.state === 'bite');
+  const isNibbling = Boolean(activeFish && activeFish.state === 'nibble');
+  const rodBendY = isBiting ? 14 + Math.sin(t * 28) * 4 : isNibbling ? 4 + Math.sin(t * 12) * 2 : 0;
+  const rodTipX = w.rodX;
+  const rodTipY = w.rodY + rodBendY;
+
+  if (w.rodEl) {
+    w.rodEl.setAttribute('transform', `translate(${w.rodX.toFixed(1)} ${w.rodY.toFixed(1)})`);
+    const shaftD = `M88 -34 Q 42 ${(-18 + rodBendY * 0.5).toFixed(1)} 0 ${rodBendY.toFixed(1)}`;
+    if (w.rodShaftEl) w.rodShaftEl.setAttribute('d', shaftD);
+    if (w.rodCoreEl) w.rodCoreEl.setAttribute('d', shaftD);
+  }
+
+  const bobberY = 72 + (isBiting ? 12 + Math.sin(t * 28) * 4 : isNibbling ? 3 + Math.sin(t * 12) * 2.5 : Math.sin(t * 2.5) * 1.8);
+  const bobberX = lerp(w.hookX, rodTipX, 0.22);
+
+  w.bobberEl.setAttribute('transform', `translate(${bobberX.toFixed(1)} ${bobberY.toFixed(1)})`);
   w.hookEl.setAttribute('transform', `translate(${w.hookX.toFixed(1)} ${w.hookY.toFixed(1)})`);
+  w.lineEl.setAttribute(
+    'd',
+    `M${rodTipX.toFixed(1)} ${rodTipY.toFixed(1)} L${bobberX.toFixed(1)} ${bobberY.toFixed(1)} Q ${(bobberX + (w.hookX - bobberX) * 0.5).toFixed(1)} ${((bobberY + w.hookY) * 0.5 + 12).toFixed(1)} ${w.hookX.toFixed(1)} ${(w.hookY - 10).toFixed(1)}`
+  );
+
   w.auraEl.setAttribute('cx', w.hookX.toFixed(1));
   w.auraEl.setAttribute('cy', w.hookY.toFixed(1));
-  w.auraEl.setAttribute('r', w.baitBoostTimer > 0 ? '110' : '56');
-  w.biteAlertEl.setAttribute('x', w.hookX.toFixed(1));
-  w.biteAlertEl.setAttribute('y', (w.hookY - 52).toFixed(1));
-  w.biteAlertEl.setAttribute('opacity', anyBiting ? '1' : '0');
+  w.auraEl.setAttribute('r', w.baitBoostTimer > 0 ? '88' : '46');
+
+  if (w.strikeRingEl) {
+    w.strikeRingEl.setAttribute('cx', w.hookX.toFixed(1));
+    w.strikeRingEl.setAttribute('cy', w.hookY.toFixed(1));
+    const ringRadius = isBiting ? 22 + Math.sin(t * 24) * 5 : 16;
+    w.strikeRingEl.setAttribute('r', ringRadius.toFixed(1));
+    w.strikeRingEl.setAttribute('opacity', isBiting ? '1' : isNibbling ? '0.35' : '0');
+  }
+
+  w.biteAlertEl.setAttribute('x', clamp(w.hookX, 140, 860).toFixed(1));
+  w.biteAlertEl.setAttribute('y', Math.max(96, w.hookY - 26).toFixed(1));
+  w.biteAlertEl.setAttribute('opacity', isBiting ? '1' : '0');
 
   // Render water ripples
   let rippleMarkup = '';
   for (let i = w.ripples.length - 1; i >= 0; i--) {
     const r = w.ripples[i];
     r.age += dt;
-    if (r.age > 1.2) {
+    if (r.age > 1.1) {
       w.ripples.splice(i, 1);
       continue;
     }
-    const p = r.age / 1.2;
-    const rad = 8 + p * 68;
+    const p = r.age / 1.1;
+    const rad = 6 + p * 46;
     const op = (1 - p) * 0.65;
-    rippleMarkup += `<ellipse cx="${r.x.toFixed(1)}" cy="${r.y.toFixed(1)}" rx="${rad.toFixed(1)}" ry="${(rad * 0.55).toFixed(1)}" stroke="${r.color}" stroke-width="1.8" fill="none" opacity="${op.toFixed(2)}"/>`;
+    rippleMarkup += `<ellipse cx="${r.x.toFixed(1)}" cy="${r.y.toFixed(1)}" rx="${rad.toFixed(1)}" ry="${(rad * 0.42).toFixed(1)}" stroke="${r.color}" stroke-width="1.6" fill="none" opacity="${op.toFixed(2)}"/>`;
   }
   w.ripplesEl.innerHTML = rippleMarkup;
 }
