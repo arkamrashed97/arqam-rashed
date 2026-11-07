@@ -10,7 +10,7 @@ export const CONFIG = {
   formEndpoint: 'https://formsubmit.co/ajax/arkam2014a@gmail.com',
   cvUrl: 'assets/docs/Arqam-Rashed-CV.pdf',
   vcardUrl: 'assets/docs/Arqam-Rashed.vcf',
-  leaderboardApiUrl: 'https://arqamrashed.com/api/leaderboard',
+  leaderboardApiUrl: 'https://arqam-rashed.pages.dev/api/leaderboard',
   supabaseUrl: 'https://qsbuqfkkevrbdxrebsln.supabase.co',
   supabasePublishableKey: 'sb_publishable_rmdQ2iW5kaFlBZwp_e3g6g_fEJ7mpn9'
 };
