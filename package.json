@@ -1,14 +1,15 @@
 {
   "name": "arqam-rashed",
   "version": "2.0.0",
-  "description": "Portfolio of Arqam Rashed — Full-Stack Architect & Creative Developer in Luxor, Egypt. Modular GitHub Pages deployment + self-contained single-file edition.",
+  "description": "Portfolio of Arqam Rashed — Full-Stack Architect & Creative Developer in Luxor, Egypt. Modular GitHub Pages + Cloudflare Pages deployment + self-contained single-file edition.",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node tools/build-single.mjs",
     "lint": "eslint js tools",
     "verify": "NODE_PATH=/tmp/opencode/pw/node_modules node tools/verify.mjs",
-    "audio:generate": "node --env-file=.env.local tools/audio/generate.mjs"
+    "audio:generate": "node --env-file=.env.local tools/audio/generate.mjs",
+    "deploy:cf": "node --env-file=.env.local tools/deploy-cloudflare.mjs"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",
