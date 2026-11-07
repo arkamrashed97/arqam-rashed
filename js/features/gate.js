@@ -111,7 +111,7 @@ export function initGate(pending) {
       boot.setAttribute('aria-hidden', 'true');
       boot.style.display = 'none';
     }
-    finishBoot();
+    finishBoot(true);
     window.dispatchEvent(new CustomEvent('arqam:gate-closed'));
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

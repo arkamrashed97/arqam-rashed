@@ -7,6 +7,7 @@ import { clamp } from './utils.js';
 export const bootValue = { v: 0 };
 export let bootFinished = false;
 export let bootFinishScheduled = false;
+export let bootTimerId = 0;
 export let bootStartedAt = performance.now();
 
 export function paintBoot(v) {
@@ -30,14 +31,21 @@ export function startBoot() {
   });
 }
 
-export function finishBoot() {
-  if (bootFinished || bootFinishScheduled) return;
-  const minimum = state.motion ? 1700 : 220;
+export function finishBoot(forceImmediate = false) {
+  if (bootFinished) return;
+  if (bootFinishScheduled && !forceImmediate) return;
+  if (bootTimerId) {
+    window.clearTimeout(bootTimerId);
+    bootTimerId = 0;
+    bootFinishScheduled = false;
+  }
+  const minimum = forceImmediate ? 0 : (state.motion ? 280 : 120);
   const wait = Math.max(0, minimum - (performance.now() - bootStartedAt));
   if (wait > 30) {
     bootFinishScheduled = true;
-    window.setTimeout(() => {
+    bootTimerId = window.setTimeout(() => {
       bootFinishScheduled = false;
+      bootTimerId = 0;
       finishBoot();
     }, wait);
     return;
@@ -61,7 +69,7 @@ export function finishBoot() {
   window.__ARQAM_FINISH_BOOT = finishBoot;
   window.__ARQAM_RUN_INTRO = runIntro;
 
-  if (!state.motion) {
+  if (!state.motion || forceImmediate) {
     paintBoot(100);
     if (refs.boot) refs.boot.style.display = 'none';
     done();
@@ -70,8 +78,8 @@ export function finishBoot() {
 
   paintBoot(100);
   gsap.timeline()
-    .to(bootValue, { v: 100, duration: 0.3, ease: 'power2.inOut', onUpdate: () => paintBoot(bootValue.v) })
-    .to(refs.boot, { autoAlpha: 0, duration: 0.55, ease: 'power2.inOut' }, '+=0.12')
+    .to(bootValue, { v: 100, duration: 0.16, ease: 'power2.out', onUpdate: () => paintBoot(bootValue.v) })
+    .to(refs.boot, { autoAlpha: 0, duration: 0.24, ease: 'power2.inOut' })
     .set(refs.boot, { display: 'none' })
     .add(done);
 }

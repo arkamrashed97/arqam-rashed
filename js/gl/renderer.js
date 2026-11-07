@@ -114,6 +114,11 @@ export function initGL() {
       sceneState.glContextLost = true;
     }, false);
 
+    canvas.addEventListener('webglcontextrestored', () => {
+      document.body.classList.remove('no-gl', 'static-work');
+      sceneState.glContextLost = false;
+    }, false);
+
     return true;
   } catch (err) {
     document.body.classList.add('no-gl', 'static-work');

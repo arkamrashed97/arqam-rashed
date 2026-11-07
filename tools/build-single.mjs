@@ -54,8 +54,8 @@ async function buildSingleFile() {
 
   // Update <script type="importmap"> in root index.html so every modular ES import gets ?v=${vTag}
   const importMapEntries = {
-    three: 'https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js',
-    'three/addons/': 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/'
+    three: './assets/vendor/three/build/three.module.js',
+    'three/addons/': './assets/vendor/three/examples/jsm/'
   };
   for (const jsRel of allJsRel) {
     importMapEntries[`./${jsRel}`] = `./${jsRel}?v=${vTag}`;
@@ -168,11 +168,12 @@ async function buildSingleFile() {
   }
 
   // 5. Inline the bundled JS module in place of <script type="module" src="js/main.js..."></script>
-  //    and keep single-file importmap clean (only external three.js).
+  //    and point single-file vendor scripts + importmap to ../assets/vendor/
+  html = html.replace(/src="assets\/vendor\/([^"]+)"/g, 'src="../assets/vendor/$1"');
   const singleImportMap = JSON.stringify({
     imports: {
-      three: 'https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js',
-      'three/addons/': 'https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/'
+      three: '../assets/vendor/three/build/three.module.js',
+      'three/addons/': '../assets/vendor/three/examples/jsm/'
     }
   }, null, 2);
   html = html.replace(
