@@ -4324,6 +4324,53 @@ init().catch((err) => {
       this.chordGain = null;
       this.chordFilter = null;
       this.lastAct = -1;
+      this.layers = null;
+      this.clickAudio = null;
+      this.filesLoaded = false;
+    }
+
+    initAudioFiles() {
+      if (this.filesLoaded) return;
+      this.filesLoaded = true;
+      const sources = {
+        0: './assets/audio/act1-desert-wind.mp3',
+        1: './assets/audio/act2-kinetic-chime.mp3',
+        2: './assets/audio/act3-crystal-resonance.mp3',
+        3: './assets/audio/act4-gravitational-calm.mp3'
+      };
+      this.layers = {};
+      for (const [key, src] of Object.entries(sources)) {
+        try {
+          const audio = new Audio(src);
+          audio.loop = true;
+          audio.volume = 0;
+          audio.preload = 'auto';
+          this.layers[key] = audio;
+        } catch (e) {}
+      }
+      try {
+        this.clickAudio = new Audio('./assets/audio/ui-click.mp3');
+        this.clickAudio.volume = 0.22;
+        this.clickAudio.preload = 'auto';
+      } catch (e) {}
+    }
+
+    fadeAudio(audio, targetVol, durationSec, onComplete) {
+      if (!audio) return;
+      const startVol = audio.volume;
+      const diff = targetVol - startVol;
+      const steps = 18;
+      const stepTime = (durationSec * 1000) / steps;
+      let step = 0;
+      clearInterval(audio._fadeInterval);
+      audio._fadeInterval = setInterval(() => {
+        step++;
+        audio.volume = Math.max(0, Math.min(1, startVol + diff * (step / steps)));
+        if (step >= steps) {
+          clearInterval(audio._fadeInterval);
+          if (onComplete) onComplete();
+        }
+      }, stepTime);
     }
 
     init() {
@@ -4438,6 +4485,20 @@ init().catch((err) => {
     }
 
     setAct(actIndex) {
+      if (this.layers && this.enabled) {
+        Object.keys(this.layers).forEach((k) => {
+          const layer = this.layers[k];
+          if (!layer) return;
+          if (parseInt(k, 10) === actIndex) {
+            if (layer.paused) layer.play().catch(() => {});
+            this.fadeAudio(layer, 0.45, 1.4);
+          } else {
+            this.fadeAudio(layer, 0, 1.4, () => {
+              if (parseInt(k, 10) !== actIndex) layer.pause();
+            });
+          }
+        });
+      }
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
       if (actIndex === 0) {
@@ -4468,6 +4529,13 @@ init().catch((err) => {
     }
 
     playTactile(freq = 520, decay = 0.06, volume = 0.08) {
+      if (this.clickAudio && this.enabled) {
+        try {
+          const clickClone = this.clickAudio.cloneNode();
+          clickClone.volume = 0.22;
+          clickClone.play().catch(() => {});
+        } catch (e) {}
+      }
       if (!this.ctx || !this.enabled) return;
       try {
         const now = this.ctx.currentTime;
@@ -4518,6 +4586,7 @@ init().catch((err) => {
 
     toggle() {
       this.init();
+      this.initAudioFiles();
       if (this.ctx && this.ctx.state === 'suspended') {
         this.ctx.resume();
       }
@@ -4531,6 +4600,11 @@ init().catch((err) => {
         } else {
           this.masterGain.gain.cancelScheduledValues(now);
           this.masterGain.gain.linearRampToValueAtTime(0.0001, now + 0.7);
+          if (this.layers) {
+            Object.values(this.layers).forEach(layer => {
+              this.fadeAudio(layer, 0, 0.8, () => layer.pause());
+            });
+          }
         }
       }
       try {
