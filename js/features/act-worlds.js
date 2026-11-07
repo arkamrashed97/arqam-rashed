@@ -592,10 +592,18 @@ function buildAct5FishingWorld() {
     <g id="pond-ripples"></g>
     <g id="pond-bubbles"></g>
     <g id="pond-fishes">${fishesMarkup}</g>
-    <!-- Live fishing line, bobber & silver hook inside the lagoon -->
+    <!-- Live fishing rod, line, bobber & silver hook inside the lagoon (visible on mobile & desktop) -->
     <g id="pond-rig">
       <circle id="pond-lure-aura" cx="1180" cy="360" r="56" fill="url(#lagoon-glow)"/>
-      <path id="pond-line" d="M1180 0 Q 1160 180 1180 360" stroke="#A7F3D0" stroke-width="1.8" stroke-dasharray="5 3" fill="none" opacity="0.82"/>
+      <g id="pond-rod" transform="translate(1180 160)">
+        <path d="M95 -85 Q 48 -42 0 0" stroke="#041E16" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <path d="M95 -85 Q 48 -42 0 0" stroke="#10B981" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M95 -85 Q 72 -64 54 -48" stroke="#F59E0B" stroke-width="6.5" stroke-linecap="round" fill="none"/>
+        <circle cx="38" cy="-33" r="3" fill="#FBBF24" stroke="#041E16" stroke-width="1.2"/>
+        <circle cx="18" cy="-16" r="2.6" fill="#FBBF24" stroke="#041E16" stroke-width="1.2"/>
+        <circle cx="0" cy="0" r="3.4" fill="#FDE68A" stroke="#041E16" stroke-width="1.4"/>
+      </g>
+      <path id="pond-line" d="M1180 160 Q 1160 260 1180 360" stroke="#A7F3D0" stroke-width="1.8" stroke-dasharray="5 3" fill="none" opacity="0.82"/>
       <g id="pond-bobber" transform="translate(1180 325)">
         <ellipse cx="0" cy="0" rx="6.5" ry="8.5" fill="#EF4444" stroke="#042F2E" stroke-width="1.8"/>
         <path d="M-6.2 0 A 6.5 8 0 0 0 6.2 0 Z" fill="#FFFFFF"/>
@@ -619,6 +627,7 @@ function buildAct5FishingWorld() {
     tailEls: Array.from(svg.querySelectorAll('.fish-tail')),
     ripplesEl: svg.querySelector('#pond-ripples'),
     bubblesEl: svg.querySelector('#pond-bubbles'),
+    rodEl: svg.querySelector('#pond-rod'),
     lineEl: svg.querySelector('#pond-line'),
     bobberEl: svg.querySelector('#pond-bobber'),
     hookEl: svg.querySelector('#pond-hook'),
@@ -788,9 +797,13 @@ function updateAct5FishingWorld(w, dt, t) {
     w.hookY = lerp(w.hookY, targetY + 24, Math.min(1, dt * 9));
   }
 
-  // Update fishing line, bobber, and hook SVG transforms
+  // Update fishing rod, line, bobber, and hook SVG transforms
   const midX = (w.rodX + w.hookX) * 0.5 + Math.sin(t * 2.5) * 14;
   const midY = (w.rodY + w.hookY) * 0.5 + 26;
+  if (w.rodEl) {
+    const rodTilt = clamp((w.hookX - w.rodX) * 0.12, -22, 22);
+    w.rodEl.setAttribute('transform', `translate(${w.rodX.toFixed(1)} ${w.rodY.toFixed(1)}) rotate(${rodTilt.toFixed(1)})`);
+  }
   w.lineEl.setAttribute('d', `M${w.rodX.toFixed(1)} ${w.rodY.toFixed(1)} Q ${midX.toFixed(1)} ${midY.toFixed(1)} ${w.hookX.toFixed(1)} ${w.hookY.toFixed(1)}`);
 
   let anyBiting = false;
