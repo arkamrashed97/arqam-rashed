@@ -2,6 +2,7 @@ import { state } from '../core/state.js';
 import { clamp, lerp } from '../core/utils.js';
 import { haptic } from '../core/env.js';
 import { sound } from '../audio/index.js';
+import { CONFIG } from '../config.js';
 
 /**
  * Interactive SVG worlds for Acts I–V:
@@ -509,36 +510,54 @@ function buildAct5FishingWorld() {
   const sec = document.getElementById('inquiry');
   if (!sec) return null;
 
-  // Read persisted high score
+  // Read persisted high score & player name
   let bestScore = 0;
-  try { bestScore = parseInt(localStorage.getItem('arqam-fish-best') || '0', 10) || 0; } catch (err) { bestScore = 0; }
+  let savedPlayerName = '';
+  try {
+    bestScore = parseInt(localStorage.getItem('arqam-fish-best') || '0', 10) || 0;
+    savedPlayerName = localStorage.getItem('arqam-fish-player') || '';
+  } catch (err) {
+    bestScore = 0;
+  }
 
-  // 1. Insert the Bilingual Fishing Scoreboard HUD bar above the inquiry container
+  // 1. Insert the Bilingual Fishing Scoreboard HUD bar + Supabase Leaderboard above the inquiry container
   const hud = document.createElement('div');
   hud.className = 'fishing-hud';
   hud.id = 'fishing-hud';
   hud.innerHTML = `
-    <div class="fishing-hud__stats">
-      <div class="fishing-stat">
-        <span id="fish-lbl-score">LAGOON SCORE</span>
-        <b id="fish-score">0</b>
+    <div class="fishing-hud__row">
+      <div class="fishing-hud__stats">
+        <div class="fishing-stat">
+          <span id="fish-lbl-score">LAGOON SCORE</span>
+          <b id="fish-score">0</b>
+        </div>
+        <div class="fishing-stat">
+          <span id="fish-lbl-caught">CAUGHT</span>
+          <b id="fish-caught">0</b>
+        </div>
+        <div class="fishing-stat fishing-stat--combo">
+          <span id="fish-lbl-combo">COMBO</span>
+          <b id="fish-combo">x1</b>
+        </div>
+        <div class="fishing-stat">
+          <span id="fish-lbl-best">BEST</span>
+          <b id="fish-best">${bestScore}</b>
+        </div>
       </div>
-      <div class="fishing-stat">
-        <span id="fish-lbl-caught">CAUGHT</span>
-        <b id="fish-caught">0</b>
-      </div>
-      <div class="fishing-stat fishing-stat--combo">
-        <span id="fish-lbl-combo">COMBO</span>
-        <b id="fish-combo">x1</b>
-      </div>
-      <div class="fishing-stat">
-        <span id="fish-lbl-best">BEST</span>
-        <b id="fish-best">${bestScore}</b>
+      <div class="fishing-hud__actions">
+        <span class="fishing-catch-pill" id="fish-status-pill">MOVE ROD NEAR FISH OR CLICK WATER TO CAST 🎣</span>
+        <button type="button" class="fishing-bait-btn" id="fish-bait-btn" data-cursor="BAIT" data-sfx="none">DROP BAIT 🪱</button>
       </div>
     </div>
-    <div class="fishing-hud__actions">
-      <span class="fishing-catch-pill" id="fish-status-pill">MOVE ROD NEAR FISH OR CLICK WATER TO CAST 🎣</span>
-      <button type="button" class="fishing-bait-btn" id="fish-bait-btn" data-cursor="BAIT" data-sfx="none">DROP BAIT 🪱</button>
+    <div class="fishing-save-row">
+      <input type="text" class="fishing-name-input" id="fish-name-input" maxlength="22" placeholder="Your name to save score..." aria-label="Player name">
+      <button type="button" class="fishing-save-btn" id="fish-save-btn" data-cursor="SAVE" data-sfx="none">SAVE SCORE 🏆</button>
+    </div>
+    <div class="fishing-board" id="fishing-board">
+      <span class="fishing-board__title" id="fish-board-title">🏆 TOP ANGLERS:</span>
+      <ul class="fishing-board__list" id="fish-board-list">
+        <li class="fishing-board__item">LOADING...</li>
+      </ul>
     </div>
   `;
 
@@ -659,11 +678,17 @@ function buildAct5FishingWorld() {
     const lblCombo = document.getElementById('fish-lbl-combo');
     const lblBest = document.getElementById('fish-lbl-best');
     const baitBtn = document.getElementById('fish-bait-btn');
+    const nameInput = document.getElementById('fish-name-input');
+    const saveBtn = document.getElementById('fish-save-btn');
+    const boardTitle = document.getElementById('fish-board-title');
     if (lblScore) lblScore.textContent = ar ? 'نقاط الصيد' : 'LAGOON SCORE';
     if (lblCaught) lblCaught.textContent = ar ? 'السمك المصطاد' : 'CAUGHT';
     if (lblCombo) lblCombo.textContent = ar ? 'المضاعف' : 'COMBO';
     if (lblBest) lblBest.textContent = ar ? 'أعلى سكور' : 'BEST';
     if (baitBtn) baitBtn.textContent = ar ? 'رمي طُعم للسمك 🪱' : 'DROP BAIT 🪱';
+    if (nameInput) nameInput.placeholder = ar ? 'اكتب اسمك فقط لحفظ السكور...' : 'Your name to save score...';
+    if (saveBtn) saveBtn.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
+    if (boardTitle) boardTitle.textContent = ar ? '🏆 لوحة المتصدرين:' : '🏆 TOP ANGLERS:';
     if (w.statusPill && w.caught === 0) {
       w.statusPill.textContent = ar
         ? 'حرّك الصنارة قرب السمك أو اضغط في الماء للصيد 🎣'
@@ -672,6 +697,118 @@ function buildAct5FishingWorld() {
   }
   syncHudLanguage();
   window.addEventListener('arqam:lang', syncHudLanguage);
+
+  const nameInputEl = document.getElementById('fish-name-input');
+  const saveBtnEl = document.getElementById('fish-save-btn');
+  const boardListEl = document.getElementById('fish-board-list');
+  if (nameInputEl && savedPlayerName) {
+    nameInputEl.value = savedPlayerName;
+  }
+
+  function renderLeaderboard(scores) {
+    if (!boardListEl) return;
+    if (!Array.isArray(scores) || !scores.length) {
+      boardListEl.innerHTML = '<li class="fishing-board__item">BE THE FIRST TO RECORD A SCORE!</li>';
+      return;
+    }
+    const medals = ['🥇', '🥈', '🥉'];
+    boardListEl.innerHTML = scores.slice(0, 6).map((item, idx) => {
+      const prefix = medals[idx] || `#${idx + 1}`;
+      const safeName = String(item.name || 'ANGLER').replace(/[<>"'&]/g, '');
+      const pts = parseInt(item.score, 10) || 0;
+      return `<li class="fishing-board__item ${idx === 0 ? 'fishing-board__item--1' : ''}">${prefix} ${safeName} <b>${pts}</b></li>`;
+    }).join('');
+  }
+
+  async function fetchLeaderboard() {
+    try {
+      const res = await fetch(CONFIG.leaderboardApiUrl, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.scores)) {
+          renderLeaderboard(data.scores);
+          return;
+        }
+      }
+    } catch (err) { /* fallback to direct Supabase public storage */ }
+
+    try {
+      const res = await fetch(`${CONFIG.supabaseUrl}/storage/v1/object/public/fishing-leaderboard/scores.json?t=${Date.now()}`);
+      if (res.ok) {
+        const list = await res.json();
+        renderLeaderboard(list);
+      }
+    } catch (err) { /* ignore */ }
+  }
+
+  async function savePlayerScore() {
+    if (!nameInputEl || !saveBtnEl) return;
+    const ar = document.documentElement.lang === 'ar';
+    const playerName = nameInputEl.value.trim();
+    const scoreToSave = Math.max(w.score, w.best);
+
+    if (!playerName) {
+      sound.play('form-error');
+      nameInputEl.focus();
+      w.statusPill.textContent = ar ? 'اكتب اسمك أولاً لحفظ السكور! ✍️' : 'ENTER YOUR NAME FIRST TO SAVE SCORE! ✍️';
+      return;
+    }
+    if (scoreToSave <= 0) {
+      sound.play('form-error');
+      w.statusPill.textContent = ar ? 'اصطد سمكة واحدة على الأقل قبل حفظ السكور! 🐟' : 'CATCH AT LEAST 1 FISH BEFORE SAVING! 🐟';
+      return;
+    }
+
+    try { localStorage.setItem('arqam-fish-player', playerName); } catch (err) { /* ignore */ }
+    saveBtnEl.disabled = true;
+    saveBtnEl.textContent = ar ? 'جارٍ الحفظ...' : 'SAVING...';
+
+    try {
+      const res = await fetch(CONFIG.leaderboardApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: playerName,
+          score: scoreToSave,
+          caught: Math.max(1, w.caught)
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data && Array.isArray(data.scores)) {
+        renderLeaderboard(data.scores);
+        sound.play('form-success');
+        w.statusPill.textContent = ar
+          ? `تم تسجيل سكورك (${scoreToSave}) باسم "${playerName}" في لوحة الشرف! 🏆`
+          : `SCORE (${scoreToSave}) SAVED FOR "${playerName}" ON LEADERBOARD! 🏆`;
+      } else {
+        throw new Error('Save failed');
+      }
+    } catch (err) {
+      sound.play('form-error');
+      w.statusPill.textContent = ar ? 'تعذر الاتصال، حاول مرة أخرى' : 'COULD NOT REACH SERVER, TRY AGAIN';
+    } finally {
+      saveBtnEl.disabled = false;
+      saveBtnEl.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
+    }
+  }
+
+  if (saveBtnEl) {
+    saveBtnEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      haptic(14);
+      savePlayerScore();
+    });
+  }
+  if (nameInputEl) {
+    nameInputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        savePlayerScore();
+      }
+    });
+  }
+
+  fetchLeaderboard();
 
   function spawnPopup(screenX, screenY, text, color) {
     const pop = document.createElement('div');

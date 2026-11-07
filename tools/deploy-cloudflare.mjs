@@ -36,7 +36,7 @@ function main() {
         '--branch=main',
         '--commit-dirty=true'
       ],
-      { stdio: 'inherit', env: process.env }
+      { stdio: 'inherit', cwd: ROOT, env: process.env }
     );
   } finally {
     fs.rmSync(stageDir, { recursive: true, force: true });
