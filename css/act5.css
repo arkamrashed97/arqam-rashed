@@ -98,18 +98,22 @@ html[dir="rtl"] .form-group select{background-position:left 14px center}
       rgba(3,25,28,.96) 62%,
       rgba(2,12,18,.98) 100%);
   border-top:1px solid rgba(16,185,129,.28);
-  touch-action:none;
+  touch-action:pan-y;
   user-select:none;
 }
 .fishing-hud{
   position:relative;z-index:4;
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;
+  display:flex;flex-direction:column;gap:10px;
   width:100%;
   padding:12px 16px;
-  background:rgba(5,17,14,.92);
+  background:rgba(5,17,14,.94);
   font:500 10.5px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   color:#E2F8F0;
   box-sizing:border-box;
+}
+.fishing-hud__row{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;
+  width:100%;
 }
 .fishing-hud__stats{
   display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;
@@ -119,10 +123,41 @@ html[dir="rtl"] .form-group select{background-position:left 14px center}
 .fishing-stat b{color:#10B981;font-size:13px;font-weight:700}
 .fishing-stat--combo b{color:#FBBF24}
 .fishing-hud__actions{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+
+/* 3-Step Visual Micro-Guide Bar */
+.fishing-guide-steps{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  width:100%;
+}
+.fishing-step{
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(16,185,129,.18);
+  font:600 9.5px/1.2 var(--mono);color:rgba(167,243,208,.6);
+  letter-spacing:.06em;text-transform:uppercase;
+  transition:all .22s ease;
+  text-align:center;
+}
+.fishing-step .step-num{font-size:8.5px;color:rgba(167,243,208,.4)}
+.fishing-step.is-active{
+  background:rgba(16,185,129,.18);border-color:#10B981;color:#E2F8F0;
+  box-shadow:0 0 12px rgba(16,185,129,.22);
+}
+.fishing-step.is-active .step-num{color:#34D399}
+.fishing-step.is-pulse{
+  background:rgba(245,158,11,.24);border-color:#FBBF24;color:#FDE047;
+  animation:bitePulse .38s ease-in-out infinite alternate;
+}
+.fishing-step.is-pulse .step-num{color:#FDE047}
+
+.fishing-status-row{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  width:100%;
 }
 .fishing-catch-pill{
-  padding:4px 10px;border-radius:2px;
+  width:100%;text-align:center;
+  padding:5px 10px;border-radius:2px;
   background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.35);
   color:#A7F3D0;font-size:9.5px;
   transition:background .18s,border-color .18s,color .18s;
@@ -142,17 +177,136 @@ html[dir="rtl"] .form-group select{background-position:left 14px center}
   0%{transform:scale(1)}
   100%{transform:scale(1.04)}
 }
+.fishing-tool-btn{
+  min-height:34px;padding:0 12px;
+  background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.42);
+  color:#A7F3D0;font:600 9.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  transition:background .2s,transform .15s,border-color .2s;
+  cursor:pointer;
+}
+.fishing-tool-btn:hover,.fishing-tool-btn:focus-visible{
+  background:rgba(16,185,129,.28);border-color:#10B981;transform:translateY(-1px);
+}
 .fishing-bait-btn{
   min-height:34px;padding:0 12px;
   background:rgba(245,158,11,.16);border:1px solid rgba(251,191,36,.55);
   color:#FDE68A;font:600 9.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
   transition:background .2s,transform .15s,border-color .2s;
+  cursor:pointer;
 }
 .fishing-bait-btn:hover:not(:disabled),.fishing-bait-btn:focus-visible:not(:disabled){
   background:rgba(245,158,11,.3);border-color:#FBBF24;transform:translateY(-1px);
 }
 .fishing-bait-btn:disabled{
   opacity:.45;cursor:not-allowed;border-color:rgba(255,255,255,.12);
+}
+
+/* Dedicated Mobile & Cross-Platform Tactical Arcade Action Bar */
+.fishing-action-bar{
+  position:relative;z-index:4;
+  width:100%;padding:10px 16px;
+  background:rgba(5,17,14,.96);
+  border-top:1px solid rgba(16,185,129,.25);
+  box-sizing:border-box;
+}
+.fishing-action-btn{
+  width:100%;min-height:52px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 18px;border-radius:2px;
+  font:700 12px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;outline:none;user-select:none;touch-action:manipulation;
+  transition:background .2s,border-color .2s,box-shadow .2s,transform .12s;
+}
+.fishing-action-btn:active{transform:scale(.985)}
+.fishing-action-btn.state-idle{
+  background:rgba(16,185,129,.16);border:1px solid rgba(16,185,129,.45);
+  color:#A7F3D0;
+}
+.fishing-action-btn.state-idle:hover{
+  background:rgba(16,185,129,.26);border-color:#10B981;
+}
+.fishing-action-btn.state-curious{
+  background:rgba(245,158,11,.16);border:1px solid rgba(251,191,36,.5);
+  color:#FDE68A;
+}
+.fishing-action-btn.state-nibble{
+  background:rgba(245,158,11,.24);border:1px solid #FBBF24;
+  color:#FDE047;
+  animation:bitePulse .55s ease-in-out infinite alternate;
+}
+.fishing-action-btn.state-bite{
+  background:#F59E0B;border:2px solid #FDE047;
+  color:#041814;font-size:13px;
+  box-shadow:0 0 24px rgba(245,158,11,.65),inset 0 0 14px rgba(255,255,255,.4);
+  animation:bitePulse .24s ease-in-out infinite alternate;
+}
+.fishing-action-btn.state-fight{
+  background:#10B981;border:2px solid #34D399;
+  color:#031410;font-size:12.5px;
+  box-shadow:0 0 24px rgba(16,185,129,.6);
+  animation:bitePulse .22s ease-in-out infinite alternate;
+}
+.fishing-action-btn.state-spook{
+  background:rgba(239,68,68,.2);border:1px solid #EF4444;
+  color:#FCA5A5;
+}
+
+/* Fish Dex Drawer Modal */
+.fish-dex-drawer{
+  position:absolute;inset:0;z-index:10;
+  background:rgba(4,14,12,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  display:flex;flex-direction:column;
+  padding:16px 20px;box-sizing:border-box;
+  overflow-y:auto;
+  border:1px solid #10B981;
+  animation:dexOpen .25s cubic-bezier(.16,1,.3,1) forwards;
+}
+.fish-dex-drawer[hidden]{display:none}
+@keyframes dexOpen{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fish-dex-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:12px;border-bottom:1px solid rgba(16,185,129,.25);
+  margin-bottom:14px;
+}
+.fish-dex-title{
+  color:#10B981;font:700 12px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+}
+.fish-dex-close{
+  background:none;border:none;color:#A7F3D0;font-size:18px;line-height:1;
+  cursor:pointer;padding:4px 8px;
+}
+.fish-dex-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;
+}
+.fish-dex-card{
+  display:flex;flex-direction:column;gap:6px;padding:10px 12px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(16,185,129,.22);
+}
+.fish-dex-card__head{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+}
+.fish-dex-card__name{
+  font:700 10.5px/1.2 var(--mono);color:#E2F8F0;
+}
+.fish-dex-card__pts{
+  font:700 11px/1 var(--mono);color:#FBBF24;
+}
+.fish-dex-card__meta{
+  display:flex;align-items:center;justify-content:space-between;
+  font:500 9px/1 var(--mono);color:rgba(167,243,208,.6);
+}
+
+@media (max-width: 640px) {
+  .fishing-hud{padding:10px 12px}
+  .fishing-hud__stats{gap:8px 12px}
+  .fishing-guide-steps{grid-template-columns:1fr 1fr 1fr;gap:4px}
+  .fishing-step{padding:5px 4px;font-size:8px;gap:2px}
+  .fishing-step .step-num{display:none}
+  .fishing-action-bar{padding:8px 12px}
+  .fishing-action-btn{min-height:52px;font-size:11px;padding:8px 10px}
 }
 .fishing-hud__row{
   display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;

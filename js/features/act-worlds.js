@@ -6,11 +6,12 @@ import { CONFIG } from '../config.js';
 
 /**
  * Act V Tactical Cyber-Lagoon Fishing Arena:
- *  - High-intelligence fish AI (spook detection, lure twitching, boredom, fake-out nibbles)
- *  - Dynamic Strike Reflex Window (0.62s to 0.95s based on fish intelligence)
- *  - Interactive Reel Fight & Line Tension mechanic for mid & high-tier species
- *  - Bait cooldown timer (15s)
- *  - Acts I–IV flying SVGs removed for pure 3D WebGL immersion
+ *  - Mobile-Optimized One-Thumb Arcade Action Bar (#fish-action-btn)
+ *  - 3-Step Visual Micro-Guide Bar (Cast -> Wait -> Strike & Reel)
+ *  - Interactive Cyber Fish Dex modal drawer
+ *  - High-intelligence fish AI (spook detection, lure twitching, fake-out nibbles)
+ *  - Line tension fight mechanic for mid/high tier fish
+ *  - Pan-safe touch interaction (no trapped page scrolling on mobile)
  */
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -29,6 +30,10 @@ const FISH_SPECIES = [
     strikeWindow: 0.95,
     targetNibbles: 1,
     fightDuration: 0,
+    zoneEn: '05M SHALLOW',
+    zoneAr: 'السطح 5 متر',
+    cautionEn: 'LOW CAUTION',
+    cautionAr: 'حذر منخفض',
     body: '#38BDF8',
     belly: '#E0F2FE',
     fin: '#0284C7',
@@ -47,6 +52,10 @@ const FISH_SPECIES = [
     strikeWindow: 0.88,
     targetNibbles: 1,
     fightDuration: 0,
+    zoneEn: '05M SHALLOW',
+    zoneAr: 'السطح 5 متر',
+    cautionEn: 'AGILE HUNTER',
+    cautionAr: 'مفترس سريع',
     body: '#94A3B8',
     belly: '#F1F5F9',
     fin: '#10B981',
@@ -65,6 +74,10 @@ const FISH_SPECIES = [
     strikeWindow: 0.80,
     targetNibbles: 2,
     fightDuration: 2.0,
+    zoneEn: '15M MID-WATER',
+    zoneAr: 'الوسط 15 متر',
+    cautionEn: 'MEDIUM CAUTION',
+    cautionAr: 'حذر متوسط',
     body: '#0EA5E9',
     belly: '#7DD3FC',
     fin: '#F59E0B',
@@ -83,6 +96,10 @@ const FISH_SPECIES = [
     strikeWindow: 0.74,
     targetNibbles: 2,
     fightDuration: 2.6,
+    zoneEn: '15M MID-WATER',
+    zoneAr: 'الوسط 15 متر',
+    cautionEn: 'ALERT & SMART',
+    cautionAr: 'ذكي ونبيه',
     body: '#F59E0B',
     belly: '#FEF3C7',
     fin: '#D97706',
@@ -101,6 +118,10 @@ const FISH_SPECIES = [
     strikeWindow: 0.68,
     targetNibbles: 3,
     fightDuration: 3.2,
+    zoneEn: '30M ABYSSAL',
+    zoneAr: 'الأعماق 30 متر',
+    cautionEn: 'TACTICAL LURKER',
+    cautionAr: 'كمين الأعماق',
     body: '#06B6D4',
     belly: '#67E8F9',
     fin: '#00E5FF',
@@ -120,6 +141,10 @@ const FISH_SPECIES = [
     strikeWindow: 0.62,
     targetNibbles: 3,
     fightDuration: 3.8,
+    zoneEn: '30M ABYSSAL',
+    zoneAr: 'الأعماق 30 متر',
+    cautionEn: 'SOVEREIGN APEX',
+    cautionAr: 'ملك البحيرة',
     body: '#EAB308',
     belly: '#FEF9C3',
     fin: '#D4FF00',
@@ -142,20 +167,14 @@ function buildFishSvgMarkup(sp) {
     : '';
   return `
     <g class="fish-inner">
-      <!-- Sharp articulated tail fin -->
       <polygon class="fish-tail" points="-21,0 -37,-12 -31,0 -37,12" fill="${sp.fin}" stroke="#042F2E" stroke-width="1.3" stroke-linejoin="miter"/>
-      <!-- Angular dorsal & ventral fins -->
       <polygon points="-9,-10 1,-19 11,-9" fill="${sp.fin}"/>
       <polygon points="-6,9 2,17 9,8" fill="${sp.fin}"/>
-      <!-- Streamlined armored fish body -->
       <path d="M-23 0 L-12 -11 L11 -11 L25 0 L11 11 L-12 11 Z" fill="${sp.body}" stroke="#042F2E" stroke-width="1.5" stroke-linejoin="miter"/>
       <path d="M-14 4 L10 4 L21 0 L10 9 L-12 9 Z" fill="${sp.belly}" opacity="0.65"/>
-      <!-- Technical gill & armor stripes -->
       <path d="M-6 -9 L-3 0 L-6 9 M3 -9 L6 0 L3 9" stroke="${sp.stripe}" stroke-width="2" fill="none" opacity="0.8"/>
-      <!-- Precision eye -->
       <polygon points="12,-4 16,-4 17,-1.5 13,-1.5" fill="#F8FAFC"/>
       <rect x="14" y="-3.5" width="2" height="2" fill="#020617"/>
-      <!-- Spook badge -->
       <g class="fish-spook-badge" opacity="0" transform="translate(0 -22)">
         <circle cx="0" cy="0" r="8" fill="#EF4444"/>
         <text x="0" y="3.5" text-anchor="middle" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700">!</text>
@@ -178,11 +197,12 @@ function buildAct5FishingWorld() {
     bestScore = 0;
   }
 
-  // Create dedicated self-contained Tactical Fishing Arena (HUD + Lagoon Tank) above .inquiry-container
+  // Tactical Fishing Arena container
   const arena = document.createElement('div');
   arena.className = 'fishing-arena';
   arena.id = 'fishing-arena';
 
+  // HUD: Stats, Actions, 3-Step Guide, Status Pill
   const hud = document.createElement('div');
   hud.className = 'fishing-hud';
   hud.id = 'fishing-hud';
@@ -207,22 +227,33 @@ function buildAct5FishingWorld() {
         </div>
       </div>
       <div class="fishing-hud__actions">
-        <span class="fishing-catch-pill" id="fish-status-pill">TWITCH HOOK GENTLY TO ATTRACT FISH → STRIKE ON BITE! 🎣</span>
+        <button type="button" class="fishing-tool-btn" id="fish-dex-btn" data-cursor="DEX" data-sfx="none">📖 FISH DEX</button>
         <button type="button" class="fishing-bait-btn" id="fish-bait-btn" data-cursor="BAIT" data-sfx="none">DROP BAIT 🪱</button>
       </div>
     </div>
-    <div class="fishing-save-row">
-      <input type="text" class="fishing-name-input" id="fish-name-input" maxlength="22" placeholder="Your name to save score..." aria-label="Player name">
-      <button type="button" class="fishing-save-btn" id="fish-save-btn" data-cursor="SAVE" data-sfx="none">SAVE SCORE 🏆</button>
+
+    <!-- 3-Step Visual Micro-Guide Bar -->
+    <div class="fishing-guide-steps" id="fishing-guide-steps" role="navigation" aria-label="Fishing Tutorial Steps">
+      <div class="fishing-step is-active" id="step-cast" data-step="1">
+        <span class="step-num">01</span>
+        <span class="step-text" id="lbl-step-1">🎯 1. CAST HOOK</span>
+      </div>
+      <div class="fishing-step" id="step-wait" data-step="2">
+        <span class="step-num">02</span>
+        <span class="step-text" id="lbl-step-2">⏳ 2. WAIT BITE</span>
+      </div>
+      <div class="fishing-step" id="step-strike" data-step="3">
+        <span class="step-num">03</span>
+        <span class="step-text" id="lbl-step-3">⚡ 3. STRIKE & REEL</span>
+      </div>
     </div>
-    <div class="fishing-board" id="fishing-board">
-      <span class="fishing-board__title" id="fish-board-title">🏆 TOP ANGLERS:</span>
-      <ul class="fishing-board__list" id="fish-board-list">
-        <li class="fishing-board__item">LOADING...</li>
-      </ul>
+
+    <div class="fishing-status-row">
+      <span class="fishing-catch-pill" id="fish-status-pill">TAP WATER TO CAST HOOK → WAIT FOR BITE! 🎣</span>
     </div>
   `;
 
+  // Lagoon SVG Pond Tank
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'fishing-pond');
   svg.setAttribute('id', 'fishing-pond');
@@ -230,7 +261,6 @@ function buildAct5FishingWorld() {
   svg.setAttribute('preserveAspectRatio', 'none');
   svg.setAttribute('aria-hidden', 'true');
 
-  // Spawn 11 swimming fish distributed across depth lanes
   const fishes = [];
   let fishesMarkup = '';
   for (let i = 0; i < 11; i++) {
@@ -272,11 +302,9 @@ function buildAct5FishingWorld() {
       </linearGradient>
     </defs>
 
-    <!-- Upper Dock / Air Zone (y = 0..72) & Water Surface Line (y = 72) -->
     <line x1="0" y1="72" x2="1000" y2="72" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.65"/>
     <path id="pond-surface-wave" d="M0 72 Q 250 68 500 72 T 1000 72" stroke="#34D399" stroke-width="1.2" fill="none" opacity="0.5"/>
 
-    <!-- Depth Sonar Grid Lines & Labels -->
     <g stroke="rgba(16,185,129,0.14)" stroke-width="1" stroke-dasharray="4 6">
       <line x1="0" y1="155" x2="1000" y2="155"/>
       <line x1="0" y1="245" x2="1000" y2="245"/>
@@ -288,51 +316,91 @@ function buildAct5FishingWorld() {
       <text x="14" y="260">30M ABYSSAL ZONE (ANGLER / LEVIATHAN)</text>
     </g>
 
+    <!-- Initial Touch/Cast Tutorial Hint -->
+    <g id="pond-cast-hint" transform="translate(520 180)" opacity="0.9">
+      <circle cx="0" cy="0" r="28" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4 4" fill="rgba(16,185,129,0.12)"/>
+      <text x="0" y="4" text-anchor="middle" fill="#A7F3D0" font-family="IBM Plex Mono, monospace" font-size="9" font-weight="700">👆 TAP WATER</text>
+    </g>
+
     <g id="pond-ripples"></g>
     <g id="pond-fishes">${fishesMarkup}</g>
 
-    <!-- Dock-mounted Tactical Carbon Rod, Surface Bobber, Monofilament Line & Submerged Hook -->
     <g id="pond-rig">
       <circle id="pond-lure-aura" cx="520" cy="195" r="46" fill="url(#lagoon-glow)"/>
-      <!-- Strike tension ring around hook (visible when a fish is biting!) -->
       <circle id="pond-strike-ring" cx="520" cy="195" r="24" stroke="#FBBF24" stroke-width="2.2" stroke-dasharray="6 3" fill="rgba(251,191,36,0.12)" opacity="0"/>
-      <!-- Fishing line from rod tip through surface bobber down to submerged hook -->
       <path id="pond-line" d="M520 38 L520 72 L520 195" stroke="#A7F3D0" stroke-width="1.5" fill="none" opacity="0.88"/>
-      <!-- Dock-mounted carbon-steel rod above water surface -->
       <g id="pond-rod" transform="translate(520 38)">
         <path id="pond-rod-shaft" d="M88 -34 Q 42 -18 0 0" stroke="#051814" stroke-width="7" stroke-linecap="square" fill="none"/>
         <path id="pond-rod-core" d="M88 -34 Q 42 -18 0 0" stroke="#10B981" stroke-width="3.2" stroke-linecap="square" fill="none"/>
         <path d="M88 -34 L60 -23" stroke="#94A3B8" stroke-width="4.5" stroke-linecap="square"/>
         <rect x="-2.5" y="-2.5" width="5" height="5" fill="#051814" stroke="#10B981" stroke-width="1.2"/>
       </g>
-      <!-- Surface Bobber floating at y = 72 -->
       <g id="pond-bobber" transform="translate(520 72)">
         <polygon points="0,-9 5,0 0,9 -5,0" fill="#091915" stroke="#10B981" stroke-width="1.5"/>
         <line x1="0" y1="-14" x2="0" y2="-9" stroke="#D4FF00" stroke-width="2"/>
       </g>
-      <!-- Submerged Metallic Grapple Hook at (hookX, hookY) -->
       <g id="pond-hook" transform="translate(520 195)">
         <polygon points="0,-12 3,-7 0,-2 -3,-7" fill="#10B981"/>
         <path d="M0 -2 L0 10 L-8 10 L-8 4 L-4.5 6.5" stroke="#F8FAFC" stroke-width="2.1" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
       </g>
-      <text id="pond-bite-alert" x="520" y="162" text-anchor="middle" fill="#FDE047" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1" opacity="0">⚡ STRIKE! CLICK / TAP NOW! ⚡</text>
+      <text id="pond-bite-alert" x="520" y="162" text-anchor="middle" fill="#FDE047" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1" opacity="0">⚡ STRIKE! TAP ACTION NOW! ⚡</text>
 
-      <!-- Dynamic Interactive Reel / Tension HUD for Fighting Fish -->
       <g id="pond-fight-hud" transform="translate(520 150)" opacity="0">
         <rect x="-70" y="-18" width="140" height="34" rx="4" fill="rgba(3,15,12,0.92)" stroke="#10B981" stroke-width="1.2"/>
         <text id="pond-fight-title" x="0" y="-6" text-anchor="middle" fill="#A7F3D0" font-family="IBM Plex Mono, monospace" font-size="8.5" font-weight="700" letter-spacing="1">REEL FIGHT // KEEP ROD CLOSE</text>
-        <!-- Reel Progress Bar (Green) -->
         <rect x="-62" y="0" width="124" height="4" rx="1.5" fill="rgba(255,255,255,0.1)"/>
         <rect id="pond-fight-reel-fill" x="-62" y="0" width="20" height="4" rx="1.5" fill="#10B981"/>
-        <!-- Line Tension Bar (Yellow/Red) -->
         <rect x="-62" y="7" width="124" height="3" rx="1" fill="rgba(255,255,255,0.08)"/>
         <rect id="pond-fight-tension-fill" x="-62" y="7" width="30" height="3" rx="1" fill="url(#fight-tension-grad)"/>
       </g>
     </g>
   `;
 
+  // Dedicated Tactical Arcade Action Bar
+  const actionBar = document.createElement('div');
+  actionBar.className = 'fishing-action-bar';
+  actionBar.innerHTML = `
+    <button type="button" class="fishing-action-btn state-idle" id="fish-action-btn" data-cursor="STRIKE">
+      <span class="fishing-action-btn__icon" id="fish-action-icon">🎣</span>
+      <span class="fishing-action-btn__text" id="fish-action-text">TAP WATER TO CAST HOOK</span>
+    </button>
+  `;
+
+  // Save row & leaderboard
+  const footerWrap = document.createElement('div');
+  footerWrap.className = 'fishing-footer-wrap';
+  footerWrap.innerHTML = `
+    <div class="fishing-save-row">
+      <input type="text" class="fishing-name-input" id="fish-name-input" maxlength="22" placeholder="Your name to save score..." aria-label="Player name">
+      <button type="button" class="fishing-save-btn" id="fish-save-btn" data-cursor="SAVE" data-sfx="none">SAVE SCORE 🏆</button>
+    </div>
+    <div class="fishing-board" id="fishing-board">
+      <span class="fishing-board__title" id="fish-board-title">🏆 TOP ANGLERS:</span>
+      <ul class="fishing-board__list" id="fish-board-list">
+        <li class="fishing-board__item">LOADING...</li>
+      </ul>
+    </div>
+  `;
+
+  // Cyber Fish Dex Drawer Modal
+  const dexDrawer = document.createElement('div');
+  dexDrawer.className = 'fish-dex-drawer';
+  dexDrawer.id = 'fish-dex-drawer';
+  dexDrawer.hidden = true;
+  dexDrawer.setAttribute('aria-hidden', 'true');
+  dexDrawer.innerHTML = `
+    <div class="fish-dex-header">
+      <span class="fish-dex-title" id="fish-dex-title">📖 CYBER-LAGOON FISH DEX</span>
+      <button type="button" class="fish-dex-close" id="fish-dex-close" aria-label="Close Dex">✕</button>
+    </div>
+    <div class="fish-dex-grid" id="fish-dex-grid"></div>
+  `;
+
   arena.appendChild(hud);
   arena.appendChild(svg);
+  arena.appendChild(actionBar);
+  arena.appendChild(footerWrap);
+  arena.appendChild(dexDrawer);
 
   const inquiryContainer = sec.querySelector('.inquiry-container');
   if (inquiryContainer) {
@@ -346,12 +414,14 @@ function buildAct5FishingWorld() {
     arena,
     svg,
     hud,
+    actionBar,
     fishes,
     fishEls: Array.from(svg.querySelectorAll('.pond-fish')),
     tailEls: Array.from(svg.querySelectorAll('.fish-tail')),
     spookBadges: Array.from(svg.querySelectorAll('.fish-spook-badge')),
     ripplesEl: svg.querySelector('#pond-ripples'),
     surfaceWaveEl: svg.querySelector('#pond-surface-wave'),
+    castHintEl: svg.querySelector('#pond-cast-hint'),
     rodEl: svg.querySelector('#pond-rod'),
     rodShaftEl: svg.querySelector('#pond-rod-shaft'),
     rodCoreEl: svg.querySelector('#pond-rod-core'),
@@ -371,6 +441,14 @@ function buildAct5FishingWorld() {
     bestEl: document.getElementById('fish-best'),
     statusPill: document.getElementById('fish-status-pill'),
     baitBtn: document.getElementById('fish-bait-btn'),
+    dexBtn: document.getElementById('fish-dex-btn'),
+    dexDrawer,
+    actionBtn: document.getElementById('fish-action-btn'),
+    actionText: document.getElementById('fish-action-text'),
+    actionIcon: document.getElementById('fish-action-icon'),
+    stepCast: document.getElementById('step-cast'),
+    stepWait: document.getElementById('step-wait'),
+    stepStrike: document.getElementById('step-strike'),
     rodX: 520,
     rodY: 38,
     hookX: 520,
@@ -383,6 +461,7 @@ function buildAct5FishingWorld() {
     caught: 0,
     combo: 1,
     best: bestScore,
+    gameState: 'idle', // 'idle' | 'curious' | 'nibble' | 'bite' | 'fight' | 'spook'
     lastCatchTime: 0,
     lastHookMoveTime: 0,
     baitBoostTimer: 0,
@@ -399,6 +478,91 @@ function buildAct5FishingWorld() {
     w.statusPill.classList.toggle('is-fight', statusClass === 'fight');
   }
 
+  function setGameState(st, customEn = '', customAr = '') {
+    w.gameState = st;
+    const ar = document.documentElement.lang === 'ar';
+
+    if (w.stepCast) {
+      w.stepCast.classList.toggle('is-active', st === 'idle' || st === 'spook');
+      w.stepCast.classList.remove('is-pulse');
+    }
+    if (w.stepWait) {
+      w.stepWait.classList.toggle('is-active', st === 'curious' || st === 'nibble');
+      w.stepWait.classList.toggle('is-pulse', st === 'nibble');
+    }
+    if (w.stepStrike) {
+      w.stepStrike.classList.toggle('is-active', st === 'bite' || st === 'fight');
+      w.stepStrike.classList.toggle('is-pulse', st === 'bite' || st === 'fight');
+    }
+
+    if (w.actionBtn && w.actionText && w.actionIcon) {
+      w.actionBtn.className = `fishing-action-btn state-${st}`;
+      if (st === 'idle') {
+        w.actionIcon.textContent = '🎣';
+        w.actionText.textContent = ar ? 'انقر في المياه لرمي الصنارة' : 'TAP WATER TO CAST HOOK';
+        setStatus(
+          'TAP WATER TO CAST HOOK → WAIT FOR BITE! 🎣',
+          'انقر في المياه عند العمق المناسب لرمي الصنارة! 🎣',
+          ''
+        );
+      } else if (st === 'curious') {
+        w.actionIcon.textContent = '👀';
+        w.actionText.textContent = ar ? 'السمكة تقترب... استعد!' : 'FISH APPROACHING... GET READY!';
+        setStatus(
+          'A FISH NOTICED YOUR HOOK... KEEP IT STEADY! 👀',
+          'سمكة انتبهت للصنارة وتقترب... استعد! 👀',
+          ''
+        );
+      } else if (st === 'nibble') {
+        w.actionIcon.textContent = '⚠️';
+        w.actionText.textContent = ar ? 'نقرة تجريبية... انتظر الغمزة القوية!' : 'NIBBLE... WAIT FOR REAL BITE!';
+        setStatus(
+          customEn || 'NIBBLE... WAIT FOR REAL BITE!',
+          customAr || 'نقرة تجريبية... لا تسحب الآن!',
+          ''
+        );
+      } else if (st === 'bite') {
+        w.actionIcon.textContent = '⚡';
+        w.actionText.textContent = ar ? '⚡ غمزة قوية! اضغط هنا الآن للسحب! ⚡' : '⚡ BITE! TAP HERE TO STRIKE NOW! ⚡';
+        setStatus(
+          '⚡ BITE! TAP ACTION BUTTON OR HOOK NOW! ⚡',
+          '⚡ غمزت بقوة! اضغط على زر السحب الآن! ⚡',
+          'bite'
+        );
+      } else if (st === 'fight') {
+        w.actionIcon.textContent = '🔄';
+        w.actionText.textContent = ar ? '🔄 اضغط بسرعة لسحب الخيط ومقاومتها! 🔄' : '🔄 TAP RAPIDLY TO REEL & FIGHT! 🔄';
+        setStatus(
+          '🎣 REEL FIGHT! TAP RAPIDLY & KEEP ROD CLOSE! 🎣',
+          '🎣 معركة شد! اضغط بسرعة وخلك قريب من السمكة! 🎣',
+          'fight'
+        );
+      } else if (st === 'spook') {
+        w.actionIcon.textContent = '❗';
+        w.actionText.textContent = ar ? 'فزعت السمكة! أعد المحاولة بهدوء' : 'SPOOKED! RE-CAST HOOK GENTLY';
+        setStatus(customEn, customAr, 'spook');
+      }
+    }
+  }
+
+  function renderFishDex() {
+    const grid = document.getElementById('fish-dex-grid');
+    if (!grid) return;
+    const ar = document.documentElement.lang === 'ar';
+    grid.innerHTML = FISH_SPECIES.map((sp) => `
+      <div class="fish-dex-card" style="border-left: 3px solid ${sp.body}; border-right: 3px solid ${sp.body};">
+        <div class="fish-dex-card__head">
+          <span class="fish-dex-card__name">${ar ? sp.nameAr : sp.nameEn}</span>
+          <span class="fish-dex-card__pts">${sp.pts} PTS</span>
+        </div>
+        <div class="fish-dex-card__meta">
+          <span>${ar ? sp.zoneAr : sp.zoneEn}</span>
+          <span>${ar ? sp.cautionAr : sp.cautionEn}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
   function syncHudLanguage() {
     const ar = document.documentElement.lang === 'ar';
     const lblScore = document.getElementById('fish-lbl-score');
@@ -406,29 +570,57 @@ function buildAct5FishingWorld() {
     const lblCombo = document.getElementById('fish-lbl-combo');
     const lblBest = document.getElementById('fish-lbl-best');
     const baitBtn = document.getElementById('fish-bait-btn');
+    const dexBtn = document.getElementById('fish-dex-btn');
+    const dexTitle = document.getElementById('fish-dex-title');
+    const lblStep1 = document.getElementById('lbl-step-1');
+    const lblStep2 = document.getElementById('lbl-step-2');
+    const lblStep3 = document.getElementById('lbl-step-3');
     const nameInput = document.getElementById('fish-name-input');
     const saveBtn = document.getElementById('fish-save-btn');
     const boardTitle = document.getElementById('fish-board-title');
+
     if (lblScore) lblScore.textContent = ar ? 'نقاط الصيد' : 'LAGOON SCORE';
     if (lblCaught) lblCaught.textContent = ar ? 'السمك المصطاد' : 'CAUGHT';
     if (lblCombo) lblCombo.textContent = ar ? 'المضاعف' : 'COMBO';
     if (lblBest) lblBest.textContent = ar ? 'أعلى سكور' : 'BEST';
+    if (dexBtn) dexBtn.textContent = ar ? '📖 دليل الأسماك' : '📖 FISH DEX';
+    if (dexTitle) dexTitle.textContent = ar ? '📖 دليل كائنات البحيرة السيبرانية' : '📖 CYBER-LAGOON FISH DEX';
+    if (lblStep1) lblStep1.textContent = ar ? '🎯 1. ارمي الصنارة' : '🎯 1. CAST HOOK';
+    if (lblStep2) lblStep2.textContent = ar ? '⏳ 2. انتظر الغمزة' : '⏳ 2. WAIT BITE';
+    if (lblStep3) lblStep3.textContent = ar ? '⚡ 3. اسحب فوراً' : '⚡ 3. STRIKE & REEL';
+
     if (baitBtn && w.baitCooldownTimer <= 0) {
       baitBtn.textContent = ar ? 'رمي طُعم للسمك 🪱' : 'DROP BAIT 🪱';
     }
     if (nameInput) nameInput.placeholder = ar ? 'اكتب اسمك فقط لحفظ السكور...' : 'Your name to save score...';
     if (saveBtn) saveBtn.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
     if (boardTitle) boardTitle.textContent = ar ? '🏆 لوحة المتصدرين:' : '🏆 TOP ANGLERS:';
-    if (w.caught === 0) {
-      setStatus(
-        'TWITCH HOOK GENTLY TO ATTRACT FISH → STRIKE ON BITE! 🎣',
-        'حرّك الصنارة بهدوء لجذب السمك ← اغمز واضغط فوراً! 🎣',
-        ''
-      );
-    }
+
+    renderFishDex();
+    setGameState(w.gameState);
   }
   syncHudLanguage();
   window.addEventListener('arqam:lang', syncHudLanguage);
+
+  // Dex modal toggle
+  if (w.dexBtn) {
+    w.dexBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      haptic(10);
+      const isHidden = dexDrawer.hidden;
+      dexDrawer.hidden = !isHidden;
+      dexDrawer.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+      if (isHidden) renderFishDex();
+    });
+  }
+  const dexCloseBtn = document.getElementById('fish-dex-close');
+  if (dexCloseBtn) {
+    dexCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dexDrawer.hidden = true;
+      dexDrawer.setAttribute('aria-hidden', 'true');
+    });
+  }
 
   const nameInputEl = document.getElementById('fish-name-input');
   const saveBtnEl = document.getElementById('fish-save-btn');
@@ -462,7 +654,7 @@ function buildAct5FishingWorld() {
           return;
         }
       }
-    } catch (err) { /* fallback to direct Supabase public storage */ }
+    } catch (err) { /* fallback */ }
 
     try {
       const res = await fetch(`${CONFIG.supabaseUrl}/storage/v1/object/public/fishing-leaderboard/scores.json?t=${Date.now()}`);
@@ -542,7 +734,6 @@ function buildAct5FishingWorld() {
     });
   }
 
-  // Lazy-fetch leaderboard only when Act V (#inquiry) approaches viewport
   if ('IntersectionObserver' in window) {
     const lbObserver = new IntersectionObserver((entries) => {
       for (let i = 0; i < entries.length; i++) {
@@ -600,6 +791,7 @@ function buildAct5FishingWorld() {
       `صيد ناجح! تم سحب ${fishName} (+${gained} نقطة)! 🐟`,
       ''
     );
+    setGameState('idle');
 
     haptic(24);
     sound.play('reel-in');
@@ -622,9 +814,8 @@ function buildAct5FishingWorld() {
     w.comboEl.textContent = 'x1';
     sound.play('water-plop');
     w.ripples.push({ x: f.x, y: f.y, age: 0, color: '#EF4444' });
-    setStatus(reasonEn, reasonAr, 'spook');
+    setGameState('spook', reasonEn, reasonAr);
 
-    // Spook other nearby fish within 75px radius
     w.fishes.forEach((other) => {
       if (other !== f && (other.state === 'swim' || other.state === 'curious' || other.state === 'nibble')) {
         const d = Math.hypot(other.x - f.x, other.y - f.y);
@@ -638,52 +829,54 @@ function buildAct5FishingWorld() {
     });
   }
 
-  // Pointer move inside #fishing-pond steers hook and tracks motion speed
-  svg.addEventListener('pointermove', (e) => {
+  // Tapping or dragging inside the pond smoothly places the hook and dismisses tutorial hint
+  const handlePondPointer = (clientX, clientY) => {
     const rect = w.svg.getBoundingClientRect();
-    const px = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
-    const py = clamp(((e.clientY - rect.top) / Math.max(1, rect.height)) * 350, 92, 332);
-    w.targetX = px;
-    w.targetY = py;
-  });
+    const px = clamp(((clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
+    const py = clamp(((clientY - rect.top) / Math.max(1, rect.height)) * 350, 92, 332);
 
-  // Clicking or tapping inside #fishing-pond:
-  // - If fish is in 'bite', strikes it!
-  // - If fish is only in 'nibble', spooks the fish (pulled too early)!
-  // - If fish is in 'fight', helps reel it in faster!
-  // - Otherwise casts the hook to the clicked spot!
-  svg.addEventListener('pointerdown', (e) => {
-    const rect = w.svg.getBoundingClientRect();
-    const px = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
-    const py = clamp(((e.clientY - rect.top) / Math.max(1, rect.height)) * 350, 92, 332);
-
-    const fightingFish = w.fishes.find((f) => f.state === 'fight');
-    if (fightingFish) {
-      // Pump the reel
-      fightingFish.reelProgress += 0.08;
-      fightingFish.tension = Math.min(0.95, fightingFish.tension + 0.05);
-      haptic(12);
-      sound.play('reel-in', { rate: 1.15 });
-      return;
+    if (w.castHintEl) {
+      w.castHintEl.setAttribute('opacity', '0');
     }
 
+    w.targetX = px;
+    w.targetY = py;
+    w.lastHookMoveTime = performance.now() * 0.001;
+    return { px, py };
+  };
+
+  svg.addEventListener('pointermove', (e) => {
+    if (e.buttons > 0 || e.pointerType === 'mouse') {
+      handlePondPointer(e.clientX, e.clientY);
+    }
+  }, { passive: true });
+
+  svg.addEventListener('pointerdown', (e) => {
+    const { px, py } = handlePondPointer(e.clientX, e.clientY);
+
+    // If a fish is currently in bite, strike it!
     const bitingFish = w.fishes.find((f) => f.state === 'bite');
     if (bitingFish) {
       if (bitingFish.fightDuration > 0) {
         bitingFish.state = 'fight';
         bitingFish.timer = 0;
-        bitingFish.reelProgress = 0.15;
+        bitingFish.reelProgress = 0.2;
         bitingFish.tension = 0.25;
         haptic(22);
         sound.play('fish-bite');
-        setStatus(
-          '🎣 FISH HOOKED! KEEP YOUR ROD ON IT TO REEL IT IN! 🎣',
-          '🎣 علقت السمكة! تحكم بالصنارة وخلك قريب منها لسحبها! 🎣',
-          'fight'
-        );
+        setGameState('fight');
       } else {
         catchFish(bitingFish, e.clientX, e.clientY);
       }
+      return;
+    }
+
+    const fightingFish = w.fishes.find((f) => f.state === 'fight');
+    if (fightingFish) {
+      fightingFish.reelProgress += 0.12;
+      fightingFish.tension = Math.max(0.05, fightingFish.tension - 0.08);
+      haptic(14);
+      sound.play('reel-in', { rate: 1.2 });
       return;
     }
 
@@ -697,15 +890,11 @@ function buildAct5FishingWorld() {
       return;
     }
 
-    // Cast hook to clicked spot in water
+    // Direct cast to clicked water location
     const castDist = Math.hypot(px - w.hookX, py - w.hookY);
-    w.targetX = px;
-    w.targetY = py;
     w.hookX = px;
     w.hookY = py;
-    w.lastHookMoveTime = performance.now() * 0.001;
 
-    // Check if cast violently right on top of a swimming fish (spook!)
     w.fishes.forEach((f) => {
       if ((f.state === 'swim' || f.state === 'curious') && Math.hypot(px - f.x, py - f.y) < 32 && castDist > 120) {
         spookFish(f, 'CAST TOO CLOSE! HOOK SPLASHED RIGHT ON THE FISH! ❗', 'رميت الصنارة فوق السمكة مباشرة ففزعت! ❗');
@@ -716,8 +905,58 @@ function buildAct5FishingWorld() {
     w.ripples.push({ x: px, y: py, age: 0.08, color: '#34D399' });
     sound.play('cast-line');
     window.setTimeout(() => sound.play('water-plop'), 120);
+    setGameState('idle');
   });
 
+  // Dedicated Tactical Arcade Action Button
+  if (w.actionBtn) {
+    w.actionBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      const fightingFish = w.fishes.find((f) => f.state === 'fight');
+      if (fightingFish) {
+        fightingFish.reelProgress += 0.14;
+        fightingFish.tension = Math.max(0.05, fightingFish.tension - 0.09);
+        haptic(16);
+        sound.play('reel-in', { rate: 1.25 });
+        return;
+      }
+
+      const bitingFish = w.fishes.find((f) => f.state === 'bite');
+      if (bitingFish) {
+        if (bitingFish.fightDuration > 0) {
+          bitingFish.state = 'fight';
+          bitingFish.timer = 0;
+          bitingFish.reelProgress = 0.2;
+          bitingFish.tension = 0.25;
+          haptic(24);
+          sound.play('fish-bite');
+          setGameState('fight');
+        } else {
+          catchFish(bitingFish);
+        }
+        return;
+      }
+
+      const nibblingFish = w.fishes.find((f) => f.state === 'nibble');
+      if (nibblingFish) {
+        spookFish(
+          nibblingFish,
+          'TOO EARLY! YOU JERKED BEFORE IT COMMITTED! ⚠️',
+          'سحبت بدري قبل ما تغمز السمكة بقوة! ⚠️'
+        );
+        return;
+      }
+
+      // If idle, cast hook towards nearest swimming fish or twitch
+      haptic(10);
+      w.lastHookMoveTime = performance.now() * 0.001;
+      sound.play('water-plop', { rate: 1.1, gain: 0.35 });
+      w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#34D399' });
+    });
+  }
+
+  // Also allow clicking the status pill on mobile
   if (w.statusPill) {
     w.statusPill.addEventListener('click', (e) => {
       const bitingFish = w.fishes.find((f) => f.state === 'bite');
@@ -726,10 +965,11 @@ function buildAct5FishingWorld() {
         if (bitingFish.fightDuration > 0) {
           bitingFish.state = 'fight';
           bitingFish.timer = 0;
-          bitingFish.reelProgress = 0.15;
+          bitingFish.reelProgress = 0.2;
           bitingFish.tension = 0.25;
           haptic(22);
           sound.play('fish-bite');
+          setGameState('fight');
         } else {
           catchFish(bitingFish, e.clientX, e.clientY);
         }
@@ -765,6 +1005,7 @@ function buildAct5FishingWorld() {
   w.catchFish = catchFish;
   w.spookFish = spookFish;
   w.setStatus = setStatus;
+  w.setGameState = setGameState;
   w.inView = false;
   w.lastRippleMarkup = '';
   return w;
@@ -775,7 +1016,7 @@ function updateAct5FishingWorld(w, dt, t) {
   const rect = w.svg.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
-  // Track bait timers & live cooldown countdown on button
+  // Track bait timers & countdown
   if (w.baitBoostTimer > 0) w.baitBoostTimer = Math.max(0, w.baitBoostTimer - dt);
   if (w.baitCooldownTimer > 0) {
     w.baitCooldownTimer = Math.max(0, w.baitCooldownTimer - dt);
@@ -791,7 +1032,7 @@ function updateAct5FishingWorld(w, dt, t) {
     w.baitBtn.textContent = ar ? 'رمي طُعم للسمك 🪱' : 'DROP BAIT 🪱';
   }
 
-  // Calculate hook velocity and check for jerky sudden movements
+  // Hook speed calculations
   const dxHook = w.hookX - w.prevHookX;
   const dyHook = w.hookY - w.prevHookY;
   const hookDist = Math.hypot(dxHook, dyHook);
@@ -800,7 +1041,7 @@ function updateAct5FishingWorld(w, dt, t) {
   w.prevHookX = w.hookX;
   w.prevHookY = w.hookY;
 
-  // Smooth hook & rod interpolation
+  // Smooth interpolation
   w.rodX = lerp(w.rodX, w.targetX, Math.min(1, dt * 14));
   w.hookX = lerp(w.hookX, w.targetX, Math.min(1, dt * 7.5));
   w.hookY = lerp(w.hookY, w.targetY, Math.min(1, dt * 7.5));
@@ -813,12 +1054,15 @@ function updateAct5FishingWorld(w, dt, t) {
 
   let activeFish = w.fishes.find((f) => f.state === 'curious' || f.state === 'nibble' || f.state === 'bite' || f.state === 'fight');
 
+  if (!activeFish && w.gameState !== 'idle' && w.gameState !== 'spook') {
+    w.setGameState('idle');
+  }
+
   w.fishes.forEach((f, i) => {
     const tailSpeed = f.state === 'fight' ? 26 : f.state === 'bite' ? 22 : f.state === 'spooked' ? 24 : f.state === 'nibble' ? 14 : 8;
     const tailAngle = Math.sin(t * tailSpeed + f.phase) * 16;
     w.tailEls[i].setAttribute('transform', `rotate(${tailAngle.toFixed(1)} -21 0)`);
 
-    // Spook badge visibility
     if (w.spookBadges[i]) {
       w.spookBadges[i].setAttribute('opacity', f.state === 'spooked' ? '1' : '0');
     }
@@ -845,7 +1089,7 @@ function updateAct5FishingWorld(w, dt, t) {
       return;
     }
 
-    // 2. SPOOKED: Fast dart away with red ripple
+    // 2. SPOOKED: Fast dart away
     if (f.state === 'spooked') {
       f.timer -= dt;
       f.x += f.vx * dt;
@@ -855,6 +1099,7 @@ function updateAct5FishingWorld(w, dt, t) {
         if (f.x < -80) { f.x = -50; f.dir = 1; }
         if (f.x > 1080) { f.x = 1050; f.dir = -1; }
         f.vx = f.dir * f.sp.speed;
+        if (activeFish === f) w.setGameState('idle');
       }
       const tilt = clamp(f.vy * 0.18, -18, 18);
       w.fishEls[i].setAttribute(
@@ -868,7 +1113,7 @@ function updateAct5FishingWorld(w, dt, t) {
     const dy = w.hookY - f.y;
     const dist = Math.hypot(dx, dy);
 
-    // Spook check during swimming/curious if player moves hook violently nearby
+    // Spook check if hook jerked violently near fish
     if ((f.state === 'swim' || f.state === 'curious') && dist < 125 && hookSpeed > 210) {
       w.spookFish(f, 'SPOOKED! HOOK MOVED TOO FAST NEAR THE FISH! ❗', 'فزعت السمكة! حركت الصنارة بسرعة مبالغ فيها! ❗');
       return;
@@ -877,12 +1122,10 @@ function updateAct5FishingWorld(w, dt, t) {
     // 3. FIGHT: Interactive line tension / reel minigame
     if (f.state === 'fight') {
       f.timer += dt;
-      // Fish thrashes and pulls away
       const thrashX = Math.sin(t * 12 + f.phase) * (f.sp.speed * 1.3);
       f.x += (thrashX + (f.x > w.hookX ? 35 : -35)) * dt;
       f.y = clamp(f.y + Math.cos(t * 16) * 45 * dt, 95, 330);
 
-      // Keeping hook close to fish reels it in; letting hook pull away snaps line!
       if (dist < 135) {
         f.reelProgress += dt / f.fightDuration;
         f.tension = Math.max(0.08, f.tension - dt * 0.35);
@@ -936,11 +1179,12 @@ function updateAct5FishingWorld(w, dt, t) {
       return;
     }
 
-    // 5. NIBBLE: Testing bait with fake-outs before real bite
+    // 5. NIBBLE: Testing bait before full bite
     if (f.state === 'nibble') {
       if (dist > 160) {
         f.state = 'swim';
         activeFish = null;
+        w.setGameState('idle');
       } else {
         f.timer += dt;
         const targetStandOff = 20 + Math.sin(f.timer * 10) * 8;
@@ -948,7 +1192,6 @@ function updateAct5FishingWorld(w, dt, t) {
         f.x = lerp(f.x, w.hookX - f.dir * targetStandOff, Math.min(1, dt * 6));
         f.y = lerp(f.y, w.hookY + Math.cos(f.timer * 7) * 4, Math.min(1, dt * 6));
 
-        // After tentative test period, commit or do another nibble
         if (f.timer >= 0.75) {
           f.nibbleCount++;
           if (f.nibbleCount >= f.targetNibbles) {
@@ -958,18 +1201,14 @@ function updateAct5FishingWorld(w, dt, t) {
             sound.play('fish-bite');
             w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#FBBF24' });
             w.ripples.push({ x: w.hookX, y: 72, age: 0, color: '#FDE047' });
-            w.setStatus(
-              '⚡ STRIKE! CLICK OR TAP NOW TO HOOK! ⚡',
-              '⚡ غمزت بقوة! اضغط الآن فوراً لتعليق السمكة! ⚡',
-              'bite'
-            );
+            w.setGameState('bite');
           } else {
             f.timer = 0;
             sound.play('water-plop', { rate: 1.25, gain: 0.35 });
-            w.setStatus(
-              `👀 NIBBLE (${f.nibbleCount}/${f.targetNibbles})... WAIT FOR THE REAL STRIKE!`,
-              `👀 نقرة خفيفة (${f.nibbleCount}/${f.targetNibbles})... لا تسحب حتى تغمز بقوة!`,
-              ''
+            w.setGameState(
+              'nibble',
+              `👀 NIBBLE (${f.nibbleCount}/${f.targetNibbles})... WAIT FOR REAL BITE!`,
+              `👀 نقرة تجريبية (${f.nibbleCount}/${f.targetNibbles})... لا تسحب الآن!`
             );
           }
         }
@@ -983,10 +1222,10 @@ function updateAct5FishingWorld(w, dt, t) {
 
     // 6. CURIOUS: Attracted by gentle twitching lure or bait boost
     if (f.state === 'curious') {
-      // Boredom check: if lure sits motionless for > 4.5s, fish gets bored and leaves
       if (t - w.lastHookMoveTime > 4.5 && w.baitBoostTimer <= 0) {
         f.state = 'swim';
         activeFish = null;
+        w.setGameState('idle');
         w.setStatus(
           'FISH LOST INTEREST IN STATIC LURE — TWITCH YOUR ROD! 🎣',
           'ملت السمكة من الصنارة الثابتة — حرّكها بخفة لتشجيعها! 🎣',
@@ -996,6 +1235,7 @@ function updateAct5FishingWorld(w, dt, t) {
         f.state = 'nibble';
         f.timer = 0;
         f.nibbleCount = 0;
+        w.setGameState('nibble');
       } else {
         f.dir = dx >= 0 ? 1 : -1;
         f.x = lerp(f.x, w.hookX, Math.min(1, dt * 2.5));
@@ -1017,11 +1257,7 @@ function updateAct5FishingWorld(w, dt, t) {
       f.state = 'curious';
       f.timer = 0;
       activeFish = f;
-      w.setStatus(
-        'A FISH NOTICED YOUR LURE... KEEP IT STEADY! 👀',
-        'سمكة انتبهت لحركة الطُعم... انتظر اقترابها! 👀',
-        ''
-      );
+      w.setGameState('curious');
     }
 
     f.vx = lerp(f.vx, f.dir * f.sp.speed, dt * 2);
