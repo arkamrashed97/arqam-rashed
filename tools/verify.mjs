@@ -201,27 +201,22 @@ async function verifyEdition(browser, baseUrl, route, label) {
     await page.waitForTimeout(200);
   }
 
-  // 6. Verify 5-Act Morphing SVG Cursor Variants, SVG Scene Worlds & Act V Fishing Game
+  // 6. Verify 5-Act Morphing SVG Cursor Variants, Clean Acts I–IV & Act V Fishing Arena
   const worldsCheck = await page.evaluate(() => ({
     cursorVariants: document.querySelectorAll('.cursor__variant').length,
     cursorActAtBottom: document.getElementById('cursor').getAttribute('data-cursor-act'),
-    act1Ships: document.querySelectorAll('.act1-ship').length,
-    act1Stars: document.querySelectorAll('.act1-star').length,
-    act2Planes: document.querySelectorAll('.act2-plane').length,
-    act3Drones: document.querySelectorAll('.act3-drone').length,
-    act4Boats: document.querySelectorAll('.act4-boat').length,
+    actWorldCount: document.querySelectorAll('.act-world').length,
     act5Fishes: document.querySelectorAll('.pond-fish').length,
-    hasFishingHud: Boolean(document.getElementById('fishing-hud'))
+    hasFishingHud: Boolean(document.getElementById('fishing-hud')),
+    hasFishingFightHud: Boolean(document.getElementById('pond-fight-hud'))
   }));
 
   assert.equal(worldsCheck.cursorVariants, 5, `${label}: must have 5 per-act cursor SVG variants`);
-  assert.ok(worldsCheck.act1Ships >= 4 && worldsCheck.act1Stars >= 20, `${label}: Act I spaceships & stars SVG must be mounted`);
-  assert.ok(worldsCheck.act2Planes >= 5, `${label}: Act II paper airplanes SVG must be mounted`);
-  assert.ok(worldsCheck.act3Drones >= 4, `${label}: Act III quantum drones SVG must be mounted`);
-  assert.ok(worldsCheck.act4Boats >= 4, `${label}: Act IV water lotus boats SVG must be mounted`);
+  assert.equal(worldsCheck.actWorldCount, 0, `${label}: flying 2D SVGs in Acts I–IV must be removed for pure 3D WebGL`);
   assert.equal(worldsCheck.act5Fishes, 11, `${label}: Act V fishing pond must have 11 swimming SVG fish`);
   assert.equal(worldsCheck.hasFishingHud, true, `${label}: Act V fishing HUD must be mounted`);
-  console.log(`  [PASS] 5 morphing cursor variants + 5 interactive SVG worlds + 11 swimming fish verified`);
+  assert.equal(worldsCheck.hasFishingFightHud, true, `${label}: Act V dynamic reel/tension HUD must be mounted`);
+  console.log(`  [PASS] 5 morphing cursor variants + 0 flying SVGs + Act V Tactical Fishing Arena (11 fish + fight HUD) verified`);
 
   assert.equal(pageErrors.length, 0, `${label}: Expected 0 pageerrors, got: ${pageErrors.join('; ')}`);
   assert.equal(failedLocalRequests.length, 0, `${label}: Expected 0 failed local requests, got: ${failedLocalRequests.join('; ')}`);

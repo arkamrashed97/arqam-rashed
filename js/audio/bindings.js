@@ -1,5 +1,5 @@
 import { sound } from './engine.js';
-import { ACT_BUTTON_SFX, ACT_TOUCH_SFX } from './manifest.js';
+import { ACT_BUTTON_SFX } from './manifest.js';
 import { haptic } from '../core/env.js';
 
 /**
@@ -42,60 +42,29 @@ export function initSoundUI() {
     });
   }
 
-  // Track pointer X across the viewport (mouse AND touch) for stereo placement + velocity audio
-  let lastX = window.innerWidth / 2;
-  let lastY = window.innerHeight / 2;
-  let lastT = performance.now();
-
-  const handleMove = (clientX, clientY, isTouch = false) => {
+  // Track pointer X across the viewport for clean stereo placement
+  const handleMove = (clientX) => {
     const nx = (clientX / Math.max(1, window.innerWidth)) * 2 - 1;
     sound.setPointer(nx);
-    if (!sound.enabled) return;
-
-    const now = performance.now();
-    const dt = Math.max(8, now - lastT);
-    const dx = clientX - lastX;
-    const dy = clientY - lastY;
-    const dist = Math.hypot(dx, dy);
-    const speed = dist / dt; // px per ms
-    lastX = clientX;
-    lastY = clientY;
-    lastT = now;
-
-    // Physical kinetic brush/ripple sound when sweeping the mouse or dragging finger briskly
-    const threshold = isTouch ? 1.15 : 2.1;
-    if (speed > threshold && dist > 28) {
-      const act = sound.currentAct;
-      const cue = ACT_TOUCH_SFX[act] || 'touch-act1';
-      const rate = Math.max(0.85, Math.min(1.22, 0.9 + speed * 0.08));
-      const gain = Math.max(0.45, Math.min(0.88, 0.45 + speed * 0.1));
-      sound.play(cue, { rate, gain, pan: nx * 0.65, cooldown: isTouch ? 360 : 480 });
-    }
   };
 
   window.addEventListener('pointermove', (e) => {
-    handleMove(e.clientX, e.clientY, e.pointerType === 'touch');
+    handleMove(e.clientX);
   }, { passive: true });
 
   window.addEventListener('touchmove', (e) => {
     if (e.touches && e.touches[0]) {
-      handleMove(e.touches[0].clientX, e.touches[0].clientY, true);
+      handleMove(e.touches[0].clientX);
     }
   }, { passive: true });
 
-  // Delegated click sound
+  // Delegated click sound — only on actual interactive elements
   document.addEventListener('click', (e) => {
     if (!(e.target instanceof Element)) return;
     if (e.target.closest('#sound-toggle, [data-lang-choice]')) return;
     const hit = e.target.closest('[data-sfx], ' + INTERACTIVE);
-    if (!hit) {
-      // Clicking/tapping empty space triggers subtle physical section touch cue
-      if (sound.enabled && sound.currentAct < 4) {
-        const cue = ACT_TOUCH_SFX[sound.currentAct] || 'touch-act1';
-        sound.play(cue, { gain: 0.72, rate: 0.96 + Math.random() * 0.08 });
-      }
-      return;
-    }
+    if (!hit) return; // Clean silence on empty page clicks
+
     const explicit = hit.getAttribute('data-sfx');
     if (explicit === 'none') return;
     if (explicit) {
@@ -106,12 +75,12 @@ export function initSoundUI() {
     sound.play(ACT_BUTTON_SFX[act] || 'btn-act1');
   }, true);
 
-  // Subtle hover cue on interactive targets
+  // Subtle hover cue on real links, buttons, and cluster cards only
   let lastHoverEl = null;
   document.addEventListener('pointerover', (e) => {
     if (e.pointerType && e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
     if (!(e.target instanceof Element)) return;
-    const hit = e.target.closest(INTERACTIVE);
+    const hit = e.target.closest('a, button, [role="button"], .cluster');
     if (!hit || hit === lastHoverEl) return;
     lastHoverEl = hit;
     sound.play('hover-soft');

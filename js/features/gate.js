@@ -54,46 +54,9 @@ export function initGate(pending) {
     if (first) first.focus({ preventScroll: true });
   }, 90);
 
-  // Distinct sonic interactions for every onboarding region
-  const topBar = gate.querySelector('.lang-gate__top');
-  if (topBar) {
-    topBar.addEventListener('pointerenter', () => playGateCue('gate-telemetry', { pan: -0.2 }));
-    topBar.addEventListener('pointerdown', (e) => {
-      haptic(6);
-      playGateCue('gate-telemetry', { pan: (e.clientX / window.innerWidth) * 2 - 1 });
-    });
-  }
-
-  const heroIntro = gate.querySelector('.lang-gate__center > div:first-child');
-  if (heroIntro) {
-    heroIntro.addEventListener('pointerenter', () => playGateCue('gate-monolith', { pan: -0.25 }));
-    heroIntro.addEventListener('pointerdown', (e) => {
-      haptic(8);
-      playGateCue('gate-monolith', { pan: (e.clientX / window.innerWidth) * 2 - 1 });
-    });
-  }
-
-  const bottomBar = gate.querySelector('.lang-gate__bottom');
-  if (bottomBar) {
-    bottomBar.addEventListener('pointerenter', () => playGateCue('gate-coords', { pan: 0.2 }));
-    bottomBar.addEventListener('pointerdown', (e) => {
-      haptic(6);
-      playGateCue('gate-coords', { pan: (e.clientX / window.innerWidth) * 2 - 1 });
-    });
-  }
-
-  // Background touch / click on the gate canvas unlocks audio & plays sanctuary stone tap
-  gate.addEventListener('pointerdown', (e) => {
+  // Gate pointerdown unlocks WebAudio context silently without jarring sound bursts
+  gate.addEventListener('pointerdown', () => {
     sound.unlock();
-    if (
-      !e.target.closest('[data-lang-choice]') &&
-      !e.target.closest('.lang-gate__top') &&
-      !e.target.closest('.lang-gate__bottom') &&
-      !e.target.closest('.lang-gate__center > div:first-child')
-    ) {
-      haptic(6);
-      playGateCue('gate-touch', { pan: (e.clientX / window.innerWidth) * 2 - 1 });
-    }
   });
 
   const finish = () => {

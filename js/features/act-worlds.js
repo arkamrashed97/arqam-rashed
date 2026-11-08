@@ -5,12 +5,12 @@ import { sound } from '../audio/index.js';
 import { CONFIG } from '../config.js';
 
 /**
- * Interactive SVG worlds for Acts I–V:
- *  - Act I (Core):         Animated SVG spaceships, thruster trails, twinkling stars & pointer constellation beams
- *  - Act II (Work):        Origami paper airplanes gliding on wind ribbons & spinning kinetic pinwheels
- *  - Act III (System):     Autonomous quantum hex-drones, orbital satellites & rotating circuit sigils
- *  - Act IV (Signal):      Floating origami lotus boats & expanding liquid silk water ripples
- *  - Act V (Inquiry):      Playable Fishing Rod & Swimming Fish Mini-Game (6 fish species, combos, bait, SFX)
+ * Act V Tactical Cyber-Lagoon Fishing Arena:
+ *  - High-intelligence fish AI (spook detection, lure twitching, boredom, fake-out nibbles)
+ *  - Dynamic Strike Reflex Window (0.62s to 0.95s based on fish intelligence)
+ *  - Interactive Reel Fight & Line Tension mechanic for mid & high-tier species
+ *  - Bait cooldown timer (15s)
+ *  - Acts I–IV flying SVGs removed for pure 3D WebGL immersion
  */
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -21,10 +21,14 @@ const FISH_SPECIES = [
     nameEn: 'SILVER NILE PERCH',
     nameAr: 'قشر بياض نيلي فضي',
     pts: 15,
-    speed: 64,
+    speed: 68,
     scale: 0.88,
     minY: 105,
     maxY: 175,
+    caution: 0.25,
+    strikeWindow: 0.95,
+    targetNibbles: 1,
+    fightDuration: 0,
     body: '#38BDF8',
     belly: '#E0F2FE',
     fin: '#0284C7',
@@ -35,10 +39,14 @@ const FISH_SPECIES = [
     nameEn: 'STEALTH BARRACUDA',
     nameAr: 'باراكودا فولاذية',
     pts: 25,
-    speed: 82,
+    speed: 84,
     scale: 0.94,
     minY: 115,
     maxY: 205,
+    caution: 0.40,
+    strikeWindow: 0.88,
+    targetNibbles: 1,
+    fightDuration: 0,
     body: '#94A3B8',
     belly: '#F1F5F9',
     fin: '#10B981',
@@ -49,10 +57,14 @@ const FISH_SPECIES = [
     nameEn: 'COBALT VECTOR FIN',
     nameAr: 'سمكة الكوبالت المضيئة',
     pts: 40,
-    speed: 90,
+    speed: 92,
     scale: 0.98,
     minY: 160,
     maxY: 255,
+    caution: 0.55,
+    strikeWindow: 0.80,
+    targetNibbles: 2,
+    fightDuration: 2.0,
     body: '#0EA5E9',
     belly: '#7DD3FC',
     fin: '#F59E0B',
@@ -63,10 +75,14 @@ const FISH_SPECIES = [
     nameEn: 'IMPERIAL BRONZE KOI',
     nameAr: 'كوي برونزي ملكي',
     pts: 60,
-    speed: 98,
+    speed: 102,
     scale: 1.08,
     minY: 185,
     maxY: 280,
+    caution: 0.70,
+    strikeWindow: 0.74,
+    targetNibbles: 2,
+    fightDuration: 2.6,
     body: '#F59E0B',
     belly: '#FEF3C7',
     fin: '#D97706',
@@ -77,10 +93,14 @@ const FISH_SPECIES = [
     nameEn: 'CYBER ABYSS ANGLER',
     nameAr: 'صياد الأعماق السيبراني',
     pts: 95,
-    speed: 112,
+    speed: 116,
     scale: 1.06,
     minY: 235,
     maxY: 325,
+    caution: 0.82,
+    strikeWindow: 0.68,
+    targetNibbles: 3,
+    fightDuration: 3.2,
     body: '#06B6D4',
     belly: '#67E8F9',
     fin: '#00E5FF',
@@ -92,10 +112,14 @@ const FISH_SPECIES = [
     nameEn: 'SOVEREIGN GOLD LEVIATHAN',
     nameAr: 'سمكة الذهب السيادية',
     pts: 160,
-    speed: 128,
+    speed: 132,
     scale: 1.18,
     minY: 255,
     maxY: 335,
+    caution: 0.92,
+    strikeWindow: 0.62,
+    targetNibbles: 3,
+    fightDuration: 3.8,
     body: '#EAB308',
     belly: '#FEF9C3',
     fin: '#D4FF00',
@@ -106,409 +130,9 @@ const FISH_SPECIES = [
 
 const worlds = {
   initialized: false,
-  act1: null,
-  act2: null,
-  act3: null,
-  act4: null,
   act5: null
 };
 
-function createSvg(className) {
-  const svg = document.createElementNS(SVG_NS, 'svg');
-  svg.setAttribute('class', `act-world ${className}`);
-  svg.setAttribute('viewBox', '0 0 1440 900');
-  svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-  svg.setAttribute('aria-hidden', 'true');
-  return svg;
-}
-
-/* ============================================================================
- * ACT I: Spaceships & Stars SVG Animation
- * ========================================================================== */
-function buildAct1World() {
-  const sec = document.getElementById('act-1');
-  if (!sec) return null;
-  const svg = createSvg('act-world--1');
-
-  let starsMarkup = '';
-  const stars = [];
-  for (let i = 0; i < 24; i++) {
-    const x = 60 + ((i * 197) % 1320);
-    const y = 70 + ((i * 131) % 760);
-    const r = 4 + (i % 4) * 2.2;
-    const color = i % 3 === 0 ? '#D4FF00' : i % 3 === 1 ? '#E8FF80' : '#A3E635';
-    stars.push({ x, y, r, phase: i * 0.7 });
-    starsMarkup += `
-      <g class="act1-star" data-idx="${i}" transform="translate(${x} ${y})">
-        <path d="M0 ${-r * 2.1} L${r * 0.48} ${-r * 0.48} L${r * 2.1} 0 L${r * 0.48} ${r * 0.48} L0 ${r * 2.1} L${-r * 0.48} ${r * 0.48} L${-r * 2.1} 0 L${-r * 0.48} ${-r * 0.48} Z" fill="${color}" opacity="0.72"/>
-        <circle cx="0" cy="0" r="${r * 0.45}" fill="#FFFFFF"/>
-      </g>`;
-  }
-
-  const ships = [
-    { x: 240, y: 210, vx: 68, vy: 18, angle: 12, scale: 1.0, type: 'cruiser' },
-    { x: 1180, y: 280, vx: -76, vy: 22, angle: 165, scale: 0.9, type: 'saucer' },
-    { x: 320, y: 690, vx: 84, vy: -24, angle: -15, scale: 0.85, type: 'interceptor' },
-    { x: 1090, y: 640, vx: -64, vy: -19, angle: -162, scale: 0.95, type: 'cruiser' }
-  ];
-
-  const shipShapes = {
-    cruiser: `
-      <path class="thruster" d="M-24 0 L-46 -5 L-38 0 L-46 5 Z" fill="#D4FF00" opacity="0.9"/>
-      <path d="M28 0 L-16 -13 L-10 -4 L-22 -4 L-22 4 L-10 4 L-16 13 Z" fill="#0B0E11" stroke="#D4FF00" stroke-width="1.5" stroke-linejoin="miter"/>
-      <polygon points="8,0 -4,-3 -4,3" fill="#E8FF80"/>
-    `,
-    saucer: `
-      <path class="thruster" d="M-22 -5 L-42 -8 L-34 -5 Z M-22 5 L-42 8 L-34 5 Z" fill="#D4FF00" opacity="0.85"/>
-      <path d="M30 0 L6 -12 L-20 -9 L-14 0 L-20 9 L6 12 Z" fill="#0B0E11" stroke="#D4FF00" stroke-width="1.5" stroke-linejoin="miter"/>
-      <line x1="-12" y1="0" x2="20" y2="0" stroke="#E8FF80" stroke-width="1.2"/>
-    `,
-    interceptor: `
-      <path class="thruster" d="M-20 -4 L-40 -7 L-32 -4 Z M-20 4 L-40 7 L-32 4 Z" fill="#B8FF00"/>
-      <path d="M28 0 L-18 -15 L-12 0 L-18 15 Z" fill="#0B0E11" stroke="#E2FF4D" stroke-width="1.5" stroke-linejoin="miter"/>
-      <path d="M12 0 L-8 -4 L-5 0 L-8 4 Z" fill="#D4FF00"/>
-    `
-  };
-
-  let shipsMarkup = '';
-  ships.forEach((s, idx) => {
-    shipsMarkup += `<g class="act1-ship" data-ship="${idx}" transform="translate(${s.x} ${s.y}) rotate(${s.angle}) scale(${s.scale})">${shipShapes[s.type]}</g>`;
-  });
-
-  svg.innerHTML = `
-    <g id="act1-constellation" stroke="#D4FF00" stroke-width="1" stroke-dasharray="4 4" opacity="0.45"></g>
-    <g id="act1-stars">${starsMarkup}</g>
-    <g id="act1-ships">${shipsMarkup}</g>
-  `;
-  sec.insertBefore(svg, sec.firstChild);
-
-  return {
-    sec,
-    svg,
-    inView: true,
-    lastLines: '',
-    stars,
-    starEls: Array.from(svg.querySelectorAll('.act1-star')),
-    ships,
-    shipEls: Array.from(svg.querySelectorAll('.act1-ship')),
-    constellationEl: svg.querySelector('#act1-constellation')
-  };
-}
-
-function updateAct1World(w, dt, t) {
-  if (!w || !w.inView) return;
-  const rect = w.sec.getBoundingClientRect();
-  if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-  const px = ((state.pointerX - rect.left) / Math.max(1, rect.width)) * 1440;
-  const py = ((state.pointerY - rect.top) / Math.max(1, rect.height)) * 900;
-
-  let lines = '';
-  w.stars.forEach((st, i) => {
-    const dx = px - st.x;
-    const dy = py - st.y;
-    const dist = Math.hypot(dx, dy);
-    const pulse = 0.72 + Math.sin(t * 2.8 + st.phase) * 0.28 + (dist < 220 ? (1 - dist / 220) * 0.75 : 0);
-    const rot = Math.sin(t * 0.9 + st.phase) * 18;
-    w.starEls[i].setAttribute('transform', `translate(${st.x} ${st.y}) scale(${pulse.toFixed(2)}) rotate(${rot.toFixed(1)})`);
-    if (dist < 210 && state.pointerMoved) {
-      lines += `<line x1="${st.x}" y1="${st.y}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}" opacity="${(1 - dist / 210).toFixed(2)}"/>`;
-    }
-  });
-  if (lines !== w.lastLines) {
-    w.constellationEl.innerHTML = lines;
-    w.lastLines = lines;
-  }
-
-  w.ships.forEach((s, i) => {
-    const dx = px - s.x;
-    const dy = py - s.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist < 240 && dist > 8 && state.pointerMoved) {
-      // Gentle orbital bank around pointer
-      s.vx += (-dy / dist) * 95 * dt + (dx / dist) * 28 * dt;
-      s.vy += (dx / dist) * 95 * dt + (dy / dist) * 28 * dt;
-    }
-    const spd = Math.hypot(s.vx, s.vy);
-    if (spd > 145) {
-      s.vx = (s.vx / spd) * 145;
-      s.vy = (s.vy / spd) * 145;
-    } else if (spd < 55) {
-      s.vx = (s.vx / Math.max(1, spd)) * 65;
-      s.vy = (s.vy / Math.max(1, spd)) * 65;
-    }
-    s.x += s.vx * dt;
-    s.y += s.vy * dt;
-    if (s.x > 1500) s.x = -60;
-    if (s.x < -60) s.x = 1500;
-    if (s.y > 940) s.y = -40;
-    if (s.y < -40) s.y = 940;
-    s.angle = Math.atan2(s.vy, s.vx) * (180 / Math.PI);
-    const thrustScale = s.scale * (1 + Math.sin(t * 16 + i) * 0.04);
-    w.shipEls[i].setAttribute(
-      'transform',
-      `translate(${s.x.toFixed(1)} ${s.y.toFixed(1)}) rotate(${s.angle.toFixed(1)}) scale(${thrustScale.toFixed(2)})`
-    );
-  });
-}
-
-/* ============================================================================
- * ACT II: Origami Paper Airplanes & Kinetic Gadgetry SVG Animation
- * ========================================================================== */
-function buildAct2World() {
-  const sec = document.getElementById('work');
-  if (!sec) return null;
-  const svg = createSvg('act-world--2');
-
-  const planes = [
-    { x: 180, y: 170, vx: 82, vy: 12, phase: 0, scale: 1.05, color: '#FF9500' },
-    { x: 640, y: 130, vx: 74, vy: -14, phase: 1.4, scale: 0.88, color: '#FFD000' },
-    { x: 1120, y: 210, vx: -78, vy: 16, phase: 2.6, scale: 0.96, color: '#FF6B00' },
-    { x: 310, y: 760, vx: 88, vy: -18, phase: 3.8, scale: 0.92, color: '#FFB800' },
-    { x: 980, y: 740, vx: -84, vy: -12, phase: 5.0, scale: 1.0, color: '#FFA726' }
-  ];
-
-  let planesMarkup = '';
-  planes.forEach((p, idx) => {
-    planesMarkup += `
-      <g class="act2-plane" data-plane="${idx}">
-        <path d="M-54 2 Q -26 10 -12 0" stroke="${p.color}" stroke-width="1.5" stroke-dasharray="4 4" fill="none" opacity="0.65"/>
-        <path d="M28 0 L-18 -15 L-8 -2 L-20 0 L-8 2 L-18 15 Z" fill="${p.color}" fill-opacity="0.22" stroke="${p.color}" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M28 0 L-8 -2 L-14 7 Z" fill="${p.color}" fill-opacity="0.48"/>
-      </g>`;
-  });
-
-  const pinwheels = [
-    { x: 120, y: 440, r: 26 },
-    { x: 1320, y: 420, r: 30 },
-    { x: 740, y: 820, r: 22 }
-  ];
-  let wheelsMarkup = '';
-  pinwheels.forEach((pw) => {
-    wheelsMarkup += `
-      <g class="act2-wheel" data-x="${pw.x}" data-y="${pw.y}" transform="translate(${pw.x} ${pw.y})">
-        <circle cx="0" cy="0" r="${pw.r}" stroke="#FF9500" stroke-width="1" stroke-dasharray="3 5" fill="none" opacity="0.45"/>
-        <path d="M0 0 L0 ${-pw.r} L${pw.r * 0.45} ${-pw.r * 0.45} Z M0 0 L${pw.r} 0 L${pw.r * 0.45} ${pw.r * 0.45} Z M0 0 L0 ${pw.r} L${-pw.r * 0.45} ${pw.r * 0.45} Z M0 0 L${-pw.r} 0 L${-pw.r * 0.45} ${-pw.r * 0.45} Z" fill="#FFB800" fill-opacity="0.28" stroke="#FF9500" stroke-width="1.2"/>
-        <circle cx="0" cy="0" r="3" fill="#FFD000"/>
-      </g>`;
-  });
-
-  svg.innerHTML = `<g>${wheelsMarkup}</g><g>${planesMarkup}</g>`;
-  sec.insertBefore(svg, sec.firstChild);
-
-  return {
-    sec,
-    svg,
-    inView: false,
-    planes,
-    planeEls: Array.from(svg.querySelectorAll('.act2-plane')),
-    wheelEls: Array.from(svg.querySelectorAll('.act2-wheel'))
-  };
-}
-
-function updateAct2World(w, dt, t) {
-  if (!w || !w.inView) return;
-  const rect = w.sec.getBoundingClientRect();
-  if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-  const px = ((state.pointerX - rect.left) / Math.max(1, rect.width)) * 1440;
-  const py = ((state.pointerY - rect.top) / Math.max(1, rect.height)) * 900;
-
-  w.planes.forEach((p, i) => {
-    const waveY = Math.sin(t * 1.9 + p.phase) * 28;
-    const dx = px - p.x;
-    const dy = py - p.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist < 220 && state.pointerMoved) {
-      // Wind draft boost when pointer sweeps near paper airplane
-      p.vx += (p.vx >= 0 ? 1 : -1) * 65 * dt;
-      p.vy += ((p.y - py) / Math.max(20, dist)) * 55 * dt;
-    }
-    p.vx = clamp(p.vx, -135, 135);
-    p.vy = clamp(p.vy, -48, 48);
-    p.x += p.vx * dt;
-    p.y += (p.vy + waveY * 0.45) * dt;
-    if (p.x > 1500) p.x = -60;
-    if (p.x < -60) p.x = 1500;
-    if (p.y > 880) p.y = 60;
-    if (p.y < 60) p.y = 880;
-    const angle = Math.atan2(p.vy + waveY * 0.45, p.vx) * (180 / Math.PI);
-    w.planeEls[i].setAttribute(
-      'transform',
-      `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${angle.toFixed(1)}) scale(${p.scale})`
-    );
-  });
-
-  const spin = (t * 48 + state.scroll * 0.18) % 360;
-  w.wheelEls.forEach((el, idx) => {
-    const x = el.getAttribute('data-x');
-    const y = el.getAttribute('data-y');
-    const dir = idx % 2 === 0 ? 1 : -1;
-    el.setAttribute('transform', `translate(${x} ${y}) rotate(${(spin * dir).toFixed(1)})`);
-  });
-}
-
-/* ============================================================================
- * ACT III: Quantum Hex-Drones & Circuit Sigils SVG Animation
- * ========================================================================== */
-function buildAct3World() {
-  const sec = document.getElementById('architecture');
-  if (!sec) return null;
-  const svg = createSvg('act-world--3');
-
-  const drones = [
-    { x: 220, y: 220, r: 65, speed: 0.7, phase: 0 },
-    { x: 1220, y: 250, r: 75, speed: -0.6, phase: 1.8 },
-    { x: 260, y: 710, r: 60, speed: 0.8, phase: 3.1 },
-    { x: 1180, y: 690, r: 70, speed: -0.65, phase: 4.5 }
-  ];
-
-  let dronesMarkup = '';
-  drones.forEach((_, idx) => {
-    dronesMarkup += `
-      <g class="act3-drone" data-drone="${idx}">
-        <polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" fill="rgba(0,240,255,0.08)" stroke="#00F0FF" stroke-width="1.5"/>
-        <circle cx="0" cy="0" r="11" stroke="#67E8F9" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
-        <circle cx="0" cy="0" r="3.5" fill="#00F0FF"/>
-        <line x1="0" y1="0" x2="28" y2="0" stroke="#00F0FF" stroke-width="1.4"/>
-      </g>`;
-  });
-
-  svg.innerHTML = `
-    <g id="act3-beams" stroke="#00F0FF" stroke-width="1" stroke-dasharray="5 5" opacity="0.38"></g>
-    <g>${dronesMarkup}</g>
-  `;
-  sec.insertBefore(svg, sec.firstChild);
-
-  return {
-    sec,
-    svg,
-    inView: false,
-    lastBeams: '',
-    drones,
-    droneEls: Array.from(svg.querySelectorAll('.act3-drone')),
-    beamsEl: svg.querySelector('#act3-beams')
-  };
-}
-
-function updateAct3World(w, dt, t) {
-  if (!w || !w.inView) return;
-  const rect = w.sec.getBoundingClientRect();
-  if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-  const px = ((state.pointerX - rect.left) / Math.max(1, rect.width)) * 1440;
-  const py = ((state.pointerY - rect.top) / Math.max(1, rect.height)) * 900;
-
-  let beams = '';
-  w.drones.forEach((d, i) => {
-    const cx = d.x + Math.cos(t * d.speed + d.phase) * d.r;
-    const cy = d.y + Math.sin(t * d.speed * 1.3 + d.phase) * (d.r * 0.65);
-    const angle = Math.atan2(py - cy, px - cx) * (180 / Math.PI);
-    w.droneEls[i].setAttribute('transform', `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${angle.toFixed(1)})`);
-    const dist = Math.hypot(px - cx, py - cy);
-    if (dist < 380 && state.pointerMoved) {
-      beams += `<line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}"/>`;
-    }
-  });
-  if (beams !== w.lastBeams) {
-    w.beamsEl.innerHTML = beams;
-    w.lastBeams = beams;
-  }
-}
-
-/* ============================================================================
- * ACT IV: Water-Silk Lotus Boats & Liquid Ripples SVG Animation
- * ========================================================================== */
-function buildAct4World() {
-  const sec = document.getElementById('contact');
-  if (!sec) return null;
-  const svg = createSvg('act-world--4');
-
-  const boats = [
-    { baseX: 240, baseY: 230, phase: 0.4, scale: 1.0 },
-    { baseX: 1180, baseY: 280, phase: 1.9, scale: 0.92 },
-    { baseX: 300, baseY: 720, phase: 3.3, scale: 0.88 },
-    { baseX: 1120, baseY: 680, phase: 4.8, scale: 1.05 }
-  ];
-
-  let boatsMarkup = '';
-  boats.forEach((_, idx) => {
-    boatsMarkup += `
-      <g class="act4-boat" data-boat="${idx}">
-        <ellipse cx="0" cy="9" rx="28" ry="5" stroke="#38BDF8" stroke-width="1" fill="none" opacity="0.4"/>
-        <path d="M-26 4 L26 4 L16 11 L-16 11 Z" fill="rgba(15,23,42,0.85)" stroke="#38BDF8" stroke-width="1.4" stroke-linejoin="miter"/>
-        <path d="M0 4 L0 -15 L14 2 Z" fill="rgba(56,189,248,0.22)" stroke="#38BDF8" stroke-width="1.2" stroke-linejoin="miter"/>
-        <path d="M-2 4 L-2 -10 L-12 2 Z" fill="rgba(148,163,184,0.25)" stroke="#94A3B8" stroke-width="1.1" stroke-linejoin="miter"/>
-      </g>`;
-  });
-
-  svg.innerHTML = `
-    <g id="act4-ripples"></g>
-    <g>${boatsMarkup}</g>
-  `;
-  sec.insertBefore(svg, sec.firstChild);
-
-  return {
-    sec,
-    svg,
-    inView: false,
-    lastRippleSvg: '',
-    boats,
-    boatEls: Array.from(svg.querySelectorAll('.act4-boat')),
-    ripplesEl: svg.querySelector('#act4-ripples'),
-    ripples: [],
-    lastRippleT: 0
-  };
-}
-
-function updateAct4World(w, dt, t) {
-  if (!w || !w.inView) return;
-  const rect = w.sec.getBoundingClientRect();
-  if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-  const px = ((state.pointerX - rect.left) / Math.max(1, rect.width)) * 1440;
-  const py = ((state.pointerY - rect.top) / Math.max(1, rect.height)) * 900;
-
-  if (state.pointerMoved && t - w.lastRippleT > 0.22 && py > 0 && py < 900) {
-    w.lastRippleT = t;
-    w.ripples.push({ x: px, y: py, age: 0 });
-    if (w.ripples.length > 7) w.ripples.shift();
-  }
-
-  let rippleSvg = '';
-  for (let i = w.ripples.length - 1; i >= 0; i--) {
-    const rp = w.ripples[i];
-    rp.age += dt;
-    if (rp.age > 1.6) {
-      w.ripples.splice(i, 1);
-      continue;
-    }
-    const p = rp.age / 1.6;
-    const rx = 12 + p * 86;
-    const ry = rx * 0.48;
-    const op = (1 - p) * 0.55;
-    rippleSvg += `<ellipse cx="${rp.x.toFixed(1)}" cy="${rp.y.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" stroke="#38BDF8" stroke-width="1.5" fill="none" opacity="${op.toFixed(2)}"/>`;
-  }
-  if (rippleSvg !== w.lastRippleSvg) {
-    w.ripplesEl.innerHTML = rippleSvg;
-    w.lastRippleSvg = rippleSvg;
-  }
-
-  w.boats.forEach((b, i) => {
-    const x = b.baseX + Math.sin(t * 0.75 + b.phase) * 28;
-    const y = b.baseY + Math.cos(t * 1.4 + b.phase) * 11;
-    const tilt = Math.sin(t * 1.8 + b.phase) * 6;
-    w.boatEls[i].setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${tilt.toFixed(1)}) scale(${b.scale})`);
-  });
-}
-
-/* ============================================================================
- * ACT V: Tactical Cyber-Lagoon Fishing Arena (4-Stage Realistic Mechanics)
- *   Stage 1 (Cast / Lure): Position hook at depth (Shallow / Mid / Abyss)
- *   Stage 2 (Approach / Nibble): Nearby fish approaches in front of its nose and tests the lure
- *   Stage 3 (Strike Window / Bite!): Bobber plunges, rod bends under load, strike ring flashes (1.45s window)
- *   Stage 4 (Reel In vs. Escape): Click/Tap during the strike window to hook & reel in; too early or too late = fish escapes!
- * ========================================================================== */
 function buildFishSvgMarkup(sp) {
   const crown = sp.crown
     ? `<polygon points="-2,-13 2,-21 6,-14 11,-21 13,-12" fill="#D4FF00" stroke="#042F2E" stroke-width="1"/>`
@@ -531,6 +155,11 @@ function buildFishSvgMarkup(sp) {
       <!-- Precision eye -->
       <polygon points="12,-4 16,-4 17,-1.5 13,-1.5" fill="#F8FAFC"/>
       <rect x="14" y="-3.5" width="2" height="2" fill="#020617"/>
+      <!-- Spook badge -->
+      <g class="fish-spook-badge" opacity="0" transform="translate(0 -22)">
+        <circle cx="0" cy="0" r="8" fill="#EF4444"/>
+        <text x="0" y="3.5" text-anchor="middle" fill="#FFFFFF" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="700">!</text>
+      </g>
       ${crown}
       ${lantern}
     </g>`;
@@ -578,7 +207,7 @@ function buildAct5FishingWorld() {
         </div>
       </div>
       <div class="fishing-hud__actions">
-        <span class="fishing-catch-pill" id="fish-status-pill">POSITION HOOK NEAR FISH → WAIT FOR BITE → CLICK TO REEL! 🎣</span>
+        <span class="fishing-catch-pill" id="fish-status-pill">TWITCH HOOK GENTLY TO ATTRACT FISH → STRIKE ON BITE! 🎣</span>
         <button type="button" class="fishing-bait-btn" id="fish-bait-btn" data-cursor="BAIT" data-sfx="none">DROP BAIT 🪱</button>
       </div>
     </div>
@@ -601,7 +230,7 @@ function buildAct5FishingWorld() {
   svg.setAttribute('preserveAspectRatio', 'none');
   svg.setAttribute('aria-hidden', 'true');
 
-  // Spawn 11 swimming fish distributed across their natural depth lanes
+  // Spawn 11 swimming fish distributed across depth lanes
   const fishes = [];
   let fishesMarkup = '';
   for (let i = 0; i < 11; i++) {
@@ -618,11 +247,14 @@ function buildAct5FishingWorld() {
       vy: 0,
       dir,
       phase: i * 0.95,
-      state: 'swim', // 'swim' | 'nibble' | 'bite' | 'caught' | 'escape'
+      state: 'swim', // 'swim' | 'curious' | 'nibble' | 'bite' | 'fight' | 'caught' | 'spooked'
       timer: 0,
       nibbleCount: 0,
-      targetNibbles: 1 + (i % 2),
-      catchProgress: 0
+      targetNibbles: sp.targetNibbles,
+      catchProgress: 0,
+      reelProgress: 0,
+      tension: 0.2,
+      fightDuration: sp.fightDuration
     });
     fishesMarkup += `<g class="pond-fish" data-fish="${i}" transform="translate(${x} ${y}) scale(${dir * sp.scale} ${sp.scale})">${buildFishSvgMarkup(sp)}</g>`;
   }
@@ -633,6 +265,11 @@ function buildAct5FishingWorld() {
         <stop offset="0%" stop-color="#10B981" stop-opacity="0.26"/>
         <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="fight-tension-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#10B981"/>
+        <stop offset="60%" stop-color="#F59E0B"/>
+        <stop offset="100%" stop-color="#EF4444"/>
+      </linearGradient>
     </defs>
 
     <!-- Upper Dock / Air Zone (y = 0..72) & Water Surface Line (y = 72) -->
@@ -646,9 +283,9 @@ function buildAct5FishingWorld() {
     </g>
     <g fill="rgba(167,243,208,0.38)" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5">
       <text x="14" y="64">SURFACE DOCK // CARBON RIG 01</text>
-      <text x="14" y="90">05M SHALLOW</text>
-      <text x="14" y="170">15M MID-WATER</text>
-      <text x="14" y="260">30M ABYSSAL ZONE (HIGH PTS)</text>
+      <text x="14" y="90">05M SHALLOW (PERCH / BARRACUDA)</text>
+      <text x="14" y="170">15M MID-WATER (COBALT VECTOR / KOI)</text>
+      <text x="14" y="260">30M ABYSSAL ZONE (ANGLER / LEVIATHAN)</text>
     </g>
 
     <g id="pond-ripples"></g>
@@ -659,7 +296,7 @@ function buildAct5FishingWorld() {
       <circle id="pond-lure-aura" cx="520" cy="195" r="46" fill="url(#lagoon-glow)"/>
       <!-- Strike tension ring around hook (visible when a fish is biting!) -->
       <circle id="pond-strike-ring" cx="520" cy="195" r="24" stroke="#FBBF24" stroke-width="2.2" stroke-dasharray="6 3" fill="rgba(251,191,36,0.12)" opacity="0"/>
-      <!-- Fishing line from rod tip (rodTipX, rodTipY) through surface bobber down to submerged hook -->
+      <!-- Fishing line from rod tip through surface bobber down to submerged hook -->
       <path id="pond-line" d="M520 38 L520 72 L520 195" stroke="#A7F3D0" stroke-width="1.5" fill="none" opacity="0.88"/>
       <!-- Dock-mounted carbon-steel rod above water surface -->
       <g id="pond-rod" transform="translate(520 38)">
@@ -679,6 +316,18 @@ function buildAct5FishingWorld() {
         <path d="M0 -2 L0 10 L-8 10 L-8 4 L-4.5 6.5" stroke="#F8FAFC" stroke-width="2.1" stroke-linecap="square" stroke-linejoin="miter" fill="none"/>
       </g>
       <text id="pond-bite-alert" x="520" y="162" text-anchor="middle" fill="#FDE047" font-family="IBM Plex Mono, monospace" font-size="11.5" font-weight="700" letter-spacing="1" opacity="0">⚡ STRIKE! CLICK / TAP NOW! ⚡</text>
+
+      <!-- Dynamic Interactive Reel / Tension HUD for Fighting Fish -->
+      <g id="pond-fight-hud" transform="translate(520 150)" opacity="0">
+        <rect x="-70" y="-18" width="140" height="34" rx="4" fill="rgba(3,15,12,0.92)" stroke="#10B981" stroke-width="1.2"/>
+        <text id="pond-fight-title" x="0" y="-6" text-anchor="middle" fill="#A7F3D0" font-family="IBM Plex Mono, monospace" font-size="8.5" font-weight="700" letter-spacing="1">REEL FIGHT // KEEP ROD CLOSE</text>
+        <!-- Reel Progress Bar (Green) -->
+        <rect x="-62" y="0" width="124" height="4" rx="1.5" fill="rgba(255,255,255,0.1)"/>
+        <rect id="pond-fight-reel-fill" x="-62" y="0" width="20" height="4" rx="1.5" fill="#10B981"/>
+        <!-- Line Tension Bar (Yellow/Red) -->
+        <rect x="-62" y="7" width="124" height="3" rx="1" fill="rgba(255,255,255,0.08)"/>
+        <rect id="pond-fight-tension-fill" x="-62" y="7" width="30" height="3" rx="1" fill="url(#fight-tension-grad)"/>
+      </g>
     </g>
   `;
 
@@ -700,6 +349,7 @@ function buildAct5FishingWorld() {
     fishes,
     fishEls: Array.from(svg.querySelectorAll('.pond-fish')),
     tailEls: Array.from(svg.querySelectorAll('.fish-tail')),
+    spookBadges: Array.from(svg.querySelectorAll('.fish-spook-badge')),
     ripplesEl: svg.querySelector('#pond-ripples'),
     surfaceWaveEl: svg.querySelector('#pond-surface-wave'),
     rodEl: svg.querySelector('#pond-rod'),
@@ -711,15 +361,22 @@ function buildAct5FishingWorld() {
     auraEl: svg.querySelector('#pond-lure-aura'),
     strikeRingEl: svg.querySelector('#pond-strike-ring'),
     biteAlertEl: svg.querySelector('#pond-bite-alert'),
+    fightHudEl: svg.querySelector('#pond-fight-hud'),
+    fightTitleEl: svg.querySelector('#pond-fight-title'),
+    fightReelFillEl: svg.querySelector('#pond-fight-reel-fill'),
+    fightTensionFillEl: svg.querySelector('#pond-fight-tension-fill'),
     scoreEl: document.getElementById('fish-score'),
     caughtEl: document.getElementById('fish-caught'),
     comboEl: document.getElementById('fish-combo'),
     bestEl: document.getElementById('fish-best'),
     statusPill: document.getElementById('fish-status-pill'),
+    baitBtn: document.getElementById('fish-bait-btn'),
     rodX: 520,
     rodY: 38,
     hookX: 520,
     hookY: 195,
+    prevHookX: 520,
+    prevHookY: 195,
     targetX: 520,
     targetY: 195,
     score: 0,
@@ -727,15 +384,19 @@ function buildAct5FishingWorld() {
     combo: 1,
     best: bestScore,
     lastCatchTime: 0,
+    lastHookMoveTime: 0,
     baitBoostTimer: 0,
+    baitCooldownTimer: 0,
     ripples: []
   };
 
-  function setStatus(enText, arText, isBite = false) {
+  function setStatus(enText, arText, statusClass = '') {
     if (!w.statusPill) return;
     const ar = document.documentElement.lang === 'ar';
     w.statusPill.textContent = ar ? arText : enText;
-    w.statusPill.classList.toggle('is-bite', Boolean(isBite));
+    w.statusPill.classList.toggle('is-bite', statusClass === 'bite');
+    w.statusPill.classList.toggle('is-spook', statusClass === 'spook');
+    w.statusPill.classList.toggle('is-fight', statusClass === 'fight');
   }
 
   function syncHudLanguage() {
@@ -752,15 +413,17 @@ function buildAct5FishingWorld() {
     if (lblCaught) lblCaught.textContent = ar ? 'السمك المصطاد' : 'CAUGHT';
     if (lblCombo) lblCombo.textContent = ar ? 'المضاعف' : 'COMBO';
     if (lblBest) lblBest.textContent = ar ? 'أعلى سكور' : 'BEST';
-    if (baitBtn) baitBtn.textContent = ar ? 'رمي طُعم للسمك 🪱' : 'DROP BAIT 🪱';
+    if (baitBtn && w.baitCooldownTimer <= 0) {
+      baitBtn.textContent = ar ? 'رمي طُعم للسمك 🪱' : 'DROP BAIT 🪱';
+    }
     if (nameInput) nameInput.placeholder = ar ? 'اكتب اسمك فقط لحفظ السكور...' : 'Your name to save score...';
     if (saveBtn) saveBtn.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
     if (boardTitle) boardTitle.textContent = ar ? '🏆 لوحة المتصدرين:' : '🏆 TOP ANGLERS:';
     if (w.caught === 0) {
       setStatus(
-        'POSITION HOOK NEAR FISH → WAIT FOR BITE → CLICK TO REEL! 🎣',
-        'قرّب الخطاف للسمكة ← انتظر الغمزة ← اضغط فوراً لسحبها! 🎣',
-        false
+        'TWITCH HOOK GENTLY TO ATTRACT FISH → STRIKE ON BITE! 🎣',
+        'حرّك الصنارة بهدوء لجذب السمك ← اغمز واضغط فوراً! 🎣',
+        ''
       );
     }
   }
@@ -819,12 +482,12 @@ function buildAct5FishingWorld() {
     if (!playerName) {
       sound.play('form-error');
       nameInputEl.focus();
-      setStatus('ENTER YOUR NAME FIRST TO SAVE SCORE! ✍️', 'اكتب اسمك أولاً لحفظ السكور! ✍️');
+      setStatus('ENTER YOUR NAME FIRST TO SAVE SCORE! ✍️', 'اكتب اسمك أولاً لحفظ السكور! ✍️', 'spook');
       return;
     }
     if (scoreToSave <= 0) {
       sound.play('form-error');
-      setStatus('CATCH AT LEAST 1 FISH BEFORE SAVING! 🐟', 'اصطد سمكة واحدة على الأقل قبل حفظ السكور! 🐟');
+      setStatus('CATCH AT LEAST 1 FISH BEFORE SAVING! 🐟', 'اصطد سمكة واحدة على الأقل قبل حفظ السكور! 🐟', 'spook');
       return;
     }
 
@@ -848,14 +511,15 @@ function buildAct5FishingWorld() {
         sound.play('form-success');
         setStatus(
           `SCORE (${scoreToSave}) SAVED FOR "${playerName}" ON LEADERBOARD! 🏆`,
-          `تم تسجيل سكورك (${scoreToSave}) باسم "${playerName}" في لوحة الشرف! 🏆`
+          `تم تسجيل سكورك (${scoreToSave}) باسم "${playerName}" في لوحة الشرف! 🏆`,
+          'fight'
         );
       } else {
         throw new Error('Save failed');
       }
     } catch (err) {
       sound.play('form-error');
-      setStatus('COULD NOT REACH SERVER, TRY AGAIN', 'تعذر الاتصال، حاول مرة أخرى');
+      setStatus('COULD NOT REACH SERVER, TRY AGAIN', 'تعذر الاتصال، حاول مرة أخرى', 'spook');
     } finally {
       saveBtnEl.disabled = false;
       saveBtnEl.textContent = ar ? 'حفظ السكور 🏆' : 'SAVE SCORE 🏆';
@@ -878,7 +542,7 @@ function buildAct5FishingWorld() {
     });
   }
 
-  // Lazy-fetch leaderboard only when Act V (#inquiry) approaches the viewport
+  // Lazy-fetch leaderboard only when Act V (#inquiry) approaches viewport
   if ('IntersectionObserver' in window) {
     const lbObserver = new IntersectionObserver((entries) => {
       for (let i = 0; i < entries.length; i++) {
@@ -934,7 +598,7 @@ function buildAct5FishingWorld() {
     setStatus(
       `REEL SUCCESS! CAUGHT ${fishName} (+${gained} PTS)! 🐟`,
       `صيد ناجح! تم سحب ${fishName} (+${gained} نقطة)! 🐟`,
-      false
+      ''
     );
 
     haptic(24);
@@ -948,20 +612,33 @@ function buildAct5FishingWorld() {
     spawnPopup(sx, sy, `+${gained} ${fishName}`, f.sp.body);
   }
 
-  function escapeFish(f, reasonEn, reasonAr) {
-    f.state = 'escape';
-    f.timer = 1.3;
+  function spookFish(f, reasonEn, reasonAr) {
+    f.state = 'spooked';
+    f.timer = 1.4;
     f.dir = f.x < w.hookX ? -1 : 1;
-    f.vx = f.dir * f.sp.speed * 2.7;
-    f.vy = (Math.random() - 0.5) * 45;
+    f.vx = f.dir * f.sp.speed * 2.8;
+    f.vy = (Math.random() - 0.5) * 55;
     w.combo = 1;
     w.comboEl.textContent = 'x1';
     sound.play('water-plop');
-    w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#EF4444' });
-    setStatus(reasonEn, reasonAr, false);
+    w.ripples.push({ x: f.x, y: f.y, age: 0, color: '#EF4444' });
+    setStatus(reasonEn, reasonAr, 'spook');
+
+    // Spook other nearby fish within 75px radius
+    w.fishes.forEach((other) => {
+      if (other !== f && (other.state === 'swim' || other.state === 'curious' || other.state === 'nibble')) {
+        const d = Math.hypot(other.x - f.x, other.y - f.y);
+        if (d < 75) {
+          other.state = 'spooked';
+          other.timer = 1.2;
+          other.dir = other.x < f.x ? -1 : 1;
+          other.vx = other.dir * other.sp.speed * 2.5;
+        }
+      }
+    });
   }
 
-  // Pointer move inside #fishing-pond smoothly steers the rod along the top dock and hook depth in the water
+  // Pointer move inside #fishing-pond steers hook and tracks motion speed
   svg.addEventListener('pointermove', (e) => {
     const rect = w.svg.getBoundingClientRect();
     const px = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
@@ -971,48 +648,91 @@ function buildAct5FishingWorld() {
   });
 
   // Clicking or tapping inside #fishing-pond:
-  // - If a fish is currently BITING (state === 'bite'), strikes & reels it in!
-  // - If a fish is only NIBBLING (state === 'nibble'), spooks the fish (pulled too early)!
-  // - Otherwise casts the hook to the clicked spot in the water!
+  // - If fish is in 'bite', strikes it!
+  // - If fish is only in 'nibble', spooks the fish (pulled too early)!
+  // - If fish is in 'fight', helps reel it in faster!
+  // - Otherwise casts the hook to the clicked spot!
   svg.addEventListener('pointerdown', (e) => {
     const rect = w.svg.getBoundingClientRect();
     const px = clamp(((e.clientX - rect.left) / Math.max(1, rect.width)) * 1000, 45, 955);
     const py = clamp(((e.clientY - rect.top) / Math.max(1, rect.height)) * 350, 92, 332);
 
+    const fightingFish = w.fishes.find((f) => f.state === 'fight');
+    if (fightingFish) {
+      // Pump the reel
+      fightingFish.reelProgress += 0.08;
+      fightingFish.tension = Math.min(0.95, fightingFish.tension + 0.05);
+      haptic(12);
+      sound.play('reel-in', { rate: 1.15 });
+      return;
+    }
+
     const bitingFish = w.fishes.find((f) => f.state === 'bite');
     if (bitingFish) {
-      catchFish(bitingFish, e.clientX, e.clientY);
+      if (bitingFish.fightDuration > 0) {
+        bitingFish.state = 'fight';
+        bitingFish.timer = 0;
+        bitingFish.reelProgress = 0.15;
+        bitingFish.tension = 0.25;
+        haptic(22);
+        sound.play('fish-bite');
+        setStatus(
+          '🎣 FISH HOOKED! KEEP YOUR ROD ON IT TO REEL IT IN! 🎣',
+          '🎣 علقت السمكة! تحكم بالصنارة وخلك قريب منها لسحبها! 🎣',
+          'fight'
+        );
+      } else {
+        catchFish(bitingFish, e.clientX, e.clientY);
+      }
       return;
     }
 
     const nibblingFish = w.fishes.find((f) => f.state === 'nibble');
-    if (nibblingFish && Math.hypot(px - w.hookX, py - w.hookY) < 95) {
-      escapeFish(
+    if (nibblingFish && Math.hypot(px - w.hookX, py - w.hookY) < 110) {
+      spookFish(
         nibblingFish,
-        'TOO EARLY! WAIT UNTIL IT BITES THE HOOK! ⚠️',
-        'سحبت الصنارة بدري! انتظر حتى تغمز السمكة بقوة! ⚠️'
+        'TOO EARLY! YOU JERKED BEFORE IT COMMITTED! ⚠️',
+        'سحبت الصنارة بدري قبل ما تغمز السمكة بقوة! ⚠️'
       );
       return;
     }
 
-    // Cast hook to new water coordinates
+    // Cast hook to clicked spot in water
+    const castDist = Math.hypot(px - w.hookX, py - w.hookY);
     w.targetX = px;
     w.targetY = py;
     w.hookX = px;
     w.hookY = py;
+    w.lastHookMoveTime = performance.now() * 0.001;
+
+    // Check if cast violently right on top of a swimming fish (spook!)
+    w.fishes.forEach((f) => {
+      if ((f.state === 'swim' || f.state === 'curious') && Math.hypot(px - f.x, py - f.y) < 32 && castDist > 120) {
+        spookFish(f, 'CAST TOO CLOSE! HOOK SPLASHED RIGHT ON THE FISH! ❗', 'رميت الصنارة فوق السمكة مباشرة ففزعت! ❗');
+      }
+    });
+
     w.ripples.push({ x: px, y: 72, age: 0, color: '#10B981' });
     w.ripples.push({ x: px, y: py, age: 0.08, color: '#34D399' });
     sound.play('cast-line');
-    window.setTimeout(() => sound.play('water-plop'), 130);
+    window.setTimeout(() => sound.play('water-plop'), 120);
   });
 
-  // Also allow clicking the status pill when it flashes STRIKE! on mobile
   if (w.statusPill) {
     w.statusPill.addEventListener('click', (e) => {
       const bitingFish = w.fishes.find((f) => f.state === 'bite');
       if (bitingFish) {
         e.stopPropagation();
-        catchFish(bitingFish, e.clientX, e.clientY);
+        if (bitingFish.fightDuration > 0) {
+          bitingFish.state = 'fight';
+          bitingFish.timer = 0;
+          bitingFish.reelProgress = 0.15;
+          bitingFish.tension = 0.25;
+          haptic(22);
+          sound.play('fish-bite');
+        } else {
+          catchFish(bitingFish, e.clientX, e.clientY);
+        }
       }
     });
   }
@@ -1021,9 +741,11 @@ function buildAct5FishingWorld() {
   if (baitBtn) {
     baitBtn.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (w.baitCooldownTimer > 0) return;
       haptic(14);
       sound.play('water-plop');
-      w.baitBoostTimer = 7.0;
+      w.baitBoostTimer = 6.0;
+      w.baitCooldownTimer = 15.0;
       for (let k = 0; k < 3; k++) {
         w.ripples.push({
           x: w.hookX + (Math.random() - 0.5) * 60,
@@ -1033,15 +755,15 @@ function buildAct5FishingWorld() {
         });
       }
       setStatus(
-        'BAIT ACTIVE! FISH ARE ATTRACTED — WAIT FOR THE BITE THEN CLICK! 🪱',
-        'تم رمي الطُعم! السمك يقترب — انتظر الغمزة ثم اضغط لسحبها! 🪱',
-        false
+        'BAIT DISPENSED! FISH ARE DRAWN IN — WATCH FOR NIBBLES! 🪱',
+        'تم نشر الطُعم! السمك ينجذب بقوة — راقب الصنارة! 🪱',
+        ''
       );
     });
   }
 
   w.catchFish = catchFish;
-  w.escapeFish = escapeFish;
+  w.spookFish = spookFish;
   w.setStatus = setStatus;
   w.inView = false;
   w.lastRippleMarkup = '';
@@ -1053,9 +775,32 @@ function updateAct5FishingWorld(w, dt, t) {
   const rect = w.svg.getBoundingClientRect();
   if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
+  // Track bait timers & live cooldown countdown on button
   if (w.baitBoostTimer > 0) w.baitBoostTimer = Math.max(0, w.baitBoostTimer - dt);
+  if (w.baitCooldownTimer > 0) {
+    w.baitCooldownTimer = Math.max(0, w.baitCooldownTimer - dt);
+    if (w.baitBtn) {
+      w.baitBtn.disabled = true;
+      const ar = document.documentElement.lang === 'ar';
+      const secLeft = Math.ceil(w.baitCooldownTimer);
+      w.baitBtn.textContent = ar ? `انتظر (${secLeft}ث)` : `COOLDOWN (${secLeft}s)`;
+    }
+  } else if (w.baitBtn && w.baitBtn.disabled) {
+    w.baitBtn.disabled = false;
+    const ar = document.documentElement.lang === 'ar';
+    w.baitBtn.textContent = ar ? 'رمي طُعم للسمك 🪱' : 'DROP BAIT 🪱';
+  }
 
-  // Smoothly move dock-mounted rod horizontally (rodY stays anchored at y = 38 above water!)
+  // Calculate hook velocity and check for jerky sudden movements
+  const dxHook = w.hookX - w.prevHookX;
+  const dyHook = w.hookY - w.prevHookY;
+  const hookDist = Math.hypot(dxHook, dyHook);
+  const hookSpeed = dt > 0 ? hookDist / dt : 0;
+  if (hookSpeed > 20) w.lastHookMoveTime = t;
+  w.prevHookX = w.hookX;
+  w.prevHookY = w.hookY;
+
+  // Smooth hook & rod interpolation
   w.rodX = lerp(w.rodX, w.targetX, Math.min(1, dt * 14));
   w.hookX = lerp(w.hookX, w.targetX, Math.min(1, dt * 7.5));
   w.hookY = lerp(w.hookY, w.targetY, Math.min(1, dt * 7.5));
@@ -1066,15 +811,19 @@ function updateAct5FishingWorld(w, dt, t) {
     w.surfaceWaveEl.setAttribute('d', `M0 72 Q 250 ${waveY.toFixed(1)} 500 72 T 1000 72`);
   }
 
-  // Check if any fish is currently engaged ('nibble' or 'bite')
-  let activeFish = w.fishes.find((f) => f.state === 'nibble' || f.state === 'bite');
+  let activeFish = w.fishes.find((f) => f.state === 'curious' || f.state === 'nibble' || f.state === 'bite' || f.state === 'fight');
 
   w.fishes.forEach((f, i) => {
-    const tailSpeed = f.state === 'bite' ? 22 : f.state === 'escape' ? 20 : f.state === 'nibble' ? 13 : 8;
-    const tailAngle = Math.sin(t * tailSpeed + f.phase) * 15;
+    const tailSpeed = f.state === 'fight' ? 26 : f.state === 'bite' ? 22 : f.state === 'spooked' ? 24 : f.state === 'nibble' ? 14 : 8;
+    const tailAngle = Math.sin(t * tailSpeed + f.phase) * 16;
     w.tailEls[i].setAttribute('transform', `rotate(${tailAngle.toFixed(1)} -21 0)`);
 
-    // 1. CAUGHT: Reel fish up to the rod tip at (rodX, 55)
+    // Spook badge visibility
+    if (w.spookBadges[i]) {
+      w.spookBadges[i].setAttribute('opacity', f.state === 'spooked' ? '1' : '0');
+    }
+
+    // 1. CAUGHT: Reel fish up to dock tip
     if (f.state === 'caught') {
       f.catchProgress += dt * 2.4;
       f.x = lerp(f.x, w.rodX, Math.min(1, dt * 14));
@@ -1096,8 +845,8 @@ function updateAct5FishingWorld(w, dt, t) {
       return;
     }
 
-    // 2. ESCAPE: Fish darts away rapidly after a missed strike or early pull
-    if (f.state === 'escape') {
+    // 2. SPOOKED: Fast dart away with red ripple
+    if (f.state === 'spooked') {
       f.timer -= dt;
       f.x += f.vx * dt;
       f.y = clamp(f.y + f.vy * dt, 92, 334);
@@ -1119,23 +868,63 @@ function updateAct5FishingWorld(w, dt, t) {
     const dy = w.hookY - f.y;
     const dist = Math.hypot(dx, dy);
 
-    // 3. BITE (STRIKE WINDOW!): Fish is on the hook! Player has 1.45s to Click/Tap!
-    if (f.state === 'bite') {
+    // Spook check during swimming/curious if player moves hook violently nearby
+    if ((f.state === 'swim' || f.state === 'curious') && dist < 125 && hookSpeed > 210) {
+      w.spookFish(f, 'SPOOKED! HOOK MOVED TOO FAST NEAR THE FISH! ❗', 'فزعت السمكة! حركت الصنارة بسرعة مبالغ فيها! ❗');
+      return;
+    }
+
+    // 3. FIGHT: Interactive line tension / reel minigame
+    if (f.state === 'fight') {
       f.timer += dt;
-      // If player drags hook too far away without clicking, fish breaks off
-      if (dist > 145) {
-        w.escapeFish(f, 'LINE SNAPPED! KEEP HOOK STEADY & CLICK! ⚡', 'انقطع الخيط! اضغط على السمكة وقت الغمزة! ⚡');
+      // Fish thrashes and pulls away
+      const thrashX = Math.sin(t * 12 + f.phase) * (f.sp.speed * 1.3);
+      f.x += (thrashX + (f.x > w.hookX ? 35 : -35)) * dt;
+      f.y = clamp(f.y + Math.cos(t * 16) * 45 * dt, 95, 330);
+
+      // Keeping hook close to fish reels it in; letting hook pull away snaps line!
+      if (dist < 135) {
+        f.reelProgress += dt / f.fightDuration;
+        f.tension = Math.max(0.08, f.tension - dt * 0.35);
+      } else {
+        f.tension += dt * 0.75;
+      }
+
+      if (f.tension >= 1.0) {
+        w.spookFish(f, '💥 LINE SNAPPED! TENSION HIT 100%! KEEP ROD CLOSER!', '💥 انقطع الخيط! زاد الشد عن الحد، خلك قريب من السمكة!');
         activeFish = null;
         return;
       }
-      // Fish tugs aggressively on the hook
+
+      if (f.reelProgress >= 1.0) {
+        w.catchFish(f);
+        activeFish = null;
+        return;
+      }
+
+      w.fishEls[i].setAttribute(
+        'transform',
+        `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(${(Math.sin(t * 22) * 16).toFixed(1)}) scale(${(f.dir * f.sp.scale).toFixed(2)} ${f.sp.scale.toFixed(2)})`
+      );
+      return;
+    }
+
+    // 4. BITE: Tactical strike reflex window
+    if (f.state === 'bite') {
+      f.timer += dt;
+      if (dist > 145) {
+        w.spookFish(f, 'PULLED AWAY TOO HARD! FISH LET GO! ⚡', 'سحبت بعيد زيادة وفلتت السمكة! ⚡');
+        activeFish = null;
+        return;
+      }
       f.x = lerp(f.x, w.hookX - f.dir * 18, Math.min(1, dt * 15));
       f.y = lerp(f.y, w.hookY + Math.sin(t * 26) * 5, Math.min(1, dt * 15));
-      if (f.timer > 1.45) {
-        w.escapeFish(
+
+      if (f.timer > f.sp.strikeWindow) {
+        w.spookFish(
           f,
-          '💨 FISH ESCAPED! CLICK / TAP FASTER WHEN IT BITES!',
-          '💨 فلتت السمكة! اضغط أسرع أول ما تغمز الصنارة!'
+          '💨 MISSED STRIKE! CLICK FASTER NEXT TIME! ⚡',
+          '💨 فلتت السمكة! اضغط أسرع في نافذة الغمزة! ⚡'
         );
         activeFish = null;
         return;
@@ -1147,31 +936,42 @@ function updateAct5FishingWorld(w, dt, t) {
       return;
     }
 
-    // 4. NIBBLE: Fish approaches hook and tests the bait before biting
+    // 5. NIBBLE: Testing bait with fake-outs before real bite
     if (f.state === 'nibble') {
-      if (dist > 165) {
+      if (dist > 160) {
         f.state = 'swim';
         activeFish = null;
       } else {
         f.timer += dt;
-        const targetStandOff = 22 + Math.sin(f.timer * 9) * 7;
+        const targetStandOff = 20 + Math.sin(f.timer * 10) * 8;
         f.dir = dx >= 0 ? 1 : -1;
         f.x = lerp(f.x, w.hookX - f.dir * targetStandOff, Math.min(1, dt * 6));
         f.y = lerp(f.y, w.hookY + Math.cos(f.timer * 7) * 4, Math.min(1, dt * 6));
 
-        // Transition from nibble to full BITE strike after ~0.85s!
-        if (f.timer >= 0.85) {
-          f.state = 'bite';
-          f.timer = 0;
-          haptic(20);
-          sound.play('fish-bite');
-          w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#FBBF24' });
-          w.ripples.push({ x: w.hookX, y: 72, age: 0, color: '#FDE047' });
-          w.setStatus(
-            '⚡ BITE! CLICK OR TAP NOW TO REEL IT IN! ⚡',
-            '⚡ غمزت الصنارة! اضغط الآن فوراً لسحب السمكة! ⚡',
-            true
-          );
+        // After tentative test period, commit or do another nibble
+        if (f.timer >= 0.75) {
+          f.nibbleCount++;
+          if (f.nibbleCount >= f.targetNibbles) {
+            f.state = 'bite';
+            f.timer = 0;
+            haptic(20);
+            sound.play('fish-bite');
+            w.ripples.push({ x: w.hookX, y: w.hookY, age: 0, color: '#FBBF24' });
+            w.ripples.push({ x: w.hookX, y: 72, age: 0, color: '#FDE047' });
+            w.setStatus(
+              '⚡ STRIKE! CLICK OR TAP NOW TO HOOK! ⚡',
+              '⚡ غمزت بقوة! اضغط الآن فوراً لتعليق السمكة! ⚡',
+              'bite'
+            );
+          } else {
+            f.timer = 0;
+            sound.play('water-plop', { rate: 1.25, gain: 0.35 });
+            w.setStatus(
+              `👀 NIBBLE (${f.nibbleCount}/${f.targetNibbles})... WAIT FOR THE REAL STRIKE!`,
+              `👀 نقرة خفيفة (${f.nibbleCount}/${f.targetNibbles})... لا تسحب حتى تغمز بقوة!`,
+              ''
+            );
+          }
         }
         w.fishEls[i].setAttribute(
           'transform',
@@ -1181,17 +981,46 @@ function updateAct5FishingWorld(w, dt, t) {
       }
     }
 
-    // 5. SWIM: Normal patrol in its depth lane; check if hook is in front of its vision cone
-    const inFront = (f.dir > 0 && dx > -15) || (f.dir < 0 && dx < 15) || w.baitBoostTimer > 0;
-    const detectRadius = w.baitBoostTimer > 0 ? 220 : 115;
-    if (!activeFish && inFront && dist < detectRadius && Math.abs(dy) < 65) {
-      f.state = 'nibble';
+    // 6. CURIOUS: Attracted by gentle twitching lure or bait boost
+    if (f.state === 'curious') {
+      // Boredom check: if lure sits motionless for > 4.5s, fish gets bored and leaves
+      if (t - w.lastHookMoveTime > 4.5 && w.baitBoostTimer <= 0) {
+        f.state = 'swim';
+        activeFish = null;
+        w.setStatus(
+          'FISH LOST INTEREST IN STATIC LURE — TWITCH YOUR ROD! 🎣',
+          'ملت السمكة من الصنارة الثابتة — حرّكها بخفة لتشجيعها! 🎣',
+          ''
+        );
+      } else if (dist < 32) {
+        f.state = 'nibble';
+        f.timer = 0;
+        f.nibbleCount = 0;
+      } else {
+        f.dir = dx >= 0 ? 1 : -1;
+        f.x = lerp(f.x, w.hookX, Math.min(1, dt * 2.5));
+        f.y = lerp(f.y, w.hookY, Math.min(1, dt * 2.5));
+      }
+      w.fishEls[i].setAttribute(
+        'transform',
+        `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(0) scale(${(f.dir * f.sp.scale).toFixed(2)} ${f.sp.scale.toFixed(2)})`
+      );
+      return;
+    }
+
+    // 7. SWIM: Standard lane patrol
+    const inFront = (f.dir > 0 && dx > -20) || (f.dir < 0 && dx < 20) || w.baitBoostTimer > 0;
+    const isTwitching = (hookSpeed > 18 && hookSpeed < 130) || w.baitBoostTimer > 0;
+    const detectRadius = w.baitBoostTimer > 0 ? 230 : (120 - f.sp.caution * 30);
+
+    if (!activeFish && inFront && isTwitching && dist < detectRadius && Math.abs(dy) < 60) {
+      f.state = 'curious';
       f.timer = 0;
       activeFish = f;
       w.setStatus(
-        'A FISH IS TESTING YOUR BAIT... WAIT FOR THE BITE! 👀',
-        'سمكة تقترب وتختبر الطُعم... انتظر الغمزة القوية! 👀',
-        false
+        'A FISH NOTICED YOUR LURE... KEEP IT STEADY! 👀',
+        'سمكة انتبهت لحركة الطُعم... انتظر اقترابها! 👀',
+        ''
       );
     }
 
@@ -1210,10 +1039,17 @@ function updateAct5FishingWorld(w, dt, t) {
     );
   });
 
-  // Render physical rod bend, surface bobber dip, and strike tension ring
+  // Physical rod bend and line visuals
+  const isFighting = Boolean(activeFish && activeFish.state === 'fight');
   const isBiting = Boolean(activeFish && activeFish.state === 'bite');
   const isNibbling = Boolean(activeFish && activeFish.state === 'nibble');
-  const rodBendY = isBiting ? 14 + Math.sin(t * 28) * 4 : isNibbling ? 4 + Math.sin(t * 12) * 2 : 0;
+  const rodBendY = isFighting
+    ? 22 + Math.sin(t * 30) * 8
+    : isBiting
+    ? 14 + Math.sin(t * 28) * 4
+    : isNibbling
+    ? 4 + Math.sin(t * 12) * 2
+    : 0;
   const rodTipX = w.rodX;
   const rodTipY = w.rodY + rodBendY;
 
@@ -1224,7 +1060,7 @@ function updateAct5FishingWorld(w, dt, t) {
     if (w.rodCoreEl) w.rodCoreEl.setAttribute('d', shaftD);
   }
 
-  const bobberY = 72 + (isBiting ? 12 + Math.sin(t * 28) * 4 : isNibbling ? 3 + Math.sin(t * 12) * 2.5 : Math.sin(t * 2.5) * 1.8);
+  const bobberY = 72 + (isFighting ? 16 + Math.sin(t * 30) * 6 : isBiting ? 12 + Math.sin(t * 28) * 4 : isNibbling ? 3 + Math.sin(t * 12) * 2.5 : Math.sin(t * 2.5) * 1.8);
   const bobberX = lerp(w.hookX, rodTipX, 0.22);
 
   w.bobberEl.setAttribute('transform', `translate(${bobberX.toFixed(1)} ${bobberY.toFixed(1)})`);
@@ -1250,6 +1086,20 @@ function updateAct5FishingWorld(w, dt, t) {
   w.biteAlertEl.setAttribute('y', Math.max(96, w.hookY - 26).toFixed(1));
   w.biteAlertEl.setAttribute('opacity', isBiting ? '1' : '0');
 
+  // Fight HUD updates
+  if (w.fightHudEl) {
+    if (isFighting && activeFish) {
+      w.fightHudEl.setAttribute('opacity', '1');
+      w.fightHudEl.setAttribute('transform', `translate(${clamp(w.hookX, 85, 915).toFixed(1)} ${Math.max(90, w.hookY - 42).toFixed(1)})`);
+      const reelPct = clamp(activeFish.reelProgress, 0, 1);
+      const tensionPct = clamp(activeFish.tension, 0, 1);
+      if (w.fightReelFillEl) w.fightReelFillEl.setAttribute('width', (reelPct * 124).toFixed(1));
+      if (w.fightTensionFillEl) w.fightTensionFillEl.setAttribute('width', (tensionPct * 124).toFixed(1));
+    } else {
+      w.fightHudEl.setAttribute('opacity', '0');
+    }
+  }
+
   // Render water ripples
   let rippleMarkup = '';
   for (let i = w.ripples.length - 1; i >= 0; i--) {
@@ -1273,35 +1123,23 @@ function updateAct5FishingWorld(w, dt, t) {
 export function initActWorlds() {
   if (worlds.initialized) return;
   worlds.initialized = true;
-  worlds.act1 = buildAct1World();
-  worlds.act2 = buildAct2World();
-  worlds.act3 = buildAct3World();
-  worlds.act4 = buildAct4World();
   worlds.act5 = buildAct5FishingWorld();
 
-  if ('IntersectionObserver' in window) {
-    const allWorlds = [worlds.act1, worlds.act2, worlds.act3, worlds.act4, worlds.act5].filter(Boolean);
+  if ('IntersectionObserver' in window && worlds.act5) {
     const visObserver = new IntersectionObserver((entries) => {
       for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
-        const match = allWorlds.find((item) => item.sec === entry.target);
-        if (match) match.inView = entry.isIntersecting;
+        if (entries[i].target === worlds.act5.sec) {
+          worlds.act5.inView = entries[i].isIntersecting;
+        }
       }
     }, { rootMargin: '250px 0px' });
-    allWorlds.forEach((item) => visObserver.observe(item.sec));
-  } else {
-    [worlds.act1, worlds.act2, worlds.act3, worlds.act4, worlds.act5].forEach((item) => {
-      if (item) item.inView = true;
-    });
+    visObserver.observe(worlds.act5.sec);
+  } else if (worlds.act5) {
+    worlds.act5.inView = true;
   }
 }
 
 export function updateActWorlds(dt) {
-  if (!worlds.initialized) return;
-  const t = state.time;
-  updateAct1World(worlds.act1, dt, t);
-  updateAct2World(worlds.act2, dt, t);
-  updateAct3World(worlds.act3, dt, t);
-  updateAct4World(worlds.act4, dt, t);
-  updateAct5FishingWorld(worlds.act5, dt, t);
+  if (!worlds.initialized || !worlds.act5) return;
+  updateAct5FishingWorld(worlds.act5, dt, state.time);
 }

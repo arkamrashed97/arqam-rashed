@@ -1,16 +1,19 @@
 import { AMBIENT, SFX } from './manifest.js';
 
 /**
- * Web Audio sound engine V4 — Balanced Perceptual Loudness & Spatial Physics.
+ * Web Audio sound engine V5 — measured loudness balance.
  *
- * Every decoded AudioBuffer is analyzed in 20ms windows and normalized in-place using
- * gated active RMS + soft-knee transient taming so quiet effects (hover-soft, type-tick,
- * water-plop) are crystal clear while loud effects never spike or startle.
+ * Source files range from -60 dB to -9 dB active RMS, so every decoded AudioBuffer is
+ * re-leveled in place: gated active RMS (50ms windows, silence excluded) is brought to a
+ * shared target, bounded only by a clean peak ceiling. No waveshaping is applied (the old
+ * tanh stage added audible distortion). Bright/harsh sources get a small loudness discount
+ * because high-frequency energy is perceived louder at equal RMS. Short fades remove clicks.
  */
 
 const PREF_KEY = 'arqam-sound';
 const CROSSFADE_CURVE_STEPS = 96;
 const AMBIENT_URLS = new Set(AMBIENT.map((a) => a.url));
+const MAX_LATE_PLAY_MS = 280;
 
 function makeFadeCurves() {
   const fadeIn = new Float32Array(CROSSFADE_CURVE_STEPS);
@@ -24,96 +27,74 @@ function makeFadeCurves() {
 }
 const CURVES = makeFadeCurves();
 
-/**
- * In-place perceptual loudness normalizer.
- * Uses 20ms gated RMS (ignoring silent padding) + soft-knee tanh crest control so all
- * sounds sit in a tight, comfortable dynamic window on both phone and desktop speakers.
- */
 function normalizeBufferInPlace(buffer, isAmbient = false) {
   const channels = buffer.numberOfChannels;
   const len = buffer.length;
   if (!len || !channels) return;
+  const rate = buffer.sampleRate;
+  const chData = [];
+  for (let c = 0; c < channels; c++) chData.push(buffer.getChannelData(c));
 
-  const winSize = Math.max(256, Math.floor(buffer.sampleRate * 0.02));
-  const winRmsList = [];
-  let maxWinRms = 0;
+  // Peak + mono-sum energy per 50ms window + first-difference energy (brightness proxy)
+  const win = Math.max(512, Math.floor(rate * 0.05));
+  const winRms = [];
   let peak = 0;
-
-  for (let c = 0; c < channels; c++) {
-    const data = buffer.getChannelData(c);
-    for (let i = 0; i < len; i++) {
-      const a = Math.abs(data[i]);
-      if (a > peak) peak = a;
-    }
-  }
-
-  const ch0 = buffer.getChannelData(0);
-  for (let start = 0; start < len; start += winSize) {
-    const end = Math.min(len, start + winSize);
-    let sum = 0;
+  let maxWin = 0;
+  let sumSq = 0;
+  let diffSq = 0;
+  let prev = 0;
+  for (let start = 0; start < len; start += win) {
+    const end = Math.min(len, start + win);
+    let ws = 0;
     for (let i = start; i < end; i++) {
-      sum += ch0[i] * ch0[i];
-    }
-    const rms = Math.sqrt(sum / (end - start));
-    winRmsList.push(rms);
-    if (rms > maxWinRms) maxWinRms = rms;
-  }
-
-  if (peak < 1e-5 || maxWinRms < 1e-5) return;
-
-  // Gate at 18% of max window RMS to exclude leading/trailing silence
-  const gate = maxWinRms * 0.18;
-  let gatedSumSq = 0;
-  let gatedCount = 0;
-  for (let i = 0; i < winRmsList.length; i++) {
-    if (winRmsList[i] >= gate) {
-      gatedSumSq += winRmsList[i] * winRmsList[i];
-      gatedCount++;
-    }
-  }
-  const activeRms = Math.sqrt(gatedSumSq / Math.max(1, gatedCount));
-
-  // If crest factor is very high (spiky click with quiet body), gently soft-saturate first
-  const crest = peak / Math.max(1e-4, activeRms);
-  if (!isAmbient && crest > 4.0) {
-    const drive = Math.min(2.6, (crest / 3.4) / peak);
-    const normTanh = 1 / Math.tanh(drive * peak);
-    peak = 0;
-    for (let c = 0; c < channels; c++) {
-      const data = buffer.getChannelData(c);
-      for (let i = 0; i < len; i++) {
-        const s = Math.tanh(data[i] * drive) * normTanh * 0.85;
-        data[i] = s;
-        const a = Math.abs(s);
+      let s = 0;
+      for (let c = 0; c < channels; c++) {
+        const v = chData[c][i];
+        const a = v < 0 ? -v : v;
         if (a > peak) peak = a;
+        s += v;
       }
+      s /= channels;
+      ws += s * s;
+      const d = s - prev;
+      diffSq += d * d;
+      prev = s;
+    }
+    sumSq += ws;
+    const r = Math.sqrt(ws / (end - start));
+    winRms.push(r);
+    if (r > maxWin) maxWin = r;
+  }
+  if (peak < 1e-6 || maxWin < 1e-6) return;
+
+  const gate = maxWin * 0.18;
+  let gSum = 0;
+  let gCount = 0;
+  for (let i = 0; i < winRms.length; i++) {
+    if (winRms[i] >= gate) {
+      gSum += winRms[i] * winRms[i];
+      gCount++;
     }
   }
+  const active = Math.sqrt(gSum / Math.max(1, gCount));
+  const brightness = Math.sqrt(diffSq / len) / Math.max(1e-6, Math.sqrt(sumSq / len));
 
-  // Re-measure gated RMS after soft-knee crest taming
-  let postSumSq = 0;
-  let postCount = 0;
-  for (let start = 0; start < len; start += winSize) {
-    const end = Math.min(len, start + winSize);
-    let sum = 0;
-    for (let i = start; i < end; i++) sum += ch0[i] * ch0[i];
-    const r = Math.sqrt(sum / (end - start));
-    if (r >= maxWinRms * 0.15) {
-      postSumSq += r * r;
-      postCount++;
-    }
-  }
-  const finalRms = Math.sqrt(postSumSq / Math.max(1, postCount)) || activeRms;
+  let target = isAmbient ? 0.07 : 0.16;
+  if (brightness > 0.45) target *= Math.max(0.6, 1 - (brightness - 0.45) * 0.5);
+  const ceiling = isAmbient ? 0.5 : 0.85;
+  const scale = Math.min(target / active, ceiling / peak, 64);
 
-  const targetRms = isAmbient ? 0.088 : 0.185;
-  const maxPeak = isAmbient ? 0.42 : 0.72;
-  let scale = targetRms / Math.max(1e-4, finalRms);
-  scale = Math.min(scale, maxPeak / Math.max(1e-4, peak), 12.0);
-
+  // Click-free edges: 3ms fade-in, 20ms fade-out on one-shots
+  const fadeIn = isAmbient ? 0 : Math.min(len, Math.floor(rate * 0.003));
+  const fadeOut = isAmbient ? 0 : Math.min(len, Math.floor(rate * 0.02));
   for (let c = 0; c < channels; c++) {
-    const data = buffer.getChannelData(c);
+    const data = chData[c];
     for (let i = 0; i < len; i++) {
-      data[i] *= scale;
+      let g = scale;
+      if (i < fadeIn) g *= i / fadeIn;
+      const fromEnd = len - 1 - i;
+      if (fromEnd < fadeOut) g *= fromEnd / fadeOut;
+      data[i] *= g;
     }
   }
 }
@@ -286,11 +267,11 @@ class SoundEngine {
     this.ctx = ctx;
 
     this.master = ctx.createGain();
-    this.master.gain.value = 0.95;
+    this.master.gain.value = 0.90;
 
     // Master brickwall limiter + gentle glue compressor
     const limiter = ctx.createDynamicsCompressor();
-    limiter.threshold.value = -12;
+    limiter.threshold.value = -14;
     limiter.knee.value = 10;
     limiter.ratio.value = 8;
     limiter.attack.value = 0.003;
@@ -299,10 +280,10 @@ class SoundEngine {
     limiter.connect(ctx.destination);
 
     this.ambientBus = ctx.createGain();
-    this.ambientBus.gain.value = 0.72;
+    this.ambientBus.gain.value = 0.52;
     this.ambientTone = ctx.createBiquadFilter();
     this.ambientTone.type = 'lowpass';
-    this.ambientTone.frequency.value = 3400;
+    this.ambientTone.frequency.value = 3200;
     this.ambientTone.Q.value = 0.4;
     this.ambientSwell = ctx.createGain();
     this.ambientSwell.gain.value = 0.85;
@@ -311,15 +292,20 @@ class SoundEngine {
     this.ambientSwell.connect(this.master);
 
     this.sfxBus = ctx.createGain();
-    this.sfxBus.gain.value = 0.92;
-    this.sfxBus.connect(this.master);
+    this.sfxBus.gain.value = 0.66;
+    this.sfxTone = ctx.createBiquadFilter();
+    this.sfxTone.type = 'lowpass';
+    this.sfxTone.frequency.value = 2600;
+    this.sfxTone.Q.value = 0.5;
+    this.sfxBus.connect(this.sfxTone);
+    this.sfxTone.connect(this.master);
 
     this.reverbSend = ctx.createGain();
-    this.reverbSend.gain.value = 1;
+    this.reverbSend.gain.value = 0.9;
     const convolver = ctx.createConvolver();
     convolver.buffer = this.makeImpulse(1.5);
     const reverbReturn = ctx.createGain();
-    reverbReturn.gain.value = 0.42;
+    reverbReturn.gain.value = 0.24;
     this.reverbSend.connect(convolver);
     convolver.connect(reverbReturn);
     reverbReturn.connect(this.master);
@@ -517,7 +503,7 @@ class SoundEngine {
     voice.out.gain.setTargetAtTime(voice.level, now, instant ? 0.65 : 0.75);
   }
 
-  setAct(act, { announce = true } = {}) {
+  setAct(act, { announce = false } = {}) {
     if (act === this.currentAct) return;
     const previous = this.currentAct;
     this.currentAct = act;
@@ -542,8 +528,8 @@ class SoundEngine {
     if (Math.abs(e - this.energy) < 0.025) return;
     this.energy = e;
     const now = this.ctx.currentTime;
-    this.ambientTone.frequency.setTargetAtTime(3400 + e * 6200, now, 0.25);
-    this.ambientSwell.gain.setTargetAtTime(0.85 + e * 0.18, now, 0.3);
+    this.ambientTone.frequency.setTargetAtTime(3200 + e * 4800, now, 0.25);
+    this.ambientSwell.gain.setTargetAtTime(0.85 + e * 0.15, now, 0.3);
   }
 
   setPointer(nx) { this.pointerPan = Math.max(-1, Math.min(1, nx)); }
@@ -563,7 +549,14 @@ class SoundEngine {
 
     const buffer = this.buffers.get(def.url);
     if (!buffer) {
-      this.decode(def.url).then(() => { if (this.enabled || opts.force) this.playNow(name, opts); }).catch(() => {});
+      const requestedAt = performance.now();
+      this.decode(def.url)
+        .then(() => {
+          if ((this.enabled || opts.force) && performance.now() - requestedAt < MAX_LATE_PLAY_MS) {
+            this.playNow(name, opts);
+          }
+        })
+        .catch(() => {});
       return;
     }
     const ctx = this.ctx;
