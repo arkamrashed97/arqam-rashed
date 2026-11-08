@@ -1359,6 +1359,7 @@ function updateAct5FishingWorld(w, dt, t) {
 export function initActWorlds() {
   if (worlds.initialized) return;
   worlds.initialized = true;
+  if (!CONFIG.enableFishingGame) return;
   worlds.act5 = buildAct5FishingWorld();
 
   if ('IntersectionObserver' in window && worlds.act5) {

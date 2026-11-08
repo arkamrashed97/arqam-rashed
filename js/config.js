@@ -5,6 +5,7 @@
  * exclusively as an encrypted secret inside Cloudflare Pages Functions (functions/api/leaderboard.js).
  */
 export const CONFIG = {
+  enableFishingGame: false, // Set to true to re-enable Act V cyber-lagoon fishing game
   email: 'me@arqamrashed.com',
   whatsapp: '201016843477',
   formEndpoint: 'https://formsubmit.co/ajax/arkamrashed@gmail.com',
