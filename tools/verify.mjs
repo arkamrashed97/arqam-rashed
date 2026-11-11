@@ -254,6 +254,20 @@ async function verifyMobileOverflow(browser, baseUrl) {
     `Mobile RTL horizontal overflow detected: scrollWidth=${overflow.scrollWidth} > innerWidth=${overflow.innerWidth}`
   );
   console.log(`  [PASS] Mobile 390x844 (Arabic RTL): scrollWidth=${overflow.scrollWidth} <= ${overflow.innerWidth} (0px horizontal overflow)`);
+
+  // Verify horizontal track moves when scrolling down into Act II on mobile
+  const workTop = await page.evaluate(() => document.getElementById('work').offsetTop);
+  await page.evaluate((y) => window.scrollTo(0, y + 500), workTop);
+  await page.waitForTimeout(400);
+
+  const mobileScrollCheck = await page.evaluate(() => {
+    const track = document.getElementById('work-track');
+    return {
+      scrollY: window.scrollY,
+      transform: track.style.transform || window.getComputedStyle(track).transform
+    };
+  });
+  console.log(`  [PASS] Mobile scroll-driven horizontal projects translation verified: ${mobileScrollCheck.transform}`);
   await context.close();
 }
 

@@ -81,6 +81,7 @@ export function initScroll() {
 
 export function initHorizontal() {
   const mm = gsap.matchMedia();
+  // Desktop
   mm.add('(min-width: 901px)', () => {
     const distance = () => Math.max(1, refs.track.scrollWidth - window.innerWidth + 1);
     const tween = gsap.to(refs.track, {
@@ -102,6 +103,67 @@ export function initHorizontal() {
       gsap.set(refs.track, { x: 0 });
     };
   });
+
+  // Mobile & Tablet
+  mm.add('(max-width: 900px)', () => {
+    const distance = () => Math.max(1, refs.track.scrollWidth - window.innerWidth + 1);
+    const tween = gsap.to(refs.track, {
+      x: () => -distance(),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: refs.workPin,
+        start: 'top top',
+        end: () => '+=' + Math.max(window.innerHeight * 1.15, distance() * 1.1),
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.5,
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      }
+    });
+    return () => {
+      if (tween.scrollTrigger) tween.scrollTrigger.kill();
+      tween.kill();
+      gsap.set(refs.track, { x: 0 });
+    };
+  });
+
+  initMobileWorkTouch();
+}
+
+function initMobileWorkTouch() {
+  const track = document.getElementById('work-track');
+  if (!track) return;
+  let startX = 0;
+  let startY = 0;
+  let isMoving = false;
+
+  track.addEventListener('touchstart', (e) => {
+    if (window.innerWidth > 900) return;
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    isMoving = true;
+  }, { passive: true });
+
+  track.addEventListener('touchmove', (e) => {
+    if (!isMoving || window.innerWidth > 900) return;
+    if (e.touches.length !== 1) return;
+    const curX = e.touches[0].clientX;
+    const curY = e.touches[0].clientY;
+    const dx = startX - curX;
+    const dy = startY - curY;
+
+    if (Math.abs(dx) > Math.abs(dy) * 1.15 && Math.abs(dx) > 6) {
+      window.scrollBy({ top: dx * 1.15, behavior: 'auto' });
+      startX = curX;
+      startY = curY;
+    }
+  }, { passive: true });
+
+  const end = () => { isMoving = false; };
+  track.addEventListener('touchend', end, { passive: true });
+  track.addEventListener('touchcancel', end, { passive: true });
 }
 
 export function measureLayout() {

@@ -62,7 +62,7 @@ export default {
       workTitle: 'BUILT<br><em>to hold.</em>',
       workIntro: 'Three systems, shipped end to end. Two production platforms and one open-source desktop release. Schema, auth, interface, deployment: no handoff.',
       workFoot1: '03 PROJECTS / 02 PRODUCTION PLATFORMS / 01 OSS RELEASE',
-      workFoot2: 'HORIZONTAL AXIS / SCROLL',
+      workFoot2: 'HORIZONTAL AXIS / SCROLL OR SWIPE →',
       p1Type: 'TOURISM MANAGEMENT / PRODUCTION',
       p1Desc: 'Customer and admin portals, a booking engine, real-time admin chat, and an AI assistant grounded in live services, prices, and bookings. Role-based auth, schema design, deployment, and DNS handled end to end.',
       p1Link: 'OPEN PLATFORM <span aria-hidden="true">↗</span>',
