@@ -142,7 +142,7 @@ export function probeDomain() {
   const timer = window.setTimeout(() => finish('error', 'domainTimeout'), 6500);
   img.onload = () => finish('live', 'domainLive');
   img.onerror = () => finish('error', 'domainPending');
-  img.src = 'https://arqamrashed.com/assets/img/project-arko.svg?probe=' + Date.now();
+  img.src = 'https://arqamrashed.com/assets/img/project-arko.jpg?probe=' + Date.now();
 }
 
 refs.domainBtn.addEventListener('click', probeDomain);

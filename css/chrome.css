@@ -4,7 +4,7 @@
   min-height:var(--hud-h);
   display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;
   padding:10px 22px;
-  font:400 9.5px/1.35 var(--mono);
+  font:400 11.5px/1.35 var(--mono);
   letter-spacing:.09em;text-transform:uppercase;
   border-bottom:1px solid var(--line);
   background:color-mix(in srgb,var(--bg) 76%,transparent);
@@ -38,7 +38,7 @@
 .motion-toggle{
   min-height:44px;padding:0 10px;
   border:1px solid var(--line);
-  font:400 9px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  font:400 11.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   color:var(--ink);
   transition:border-color .2s,color .2s,background .2s;
 }
@@ -61,7 +61,7 @@
 .readout{
   position:fixed;left:22px;bottom:12px;z-index:55;
   display:flex;gap:18px;
-  font:400 8.5px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  font:400 11px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);pointer-events:none;
 }
 .readout b{font-weight:400;color:var(--ink)}
@@ -77,7 +77,7 @@ body.act-4-on .readout,body.contact-in-view .readout{display:none}
   background:color-mix(in srgb,var(--bg) 82%,transparent);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   border-left:1px solid var(--line);
-  font:400 9px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  font:400 11px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
 }
 .act-nav a{
   display:flex;align-items:center;justify-content:flex-end;gap:10px;
@@ -213,6 +213,6 @@ body.cursor-down .cursor__svg{transform:scale(.88)}
 .hairline{border-top:1px solid var(--line)}
 .mono{font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
 .serif{font-family:var(--serif);font-weight:400}
-.data-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font:400 9.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.data-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font:400 11.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase}
 .data-row dt{color:var(--muted)}
 .data-row dd{margin:0;text-align:right;color:var(--ink)}

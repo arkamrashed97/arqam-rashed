@@ -18,14 +18,18 @@ export function initModal() {
     archText: el('modal-arch-text'),
     link: el('modal-link'),
     close: el('modal-close'),
-    backdrop: el('modal-backdrop')
+    backdrop: el('modal-backdrop'),
+    preview: el('modal-preview'),
+    tabs: el('modal-tabs'),
+    img: el('modal-img')
   };
   let opener = null;
 
   function open(idx, trigger) {
     const data = CASE_STUDIES[idx];
     if (!data) return;
-    const local = document.documentElement.lang === 'ar' ? data.ar : data;
+    const isAr = document.documentElement.lang === 'ar';
+    const local = isAr ? data.ar : data;
     parts.index.textContent = local.index;
     parts.title.textContent = local.title;
     parts.desc.textContent = local.desc;
@@ -36,6 +40,40 @@ export function initModal() {
     parts.metrics.innerHTML = local.metrics
       .map((m) => `<div class="project-modal__metric"><b>${m.val}</b><span>${m.label}</span></div>`)
       .join('');
+
+    if (parts.preview && parts.img && data.images && data.images.length) {
+      parts.preview.hidden = false;
+      const setImage = (i) => {
+        const item = data.images[i];
+        parts.img.src = item.src;
+        parts.img.alt = isAr ? (item.labelAr || item.label) : item.label;
+        if (parts.tabs) {
+          parts.tabs.querySelectorAll('.project-modal__tab').forEach((t, ti) => {
+            t.classList.toggle('is-active', ti === i);
+          });
+        }
+      };
+
+      if (parts.tabs) {
+        if (data.images.length > 1) {
+          parts.tabs.hidden = false;
+          parts.tabs.innerHTML = data.images
+            .map((item, i) => `<button type="button" class="project-modal__tab ${i === 0 ? 'is-active' : ''}" data-img="${i}">${isAr ? (item.labelAr || item.label) : item.label}</button>`)
+            .join('');
+          parts.tabs.querySelectorAll('.project-modal__tab').forEach((tab) => {
+            tab.addEventListener('click', () => {
+              setImage(parseInt(tab.getAttribute('data-img'), 10));
+            });
+          });
+        } else {
+          parts.tabs.hidden = true;
+          parts.tabs.innerHTML = '';
+        }
+      }
+      setImage(0);
+    } else if (parts.preview) {
+      parts.preview.hidden = true;
+    }
 
     opener = trigger || null;
     modal.hidden = false;

@@ -101,6 +101,11 @@ export function applyLanguage(lang, persist) {
   applyBindings(code);
   applyCursorLabels(code);
   updateLangToggle(code);
+  const arkoImg = document.getElementById('img-arko');
+  if (arkoImg) {
+    arkoImg.src = code === 'ar' ? 'assets/img/project-arko-dark.jpg' : 'assets/img/project-arko-light.jpg';
+    arkoImg.alt = code === 'ar' ? 'واجهة برنامج أركوكليك لأتمتة سطح المكتب' : 'ArkoClick desktop automation interface';
+  }
   document.title = t('pageTitle', code);
   const meta = document.querySelector('meta[name="description"]');
   if (meta) meta.setAttribute('content', t('metaDesc', code));

@@ -18,7 +18,7 @@ function actOfElement(el) {
 
 export function initSoundUI() {
   const btn = document.getElementById('sound-toggle');
-  const label = document.getElementById('sound-label');
+  const label = document.getElementById('sound-label') || document.getElementById('sound-toggle-text');
 
   function syncButton(on) {
     if (!btn) return;

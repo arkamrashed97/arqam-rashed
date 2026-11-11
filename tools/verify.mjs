@@ -147,13 +147,19 @@ async function verifyEdition(browser, baseUrl, route, label) {
   await page.waitForTimeout(200);
   const arCheck = await page.evaluate(() => ({
     lang: document.documentElement.lang,
-    dir: document.documentElement.dir
+    dir: document.documentElement.dir,
+    hudName: document.getElementById('hud-name')?.textContent?.trim(),
+    nameA: document.getElementById('name-a')?.textContent?.trim(),
+    nameB: document.getElementById('name-b')?.textContent?.trim()
   }));
   assert.equal(arCheck.lang, 'ar', `${label}: #lang-toggle should switch to Arabic`);
   assert.equal(arCheck.dir, 'rtl', `${label}: #lang-toggle should set dir=rtl`);
+  assert.equal(arCheck.hudName, 'أرقم راشد', `${label}: #hud-name should be 'أرقم راشد' in Arabic`);
+  assert.equal(arCheck.nameA, 'أرقم', `${label}: #name-a should be 'أرقم' in Arabic`);
+  assert.equal(arCheck.nameB, 'راشد', `${label}: #name-b should be 'راشد' in Arabic`);
   await page.click('#lang-toggle');
   await page.waitForTimeout(200);
-  console.log('  [PASS] Bidirectional language switch (EN <-> AR RTL)');
+  console.log('  [PASS] Bidirectional language switch (EN <-> AR RTL) + Arabic name verified');
 
   // 4. CV Download Links & Removal of Inline CV Timeline
   const cvCheck = await page.evaluate(async () => {

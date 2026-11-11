@@ -13,6 +13,9 @@ export const CASE_STUDIES = [
       archText: 'Built on Next.js App Router with Supabase PostgreSQL. Row Level Security (RLS) ensures strict tenant data separation across customer, agent, and super-admin portals. AI context injection fetches live hotel availability, dynamic seasonal pricing, and active bookings via transactional edge functions with zero hallucinations.',
       link: 'https://sequoiatravel.com',
       btnText: 'VISIT SEQUOIATRAVEL.COM ↗',
+      images: [
+        { src: 'assets/img/project-sequoia.jpg', label: 'Production Platform', labelAr: 'واجهة المنصة الحية' }
+      ],
       // Arabic version
       ar: {
         index: '01 / دراسة المعمارية الفنية',
@@ -41,8 +44,12 @@ export const CASE_STUDIES = [
       ],
       archTitle: 'LOW-LEVEL WIN32 & SCHEDULER DESIGN',
       archText: 'Implemented via direct Win32 API PostMessage and SendMessage dispatch. Rather than relying on standard busy-wait polling loops, a calibrated min-heap priority scheduler allows the application to sleep with 0.00% CPU overhead between events. Binary auto-updates are cryptographically verified with SHA-256 signatures before staging.',
-      link: 'https://github.com/arkamrashed97/arko-click',
+      link: 'https://github.com/arkamrashed97/ArkoClick',
       btnText: 'VIEW GITHUB REPOSITORY ↗',
+      images: [
+        { src: 'assets/img/project-arko-dark.jpg', label: 'Dark Mode (Arabic UI)', labelAr: 'الوضع الداكن (الواجهة العربية)' },
+        { src: 'assets/img/project-arko-light.jpg', label: 'Light Mode (English UI)', labelAr: 'الوضع الفاتح (الواجهة الإنجليزية)' }
+      ],
       // Arabic version
       ar: {
         index: '02 / دراسة المعمارية الفنية',
@@ -73,6 +80,9 @@ export const CASE_STUDIES = [
       archText: 'Designed for high reliability in retail point-of-sale environments. Features atomic transaction handling for inventory depletion, preventing duplicate checkout or phantom stock. A sandboxed Demo Mode initializes mock memory state, permitting staff training without altering production financial or stock tables.',
       link: 'https://rtsupplements.vercel.app',
       btnText: 'VISIT RTSUPPLEMENTS.VERCEL.APP ↗',
+      images: [
+        { src: 'assets/img/project-rt.jpg', label: 'Production Dashboard', labelAr: 'لوحة التحكم الحية' }
+      ],
       // Arabic version
       ar: {
         index: '03 / دراسة المعمارية الفنية',

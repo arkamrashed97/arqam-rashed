@@ -117,7 +117,14 @@ async function buildSingleFile() {
 
   let bundledJs = jsBuild.outputFiles[0].text.trim();
 
-  // Rewrite audio and doc paths in the bundled JS for single-file/index.html
+  const imgMimeMap = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.svg': 'image/svg+xml'
+  };
+
+  // Rewrite audio, image, and doc paths in the bundled JS for single-file/index.html
   const vcardDataUri = toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard');
   if (EMBED_ALL) {
     const cvDataUri = toDataUri('assets/docs/Arqam-Rashed-CV.pdf', 'application/pdf');
@@ -125,21 +132,21 @@ async function buildSingleFile() {
       const uri = toDataUri(`assets/audio/${file}`, 'audio/mpeg');
       return JSON.stringify(uri);
     });
+    bundledJs = bundledJs.replace(/["']assets\/img\/([^"']+)["']/g, (_, file) => {
+      const ext = path.extname(file).toLowerCase();
+      const mime = imgMimeMap[ext] || 'application/octet-stream';
+      return JSON.stringify(toDataUri(`assets/img/${file}`, mime));
+    });
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, JSON.stringify(cvDataUri));
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
   } else {
     bundledJs = bundledJs.replace(/["']assets\/audio\/([^"']+\.mp3)["']/g, '"../assets/audio/$1"');
+    bundledJs = bundledJs.replace(/["']assets\/img\/([^"']+)["']/g, '"../assets/img/$1"');
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, '"../assets/docs/Arqam-Rashed-CV.pdf"');
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
   }
 
   // 3. Inline project images as data URIs so WebGL texture loader works even on file://
-  const imgMimeMap = {
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.png': 'image/png',
-    '.svg': 'image/svg+xml'
-  };
   html = html.replace(/src="(assets\/img\/[^"]+)"/g, (_, relPath) => {
     const ext = path.extname(relPath).toLowerCase();
     const mime = imgMimeMap[ext] || 'application/octet-stream';

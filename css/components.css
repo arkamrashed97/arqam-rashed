@@ -52,7 +52,7 @@ body.no-js .project__img{opacity:.92!important}
 .project__deep{
   display:inline-flex;align-items:center;gap:6px;min-height:44px;
   background:transparent;border:0;border-bottom:1px solid var(--line);
-  font:400 9px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  font:400 11.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
   color:var(--muted);transition:all .2s;cursor:pointer;
   touch-action:manipulation;
 }
