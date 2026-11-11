@@ -9,8 +9,6 @@ export const CONFIG = {
   email: 'me@arqamrashed.com',
   whatsapp: '201016843477',
   formEndpoint: 'https://formsubmit.co/ajax/arkamrashed@gmail.com',
-  cvUrl: 'assets/docs/Arqam-Rashed-CV.pdf',
-  vcardUrl: 'assets/docs/Arqam-Rashed.vcf',
   leaderboardApiUrl: 'https://arqam-rashed.pages.dev/api/leaderboard',
   supabaseUrl: 'https://qsbuqfkkevrbdxrebsln.supabase.co',
   supabasePublishableKey: 'sb_publishable_rmdQ2iW5kaFlBZwp_e3g6g_fEJ7mpn9'

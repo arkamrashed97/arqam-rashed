@@ -125,9 +125,11 @@ async function buildSingleFile() {
   };
 
   // Rewrite audio, image, and doc paths in the bundled JS for single-file/index.html
-  const vcardDataUri = toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard');
+  const vcardPath = path.join(ROOT, 'assets/docs/Arqam-Rashed.vcf');
+  const vcardDataUri = fs.existsSync(vcardPath) ? toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard') : '';
+  const cvPath = path.join(ROOT, 'assets/docs/Arqam-Rashed-CV.pdf');
+  const cvDataUri = fs.existsSync(cvPath) ? toDataUri('assets/docs/Arqam-Rashed-CV.pdf', 'application/pdf') : '';
   if (EMBED_ALL) {
-    const cvDataUri = toDataUri('assets/docs/Arqam-Rashed-CV.pdf', 'application/pdf');
     bundledJs = bundledJs.replace(/["']assets\/audio\/([^"']+\.mp3)["']/g, (_, file) => {
       const uri = toDataUri(`assets/audio/${file}`, 'audio/mpeg');
       return JSON.stringify(uri);
@@ -137,13 +139,19 @@ async function buildSingleFile() {
       const mime = imgMimeMap[ext] || 'application/octet-stream';
       return JSON.stringify(toDataUri(`assets/img/${file}`, mime));
     });
-    bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, JSON.stringify(cvDataUri));
-    bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
+    if (cvDataUri) {
+      bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, JSON.stringify(cvDataUri));
+    }
+    if (vcardDataUri) {
+      bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
+    }
   } else {
     bundledJs = bundledJs.replace(/["']assets\/audio\/([^"']+\.mp3)["']/g, '"../assets/audio/$1"');
     bundledJs = bundledJs.replace(/["']assets\/img\/([^"']+)["']/g, '"../assets/img/$1"');
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, '"../assets/docs/Arqam-Rashed-CV.pdf"');
-    bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
+    if (vcardDataUri) {
+      bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
+    }
   }
 
   // 3. Inline project images as data URIs so WebGL texture loader works even on file://

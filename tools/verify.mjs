@@ -161,32 +161,43 @@ async function verifyEdition(browser, baseUrl, route, label) {
   await page.waitForTimeout(200);
   console.log('  [PASS] Bidirectional language switch (EN <-> AR RTL) + Arabic name verified');
 
-  // 4. CV Download Links & Removal of Inline CV Timeline
-  const cvCheck = await page.evaluate(async () => {
+  // 4. Verification that CV downloads & redundant action buttons are removed
+  const cvRemovalCheck = await page.evaluate(() => {
     const cvBtn = document.getElementById('cv-btn');
     const footerCvBtn = document.getElementById('footer-cv-btn');
     const vcardBtn = document.getElementById('vcard-btn');
+    const ctaEmail = document.getElementById('cta-email');
+    const ctaWa = document.getElementById('cta-wa');
+    const cvDossier = document.querySelector('.cv-dossier');
+    const emailCopy = document.getElementById('email-copy');
+    const domainStatus = document.getElementById('domain-status');
     const timeline = document.querySelector('.timeline');
     const bodyText = document.body.innerText;
-    const res = await fetch(cvBtn.getAttribute('href'));
     return {
-      cvDownload: cvBtn ? cvBtn.getAttribute('download') : null,
-      footerCvDownload: footerCvBtn ? footerCvBtn.getAttribute('download') : null,
-      vcardDownload: vcardBtn ? vcardBtn.getAttribute('download') : null,
+      hasCvBtn: Boolean(cvBtn),
+      hasFooterCvBtn: Boolean(footerCvBtn),
+      hasVcardBtn: Boolean(vcardBtn),
+      hasCtaEmail: Boolean(ctaEmail),
+      hasCtaWa: Boolean(ctaWa),
+      hasCvDossier: Boolean(cvDossier),
+      hasEmailCopy: Boolean(emailCopy),
+      hasDomainStatus: Boolean(domainStatus),
       hasTimelineDom: Boolean(timeline),
-      hasBostaOrGrandMemphis: /Grand Memphis|Bosta/i.test(bodyText),
-      pdfStatus: res.status,
-      pdfContentType: res.headers.get('content-type')
+      hasBostaOrGrandMemphis: /Grand Memphis|Bosta/i.test(bodyText)
     };
   });
 
-  assert.equal(cvCheck.cvDownload, 'Arqam-Rashed-CV.pdf', `${label}: #cv-btn must download Arqam-Rashed-CV.pdf`);
-  assert.equal(cvCheck.footerCvDownload, 'Arqam-Rashed-CV.pdf', `${label}: #footer-cv-btn must download Arqam-Rashed-CV.pdf`);
-  assert.equal(cvCheck.vcardDownload, 'Arqam-Rashed.vcf', `${label}: #vcard-btn must download Arqam-Rashed.vcf`);
-  assert.equal(cvCheck.hasTimelineDom, false, `${label}: .timeline must be removed from DOM`);
-  assert.equal(cvCheck.hasBostaOrGrandMemphis, false, `${label}: inline CV work history must not appear in page text`);
-  assert.equal(cvCheck.pdfStatus, 200, `${label}: CV PDF link must return HTTP 200`);
-  console.log(`  [PASS] CV PDF & vCard download buttons verified (HTTP ${cvCheck.pdfStatus}, 0 inline CV history)`);
+  assert.equal(cvRemovalCheck.hasCvBtn, false, `${label}: #cv-btn must be removed from Act IV`);
+  assert.equal(cvRemovalCheck.hasFooterCvBtn, false, `${label}: #footer-cv-btn must be removed from Footer`);
+  assert.equal(cvRemovalCheck.hasVcardBtn, false, `${label}: #vcard-btn must be removed from Act IV`);
+  assert.equal(cvRemovalCheck.hasCtaEmail, false, `${label}: #cta-email must be removed from Act IV`);
+  assert.equal(cvRemovalCheck.hasCtaWa, false, `${label}: #cta-wa must be removed from Act IV`);
+  assert.equal(cvRemovalCheck.hasCvDossier, false, `${label}: .cv-dossier must be removed from Footer`);
+  assert.equal(cvRemovalCheck.hasEmailCopy, true, `${label}: #email-copy must remain in Act IV`);
+  assert.equal(cvRemovalCheck.hasDomainStatus, true, `${label}: #domain-status must remain in Act IV`);
+  assert.equal(cvRemovalCheck.hasTimelineDom, false, `${label}: .timeline must be removed from DOM`);
+  assert.equal(cvRemovalCheck.hasBostaOrGrandMemphis, false, `${label}: inline CV work history must not appear in page text`);
+  console.log('  [PASS] CV downloads, dossier, and redundant Act IV buttons confirmed removed');
 
   // 5. Case Study Modal & Scroll Transitions across Acts I..V
   await page.evaluate(() => window.scrollTo(0, document.getElementById('work').offsetTop + 60));

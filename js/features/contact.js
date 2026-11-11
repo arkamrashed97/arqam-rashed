@@ -21,11 +21,6 @@ export function initContact() {
   localiseWhatsApp();
   window.addEventListener('arqam:lang', localiseWhatsApp);
 
-  const cv = document.getElementById('cv-btn');
-  if (cv) cv.setAttribute('href', CONFIG.cvUrl);
-  const vcard = document.getElementById('vcard-btn');
-  if (vcard) vcard.setAttribute('href', CONFIG.vcardUrl);
-
   document.querySelectorAll('[data-download]').forEach((a) => {
     a.addEventListener('click', () => sound.play('download-ok'));
   });

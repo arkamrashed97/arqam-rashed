@@ -1,15 +1,10 @@
-/* Footer: CV dossier and verified channels */
+/* Footer: verified channels */
 .site-footer{
   position:relative;z-index:2;color:var(--ink);
   padding:4vh var(--pad) calc(4vh + 54px);
   background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 92%,transparent),color-mix(in srgb,var(--bg) 97%,transparent) 42%,var(--bg));
 }
-.footer-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:5vw;border-top:1px solid var(--line);padding-top:3.5vh;align-items:start}
-.cv-dossier{display:grid;gap:14px;max-width:52ch}
-.cv-dossier__copy{
-  font-size:clamp(13.5px,1.05vw,16px);line-height:1.65;color:var(--muted);
-}
-.cv-dossier__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
+.footer-grid{display:grid;grid-template-columns:1fr;gap:24px;border-top:1px solid var(--line);padding-top:3.5vh;align-items:start}
 .footer-links{display:flex;flex-wrap:wrap;gap:0 18px;align-content:start}
 .footer-links a{
   display:inline-flex;align-items:center;min-height:44px;min-width:44px;
