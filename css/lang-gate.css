@@ -51,7 +51,7 @@ body.is-ready #boot {
 .lang-gate__top{
   display:flex;justify-content:space-between;gap:20px;
   border-bottom:1px solid rgba(212,255,0,.24);padding-bottom:12px;
-  font:400 9.5px/1.5 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  font:400 12.5px/1.5 var(--mono);letter-spacing:.09em;text-transform:uppercase;
   color:rgba(226,226,229,.55);
 }
 .lang-gate__top span,
@@ -119,7 +119,7 @@ body.is-ready #boot {
 }
 .lang-option__sub{
   display:block;margin-top:7px;
-  font:400 9px/1.5 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+  font:400 12px/1.5 var(--mono);letter-spacing:.06em;text-transform:uppercase;
   color:rgba(226,226,229,.5);
 }
 .lang-option__arrow{font-size:18px;line-height:1;color:#D4FF00;transition:transform .2s}
@@ -137,7 +137,7 @@ body.is-ready #boot {
 }
 .lang-option[data-lang-choice="ar"] .lang-option__sub{
   font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
-  font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;
+  font-size:13px;font-weight:400;letter-spacing:0;text-transform:none;
 }
 .lang-option[data-lang-choice="ar"] .lang-option__arrow{transform:scaleX(-1)}
 .lang-option[data-lang-choice="ar"]:hover .lang-option__arrow,
@@ -145,7 +145,7 @@ body.is-ready #boot {
 .lang-gate__bottom{
   display:flex;justify-content:space-between;gap:20px;
   border-top:1px solid rgba(226,226,229,.18);padding-top:12px;
-  font:400 8.5px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  font:400 12px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   color:rgba(226,226,229,.42);
 }
 
@@ -153,7 +153,7 @@ body.is-ready #boot {
 .lang-toggle{
   min-width:44px;min-height:44px;padding:0 8px;
   border:1px solid var(--line);
-  font:500 11px/1 var(--mono);letter-spacing:.04em;
+  font:500 13px/1 var(--mono);letter-spacing:.04em;
   color:var(--ink);
   transition:border-color .2s,color .2s,background .2s;
 }

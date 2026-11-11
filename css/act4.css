@@ -10,7 +10,7 @@
 .contact-head{
   display:flex;justify-content:space-between;gap:20px;
   border-bottom:1px solid var(--line);padding-bottom:12px;
-  font:400 11.5px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+  font:400 13px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
 }
 .contact-title{
   font-family:var(--display);font-weight:400;
@@ -40,22 +40,22 @@
 .email-copy{
   width:100%;min-height:58px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;
   border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0;text-align:left;
-  font:400 11.5px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  font:400 13px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;
 }
 .email-copy__label{color:var(--muted)}
 .email-copy__value{
-  overflow-wrap:anywhere;font:400 clamp(12px,1.15vw,16px)/1.2 var(--mono);
+  overflow-wrap:anywhere;font:400 clamp(14px,1.25vw,17px)/1.2 var(--mono);
   letter-spacing:.03em;text-transform:none;
 }
-.email-copy__action{color:var(--accent-strong);font:400 11.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.email-copy__action{color:var(--accent-strong);font:400 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
 .email-copy:hover .email-copy__action{text-decoration:underline;text-underline-offset:3px}
 .email-copy.is-copied .email-copy__action{color:var(--ink)}
 .domain-status{
   display:flex;align-items:center;gap:10px;min-height:44px;
-  font:400 11.5px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;
+  font:400 13px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;
 }
 .domain-status__dot{width:6px;height:6px;flex:0 0 auto;background:var(--accent)}
 .domain-status[data-state="checking"] .domain-status__dot{background:var(--muted)}
 .domain-status[data-state="error"] .domain-status__dot{background:var(--ink)}
 .domain-status:hover{color:var(--ink)}
-.contact-note{max-width:30ch;font:400 12px/1.55 var(--mono);letter-spacing:.05em;color:var(--muted)}
+.contact-note{max-width:30ch;font:400 13.5px/1.55 var(--mono);letter-spacing:.05em;color:var(--muted)}

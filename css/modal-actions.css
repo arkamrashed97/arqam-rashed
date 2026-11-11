@@ -20,7 +20,7 @@
   border-bottom:1px solid var(--line);padding-bottom:12px;
 }
 .project-modal__index{
-  font:400 11.5px/1.3 var(--mono);letter-spacing:.1em;color:var(--accent);
+  font:400 13px/1.3 var(--mono);letter-spacing:.1em;color:var(--accent);
 }
 .project-modal__close{
   background:transparent;border:1px solid var(--line);color:var(--ink);
@@ -43,7 +43,7 @@
   display:block;font-family:var(--display);font-size:22px;color:var(--accent);
 }
 .project-modal__metric span{
-  font:400 11px/1.3 var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;
+  font:400 12.5px/1.3 var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;
 }
 .project-modal__preview{
   display:grid;gap:10px;border:1px solid var(--line);padding:12px;
@@ -54,7 +54,7 @@
 }
 .project-modal__tab{
   background:transparent;border:1px solid var(--line);color:var(--muted);
-  padding:6px 12px;font:400 11px/1 var(--mono);letter-spacing:.06em;
+  padding:6px 12px;font:400 12.5px/1 var(--mono);letter-spacing:.06em;
   text-transform:uppercase;cursor:pointer;transition:all .2s;
 }
 .project-modal__tab.is-active{
@@ -68,11 +68,11 @@
   width:100%;height:auto;max-height:420px;object-fit:contain;display:block;
 }
 .project-modal__section h4{
-  font:400 12px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+  font:400 13.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;
   color:var(--accent);margin:0 0 8px;
 }
 .project-modal__section p{
-  font-size:13.5px;line-height:1.65;color:color-mix(in srgb,var(--ink) 85%,transparent);
+  font-size:15px;line-height:1.65;color:color-mix(in srgb,var(--ink) 85%,transparent);
 }
 .project-modal__footer{
   display:flex;gap:12px;padding-top:12px;border-top:1px solid var(--line);

@@ -81,7 +81,7 @@ export const BINDINGS = [
     { sel: '.act-3__context span:first-child', key: 'context1', html: true },
     { sel: '.act-3__context span:last-child', key: 'context2' },
     { sel: '.contact-head span:first-child', key: 'signalKicker' },
-    { sel: '.contact-head span:last-child', key: 'location' },
+    { sel: '#contact-head-meta', key: 'contactHeadMeta' },
     { sel: '#contact-title', key: 'contactTitle', html: true },
     { sel: '.contact-copy', key: 'contactCopy' },
     { sel: '.contact-note', key: 'contactNote' },

@@ -11,9 +11,9 @@ body.no-js .project__img{opacity:.92!important}
 
 /* Audio engine HUD toggle */
 .sound-toggle{
-  display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;
+  display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;
   background:transparent;border:1px solid var(--line);
-  font:400 8.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  font:400 12px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
   color:var(--muted);transition:all .2s var(--ease);cursor:pointer;
   touch-action:manipulation;
 }
@@ -24,7 +24,7 @@ body.no-js .project__img{opacity:.92!important}
   color:var(--ink);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);
 }
 .sound-toggle__icon{
-  display:inline-block;font-size:11px;line-height:1;
+  display:inline-block;font-size:13px;line-height:1;
   transition:transform .2s var(--ease);
 }
 .sound-toggle.is-active .sound-toggle__icon{
@@ -52,7 +52,7 @@ body.no-js .project__img{opacity:.92!important}
 .project__deep{
   display:inline-flex;align-items:center;gap:6px;min-height:44px;
   background:transparent;border:0;border-bottom:1px solid var(--line);
-  font:400 11.5px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
+  font:400 13px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
   color:var(--muted);transition:all .2s;cursor:pointer;
   touch-action:manipulation;
 }
