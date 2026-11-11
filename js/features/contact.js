@@ -8,7 +8,7 @@ import { sound } from '../audio/index.js';
  */
 const WA_TEXT = {
   en: 'Hello Arqam, I viewed your portfolio and would like to discuss a project with you.',
-  ar: 'مرحباً أرقم، اطلعت على معرض أعمالك وأرغب في مناقشة مشروع برمجي معك.'
+  ar: 'مرحباً أرقم، اطلعت على سابقة أعمالك وحابب ننسق مع بعض بخصوص مشروع برمجي جديد.'
 };
 
 function localiseWhatsApp() {
