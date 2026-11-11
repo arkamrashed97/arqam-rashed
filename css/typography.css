@@ -9,8 +9,17 @@ html[lang="ar"] *{letter-spacing:normal!important}
 html[lang="ar"] .hero-name h1{
   font-family:var(--display)!important;
   font-weight:900!important;
-  letter-spacing:-.015em!important;
-  line-height:0.92;
+  letter-spacing:normal!important;
+  line-height:1.24!important;
+}
+html[lang="ar"] .hero-name .line{
+  overflow:visible!important;
+  padding-top:0.18em!important;
+  padding-bottom:0.1em!important;
+}
+html[lang="ar"] .hero-name .line-inner{
+  overflow:visible!important;
+  display:inline-block;
 }
 html[lang="ar"] .hero-name h1 .first,
 html[lang="ar"] .hero-name h1 .last{

@@ -87,6 +87,10 @@ export function finishBoot(forceImmediate = false) {
 /* Intro typography */
 export function splitName(el) {
   if (!el) return [];
+  // In Arabic cursive script, do not split into individual char spans as it breaks letter shaping and connections
+  if (document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl' || /[\u0600-\u06FF]/.test(el.textContent)) {
+    return [el];
+  }
   const text = el.textContent.trim();
   el.textContent = '';
   const chars = [];

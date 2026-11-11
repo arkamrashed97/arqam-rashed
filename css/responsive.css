@@ -166,6 +166,17 @@
   .project h3{font-size:clamp(28px,9vw,48px)}
 }
 @media (max-width:900px){
+  html[lang="ar"] .hero-name h1,
+  html[dir="rtl"] .hero-name h1{
+    line-height:1.26!important;
+    letter-spacing:normal!important;
+  }
+  html[lang="ar"] .hero-name .line,
+  html[dir="rtl"] .hero-name .line{
+    overflow:visible!important;
+    padding-top:0.2em!important;
+    padding-bottom:0.12em!important;
+  }
   html[dir="rtl"] .hero-name .line:first-child{text-align:right}
   html[dir="rtl"] .hero-name .line--2{text-align:right;padding-right:7vw;padding-left:0}
 }
