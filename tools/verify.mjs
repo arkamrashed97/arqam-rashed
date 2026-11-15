@@ -161,7 +161,7 @@ async function verifyEdition(browser, baseUrl, route, label) {
   await page.waitForTimeout(200);
   console.log('  [PASS] Bidirectional language switch (EN <-> AR RTL) + Arabic name verified');
 
-  // 4. Verification that CV downloads & redundant action buttons are removed
+  // 4. Verification that Footer CV dossier is present & redundant Act IV action buttons are removed
   const cvRemovalCheck = await page.evaluate(() => {
     const cvBtn = document.getElementById('cv-btn');
     const footerCvBtn = document.getElementById('footer-cv-btn');
@@ -176,6 +176,7 @@ async function verifyEdition(browser, baseUrl, route, label) {
     return {
       hasCvBtn: Boolean(cvBtn),
       hasFooterCvBtn: Boolean(footerCvBtn),
+      footerCvHref: footerCvBtn ? footerCvBtn.getAttribute('href') : null,
       hasVcardBtn: Boolean(vcardBtn),
       hasCtaEmail: Boolean(ctaEmail),
       hasCtaWa: Boolean(ctaWa),
@@ -188,16 +189,17 @@ async function verifyEdition(browser, baseUrl, route, label) {
   });
 
   assert.equal(cvRemovalCheck.hasCvBtn, false, `${label}: #cv-btn must be removed from Act IV`);
-  assert.equal(cvRemovalCheck.hasFooterCvBtn, false, `${label}: #footer-cv-btn must be removed from Footer`);
+  assert.equal(cvRemovalCheck.hasFooterCvBtn, true, `${label}: #footer-cv-btn must be present in Footer`);
+  assert.ok(cvRemovalCheck.footerCvHref && cvRemovalCheck.footerCvHref.endsWith('assets/docs/Arqam-Rashed-CV.pdf'), `${label}: #footer-cv-btn must link to CV PDF`);
   assert.equal(cvRemovalCheck.hasVcardBtn, false, `${label}: #vcard-btn must be removed from Act IV`);
   assert.equal(cvRemovalCheck.hasCtaEmail, false, `${label}: #cta-email must be removed from Act IV`);
   assert.equal(cvRemovalCheck.hasCtaWa, false, `${label}: #cta-wa must be removed from Act IV`);
-  assert.equal(cvRemovalCheck.hasCvDossier, false, `${label}: .cv-dossier must be removed from Footer`);
+  assert.equal(cvRemovalCheck.hasCvDossier, true, `${label}: .cv-dossier must be present in Footer`);
   assert.equal(cvRemovalCheck.hasEmailCopy, true, `${label}: #email-copy must remain in Act IV`);
   assert.equal(cvRemovalCheck.hasDomainStatus, true, `${label}: #domain-status must remain in Act IV`);
   assert.equal(cvRemovalCheck.hasTimelineDom, false, `${label}: .timeline must be removed from DOM`);
   assert.equal(cvRemovalCheck.hasBostaOrGrandMemphis, false, `${label}: inline CV work history must not appear in page text`);
-  console.log('  [PASS] CV downloads, dossier, and redundant Act IV buttons confirmed removed');
+  console.log('  [PASS] Footer CV dossier restored and redundant Act IV buttons confirmed removed');
 
   // 5. Case Study Modal & Scroll Transitions across Acts I..V
   await page.evaluate(() => window.scrollTo(0, document.getElementById('work').offsetTop + 60));
