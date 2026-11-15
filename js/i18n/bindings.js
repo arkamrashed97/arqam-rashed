@@ -100,7 +100,7 @@ export const BINDINGS = [
     { sel: '#footer-cv-meta', key: 'cvMeta' },
     { sel: '.footer-grid > div:last-child .kicker', key: 'channelsLabel' },
     { sel: '.footer-links', key: 'footerNavLabel', prop: 'aria-label' },
-    { sel: '.footer-links a', keys: ['footerLinkGh', 'footerLinkSequoia', 'footerLinkRt', 'footerLinkArko', 'footerLinkEmail'] },
+    { sel: '.footer-links a', keys: ['footerLinkGh', 'footerLinkTawfeek', 'footerLinkRt', 'footerLinkArko', 'footerLinkEmail'] },
     { sel: '.footer-meta > span:first-child', key: 'footerMeta1' },
     { sel: '.footer-meta a[href="#top"]', key: 'backToTop', html: true },
     { sel: '.mobile-nav', key: 'sectionsLabel', prop: 'aria-label' },

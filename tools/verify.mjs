@@ -206,11 +206,19 @@ async function verifyEdition(browser, baseUrl, route, label) {
   await page.waitForTimeout(300);
   await page.locator('[data-case="0"]').dispatchEvent('click');
   await page.waitForTimeout(250);
-  const modalOpen = await page.evaluate(() => !document.getElementById('project-modal').hidden);
-  assert.equal(modalOpen, true, `${label}: project modal should open on case study click`);
+  const modalCheck = await page.evaluate(() => ({
+    open: !document.getElementById('project-modal').hidden,
+    title: document.getElementById('modal-title')?.textContent?.trim(),
+    shotCount: document.querySelectorAll('#modal-frame img').length,
+    hasSequoia: /sequoia/i.test(document.body.innerText)
+  }));
+  assert.equal(modalCheck.open, true, `${label}: project modal should open on case study click`);
+  assert.equal(modalCheck.title, 'TAWFEEK TOURS', `${label}: Case study 0 must be TAWFEEK TOURS`);
+  assert.ok(modalCheck.shotCount >= 4, `${label}: Case study 0 modal must display all TawfeekTours screenshots (${modalCheck.shotCount})`);
+  assert.equal(modalCheck.hasSequoia, false, `${label}: legacy Sequoia Travel reference must be removed`);
   await page.locator('#modal-close').dispatchEvent('click');
   await page.waitForTimeout(250);
-  console.log('  [PASS] Case study modal opens and closes cleanly');
+  console.log(`  [PASS] Case study modal opens and renders ${modalCheck.shotCount} TawfeekTours screenshots cleanly`);
 
   for (const id of ['act-1', 'work', 'architecture', 'contact', 'inquiry']) {
     await page.evaluate((secId) => {
@@ -268,19 +276,51 @@ async function verifyMobileOverflow(browser, baseUrl) {
   );
   console.log(`  [PASS] Mobile 390x844 (Arabic RTL): scrollWidth=${overflow.scrollWidth} <= ${overflow.innerWidth} (0px horizontal overflow)`);
 
-  // Verify horizontal track moves when scrolling down into Act II on mobile
+  // Verify Act II stacks vertically on mobile and displays all screenshots uncropped on scroll-down
   const workTop = await page.evaluate(() => document.getElementById('work').offsetTop);
-  await page.evaluate((y) => window.scrollTo(0, y + 500), workTop);
+  await page.evaluate((y) => window.scrollTo(0, y + 100), workTop);
   await page.waitForTimeout(400);
 
-  const mobileScrollCheck = await page.evaluate(() => {
+  // Trigger lazy-loaded images along Act II by scrolling through each project
+  const imgCount = await page.locator('.project__media img').count();
+  for (let i = 0; i < imgCount; i++) {
+    await page.locator('.project__media img').nth(i).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(150);
+  }
+
+  const mobileWorkCheck = await page.evaluate(() => {
     const track = document.getElementById('work-track');
+    const projects = [...document.querySelectorAll('.project')];
+    const imgs = [...document.querySelectorAll('.project__media img')];
+    const tops = projects.map((p) => p.getBoundingClientRect().top + window.scrollY);
+    const imgMetrics = imgs.map((img) => {
+      const rect = img.getBoundingClientRect();
+      const natRatio = img.naturalHeight ? img.naturalWidth / img.naturalHeight : 0;
+      const renRatio = rect.height ? rect.width / rect.height : 0;
+      return {
+        src: img.getAttribute('src')?.slice(0, 60),
+        visible: getComputedStyle(img).display !== 'none' && Number(getComputedStyle(img).opacity) > 0.5,
+        complete: img.complete && img.naturalWidth > 0,
+        width: rect.width,
+        height: rect.height,
+        ratioDiff: natRatio && renRatio ? Math.abs(natRatio - renRatio) / natRatio : 1
+      };
+    });
     return {
-      scrollY: window.scrollY,
-      transform: track.style.transform || window.getComputedStyle(track).transform
+      flexDir: getComputedStyle(track).flexDirection,
+      projectTopsAscending: tops.length === 3 && tops[1] > tops[0] + 50 && tops[2] > tops[1] + 50,
+      imgCount: imgs.length,
+      allVisible: imgMetrics.every((m) => m.visible && m.complete && m.height > 80),
+      allUncropped: imgMetrics.every((m) => m.ratioDiff < 0.08),
+      imgMetrics
     };
   });
-  console.log(`  [PASS] Mobile scroll-driven horizontal projects translation verified: ${mobileScrollCheck.transform}`);
+  assert.equal(mobileWorkCheck.flexDir, 'column', 'Mobile Act II track must stack vertically');
+  assert.equal(mobileWorkCheck.projectTopsAscending, true, 'Mobile projects must stack vertically down the page');
+  assert.ok(mobileWorkCheck.imgCount >= 7, `Expected >= 7 project screenshots on mobile, got ${mobileWorkCheck.imgCount}`);
+  assert.equal(mobileWorkCheck.allVisible, true, `All mobile project images must be visible & loaded: ${JSON.stringify(mobileWorkCheck.imgMetrics)}`);
+  assert.equal(mobileWorkCheck.allUncropped, true, `All mobile project images must preserve natural aspect ratio: ${JSON.stringify(mobileWorkCheck.imgMetrics)}`);
+  console.log(`  [PASS] Mobile vertical scroll-down displays all ${mobileWorkCheck.imgCount} uncropped project screenshots`);
   await context.close();
 }
 

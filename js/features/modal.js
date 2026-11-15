@@ -21,7 +21,7 @@ export function initModal() {
     backdrop: el('modal-backdrop'),
     preview: el('modal-preview'),
     tabs: el('modal-tabs'),
-    img: el('modal-img')
+    frame: el('modal-frame')
   };
   let opener = null;
 
@@ -41,18 +41,14 @@ export function initModal() {
       .map((m) => `<div class="project-modal__metric"><b>${m.val}</b><span>${m.label}</span></div>`)
       .join('');
 
-    if (parts.preview && parts.img && data.images && data.images.length) {
+    if (parts.preview && parts.frame && data.images && data.images.length) {
       parts.preview.hidden = false;
-      const setImage = (i) => {
-        const item = data.images[i];
-        parts.img.src = item.src;
-        parts.img.alt = isAr ? (item.labelAr || item.label) : item.label;
-        if (parts.tabs) {
-          parts.tabs.querySelectorAll('.project-modal__tab').forEach((t, ti) => {
-            t.classList.toggle('is-active', ti === i);
-          });
-        }
-      };
+      parts.frame.innerHTML = data.images
+        .map((item, i) => {
+          const cap = isAr ? (item.labelAr || item.label) : item.label;
+          return `<figure class="project-modal__shot" id="modal-shot-${i}"><img${i === 0 ? ' id="modal-img"' : ''} src="${item.src}" alt="${cap}" loading="lazy"><figcaption class="project-modal__caption">0${i + 1} // ${cap}</figcaption></figure>`;
+        })
+        .join('');
 
       if (parts.tabs) {
         if (data.images.length > 1) {
@@ -62,7 +58,12 @@ export function initModal() {
             .join('');
           parts.tabs.querySelectorAll('.project-modal__tab').forEach((tab) => {
             tab.addEventListener('click', () => {
-              setImage(parseInt(tab.getAttribute('data-img'), 10));
+              const idxImg = parseInt(tab.getAttribute('data-img'), 10);
+              parts.tabs.querySelectorAll('.project-modal__tab').forEach((t, ti) => {
+                t.classList.toggle('is-active', ti === idxImg);
+              });
+              const targetShot = document.getElementById(`modal-shot-${idxImg}`);
+              if (targetShot) targetShot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
           });
         } else {
@@ -70,7 +71,6 @@ export function initModal() {
           parts.tabs.innerHTML = '';
         }
       }
-      setImage(0);
     } else if (parts.preview) {
       parts.preview.hidden = true;
     }

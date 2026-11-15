@@ -1,34 +1,37 @@
 export const CASE_STUDIES = [
     {
       index: '01 / ARCHITECTURE CASE STUDY',
-      title: 'SEQUOIA TRAVEL',
-      type: 'TOURISM MANAGEMENT & BOOKING ENGINE / PRODUCTION',
-      desc: 'Customer and administrative booking portal, real-time staff chat, multi-currency payment pipeline, and an AI concierge grounded in live inventories and reservation records.',
+      title: 'TAWFEEK TOURS',
+      type: 'TOURISM PLATFORM & SANITY CMS DASHBOARD / PRODUCTION',
+      desc: 'Full Luxor tourism & travel booking platform powered by Astro and Sanity CMS. Supports private excursions, sunrise hot air balloons, Nile cruises, hotel stays, flight inquiries, and live multi-currency switching (USD / EGP / EUR).',
       metrics: [
-        { val: '<120ms', label: 'Global Edge TTFB' },
-        { val: '99.98%', label: 'Verified Uptime' },
-        { val: '100%', label: 'RBAC Strict Isolation' }
+        { val: '0ms JS', label: 'Astro Static Edge Shell' },
+        { val: '3 Currencies', label: 'USD · EGP · EUR Sync' },
+        { val: 'Sanity CMS', label: 'Structured Studio Admin' }
       ],
       archTitle: 'CORE ARCHITECTURAL DECISIONS',
-      archText: 'Built on Next.js App Router with Supabase PostgreSQL. Row Level Security (RLS) ensures strict tenant data separation across customer, agent, and super-admin portals. AI context injection fetches live hotel availability, dynamic seasonal pricing, and active bookings via transactional edge functions with zero hallucinations.',
-      link: 'https://sequoiatravel.com',
-      btnText: 'VISIT SEQUOIATRAVEL.COM ↗',
+      archText: 'Engineered on Astro for ultra-fast static & edge delivery paired with a custom Sanity Studio CMS dashboard (/studio) so the operations team edits tours, seasonal pricing, cruise schedules, and categories in real time without touching code. Structured Schema.org metadata, zero-bloat filtering, and direct WhatsApp conversion routing keep booking friction near zero.',
+      link: 'https://tawfeektours.com',
+      btnText: 'VISIT TAWFEEKTOURS.COM ↗',
       images: [
-        { src: 'assets/img/project-sequoia.jpg', label: 'Production Platform', labelAr: 'واجهة المنصة الحية' }
+        { src: 'assets/img/project-tawfeek.jpg', label: 'Landing & Multi-Currency Entry', labelAr: 'الواجهة الرئيسية ومحول العملات' },
+        { src: 'assets/img/project-tawfeek-tours.jpg', label: 'Interactive Tours Catalog & Filters', labelAr: 'دليل الجولات والتصفية الفورية' },
+        { src: 'assets/img/project-tawfeek-booking.jpg', label: 'Nile Cruise Detail & Direct Booking', labelAr: 'تفاصيل الباخرة النيلية ومسار الحجز' },
+        { src: 'assets/img/project-tawfeek-studio.jpg', label: 'Sanity CMS Operations Dashboard', labelAr: 'لوحة تحكم إدارة المحتوى Sanity Studio' }
       ],
       // Arabic version
       ar: {
         index: '01 / دراسة معمارية النظام',
-        title: 'SEQUOIA TRAVEL',
-        type: 'منصة إدارة سياحية وحجوزات متكاملة / نظام إنتاجي حي',
-        desc: 'منظومة سياحية متكاملة تضم بوابات تفاعلية للمسافرين، لوحة تحكم مركزية للعمليات، محرك حجز فوري متعدد العملات، محادثة إدارية لحظية، ومساعد ذكاء اصطناعي مربوط مباشرة بتوافر الغرف والأسعار الحية.',
+        title: 'TAWFEEK TOURS',
+        type: 'منصة سياحية متكاملة ولوحة تحكم Sanity CMS / نظام إنتاجي حي',
+        desc: 'منصة سياحية متكاملة لشركة توفيق تورز في الأقصر، مصممة بـ Astro مع لوحة تحكم إدارة محتوى كاملة عبر Sanity CMS. تغطي حجز الجولات الخاصة، رحلات المنطاد، البواخر النيلية، الفنادق، وتذاكر الطيران مع تبديل فوري للأسعار بثلاث عملات (دولار / جنيه / يورو).',
         metrics: [
-          { val: '<120ms', label: 'سرعة الاستجابة السحابية' },
-          { val: '99.98%', label: 'استقرار وجاهزية النظام' },
-          { val: '100%', label: 'عزل تام لصلاحيات البيانات' }
+          { val: 'أداء فوري', label: 'توليد صفحات Astro فائق السرعة' },
+          { val: '3 عملات', label: 'تسعير لحظي USD · EGP · EUR' },
+          { val: 'Sanity CMS', label: 'لوحة تحكم شاملة للفريق' }
         ],
         archTitle: 'القرارات المعمارية والتقنية',
-        archText: 'معمارية سحابية متقدمة تعتمد على Next.js App Router وSupabase PostgreSQL مع تطبيق حماية البيانات على مستوى السجلات (RLS) لعزل بيانات العملاء والوكلاء والإدارة بإحكام. يستعلم مساعد الذكاء الاصطناعي لحظياً عن الأسعار والتوافر الفعلي عبر Edge Functions فورية تمنع أي احتمالية للمعلومات الخاطئة.',
+        archText: 'تم بناء المنصة باستخدام Astro لتقديم صفحات خفيفة وفائقة السرعة على Cloudflare، مع ربطها بلوحة تحكم مخصصة عبر Sanity Studio (/studio) تتيح لفريق السياحة تحديث الرحلات، الأسعار الموسمية، مواعيد البواخر، والفنادق لحظياً بدون تدخل برمجي، بالإضافة لربط مباشر لطلبات الحجز عبر واتساب وتضمين بيانات منظمة لمحركات البحث.',
         btnText: 'معاينة المنصة الحية ↗'
       }
     },

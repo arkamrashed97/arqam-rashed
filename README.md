@@ -16,7 +16,7 @@ This repository maintains **two strictly synchronized editions** (see [`AGENTS.m
    - [`css/`](./css/) — 13 modular CSS stylesheets (`base.css`, `chrome.css`, `lang-gate.css`, `typography.css`, `act1.css`..`act5.css`, `footer.css`, `responsive.css`, `components.css`, `modal-actions.css`).
    - [`js/`](./js/) — 29 ES modules organized into `core/`, `gl/`, `i18n/`, `audio/`, and `features/`.
    - [`functions/`](./functions/) — Cloudflare Pages Functions (`functions/api/leaderboard.js` backed by Supabase).
-   - [`assets/img/`](./assets/img/) — Extracted project textures (`project-sequoia.jpg`, `project-arko.svg`, `project-rt.jpg`).
+   - [`assets/img/`](./assets/img/) — Extracted project textures and screenshots (`project-tawfeek*.jpg`, `project-arko*.jpg`, `project-rt.jpg`).
    - [`assets/docs/`](./assets/docs/) — Static downloadable CV (`Arqam-Rashed-CV.pdf`) and contact card (`Arqam-Rashed.vcf` with `me@arqamrashed.com`).
    - [`assets/audio/`](./assets/audio/) — 39 natural, loudness-balanced ElevenLabs MP3 soundscapes, onboarding cues, per-act physical touch cues, and fishing game SFX.
 2. **Secondary Portable Single-File Edition ([`single-file/index.html`](./single-file/index.html))**
@@ -28,7 +28,7 @@ This repository maintains **two strictly synchronized editions** (see [`AGENTS.m
 ## Five-Act Experience
 
 1. **Act I — Identity / Core**: Displaced ferrofluid icosahedron in obsidian, titanium, and acid lime (`act1-luxor-wind.mp3`).
-2. **Act II — Selected Work**: Horizontal editorial track and case-study architecture modal for **Sequoia Travel**, **ArkoClick**, and **RT Supplements** (`act2-kinetic-garden.mp3`).
+2. **Act II — Selected Work**: Horizontal editorial track (vertical multi-shot showcase on mobile) and case-study architecture modal for **TawfeekTours**, **ArkoClick**, and **RT Supplements** (`act2-kinetic-garden.mp3`).
 3. **Act III — System Architecture**: GPU particle topology with 6 selectable engineering clusters (`ALL`, `WEB`, `BACKEND`, `DESKTOP`, `MOBILE`, `DEVOPS`) (`act3-crystal-resonance.mp3`).
 4. **Act IV — Direct Line / Signal**: Gravitational portal, cursor-warped grid, one-click email copy, and direct **Download CV (PDF)** + **Save Contact Card (VCF)** actions (`act4-twilight-calm.mp3`).
 5. **ActV — Project Inquiry**: Interactive project scope, timeline, and budget estimator with instant WhatsApp and email dispatch (`act5-dialogue-presence.mp3`).
