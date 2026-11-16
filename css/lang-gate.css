@@ -57,7 +57,7 @@ body.is-ready #boot {
 .lang-gate__top span,
 .lang-gate__bottom span,
 .lang-gate__kicker,
-.lang-gate h1,
+.lang-gate .lang-gate__title,
 .lang-gate__note{
   transition:color .22s,text-shadow .22s,transform .22s;
 }
@@ -78,13 +78,13 @@ body.is-ready #boot {
   color:rgba(226,226,229,.5);
 }
 .lang-gate__kicker::before{content:"";width:26px;height:1px;background:#D4FF00}
-.lang-gate h1{
+.lang-gate .lang-gate__title{
   margin:18px 0 0;
   font-family:var(--display);font-weight:400;
   font-size:clamp(46px,6.6vw,108px);line-height:.84;letter-spacing:-.045em;
   text-transform:uppercase;
 }
-.lang-gate h1 .ar{
+.lang-gate .lang-gate__title .ar{
   display:block;direction:rtl;
   margin-top:.16em;
   font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;

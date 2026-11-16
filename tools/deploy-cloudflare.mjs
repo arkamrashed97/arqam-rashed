@@ -9,6 +9,12 @@ const ROOT = path.resolve(__dirname, '..');
 
 const STAGE_ITEMS = [
   'index.html',
+  '404.html',
+  'robots.txt',
+  'sitemap.xml',
+  'site.webmanifest',
+  'favicon.ico',
+  'favicon.svg',
   '_headers',
   'css',
   'js',

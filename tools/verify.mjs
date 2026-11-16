@@ -324,6 +324,38 @@ async function verifyMobileOverflow(browser, baseUrl) {
   await context.close();
 }
 
+async function verifySeo(browser, baseUrl) {
+  console.log('\n=== Verifying SEO essentials ===');
+  for (const [file, needle] of [['robots.txt', 'Sitemap: https://arqamrashed.com/sitemap.xml'], ['sitemap.xml', '<loc>https://arqamrashed.com/</loc>'], ['site.webmanifest', '"start_url"'], ['404.html', 'noindex']]) {
+    const body = fs.readFileSync(path.join(ROOT, file), 'utf8');
+    assert.ok(body.includes(needle), `${file} must contain ${needle}`);
+  }
+  for (const file of ['favicon.ico', 'favicon.svg', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
+    assert.ok(fs.existsSync(path.join(ROOT, file)), `${file} must exist`);
+  }
+  const page = await browser.newPage();
+  await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
+  const seo = await page.evaluate(() => {
+    const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent));
+    return {
+      h1Count: document.querySelectorAll('h1').length,
+      title: document.title,
+      desc: document.querySelector('meta[name="description"]')?.content || '',
+      canonical: document.querySelector('link[rel="canonical"]')?.href,
+      ogImage: document.querySelector('meta[property="og:image"]')?.content,
+      ldTypes: ld.flatMap((d) => (d['@graph'] || [d]).map((n) => n['@type']))
+    };
+  });
+  await page.close();
+  assert.equal(seo.h1Count, 1, `Exactly one <h1> expected, got ${seo.h1Count}`);
+  assert.ok(seo.title.length >= 20 && seo.title.length <= 70, `Title length out of range: ${seo.title}`);
+  assert.ok(seo.desc.length >= 70 && seo.desc.length <= 220, `Meta description length out of range (${seo.desc.length})`);
+  assert.equal(seo.canonical, 'https://arqamrashed.com/');
+  assert.ok(seo.ogImage && seo.ogImage.endsWith('og-image.jpg'), 'og:image must be set');
+  assert.ok(seo.ldTypes.includes('Person') && seo.ldTypes.includes('ProfilePage'), `JSON-LD must include Person + ProfilePage: ${seo.ldTypes}`);
+  console.log(`  [PASS] robots.txt, sitemap.xml, manifest, 404, favicons, single <h1>, canonical, og:image, JSON-LD (${seo.ldTypes.join(', ')})`);
+}
+
 async function main() {
   const { server, baseUrl } = await startStaticServer();
   const browser = await chromium.launch({
@@ -336,6 +368,7 @@ async function main() {
     await verifyEdition(browser, baseUrl, '/', 'Modular Root Edition (GitHub Pages)');
     await verifyEdition(browser, baseUrl, '/single-file/index.html', 'Single-File Edition (/single-file/index.html)');
     await verifyMobileOverflow(browser, baseUrl);
+    await verifySeo(browser, baseUrl);
     console.log('\nALL VERIFICATION CHECKS PASSED SUCCESSFULLY.');
   } finally {
     await browser.close();

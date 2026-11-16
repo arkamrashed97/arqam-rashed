@@ -1,6 +1,6 @@
 export default {
-      pageTitle: 'Arqam Rashed / Full-Stack Architect',
-      metaDesc: 'Arqam Rashed is a full-stack architect and creative developer in Luxor, Egypt. Production platforms, native systems, and real-time interfaces built end to end.',
+      pageTitle: 'Arqam Rashed (أرقم راشد) — Full-Stack Developer in Luxor, Egypt',
+      metaDesc: 'Arqam Rashed is a full-stack developer in Luxor, Egypt building production web platforms, Flutter mobile apps, desktop tools, and business systems end to end. See TawfeekTours, ArkoClick, and RT Supplements.',
       skip: 'Skip to content',
       hudName: 'ARQAM RASHED',
       nameA: 'ARQAM',

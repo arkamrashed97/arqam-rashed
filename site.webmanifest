@@ -1,0 +1,14 @@
+{
+  "name": "Arqam Rashed — Full-Stack Developer",
+  "short_name": "Arqam Rashed",
+  "description": "Portfolio of Arqam Rashed, full-stack developer in Luxor, Egypt.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070708",
+  "theme_color": "#070708",
+  "icons": [
+    { "src": "/assets/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
