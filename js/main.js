@@ -83,7 +83,7 @@ async function init() {
   } else {
     renderStaticFallback();
     startLoop();
-    window.setTimeout(() => finishBoot(), prefersReduced ? 300 : 1600);
+    window.setTimeout(() => finishBoot(), prefersReduced ? 120 : 240);
   }
 
   if (document.fonts && document.fonts.ready) {

@@ -35,6 +35,8 @@ export const refs = {
   nameA: $('#name-a'),
   nameB: $('#name-b'),
   heroTitle: $('#hero-title'),
+  heroPortrait: $('#hero-portrait'),
+  heroPortraitFrame: $('#hero-portrait-frame'),
   heroCopy: $('.hero-copy'),
   heroFacts: $('.hero-facts'),
   heroTop: $('.hero-top'),

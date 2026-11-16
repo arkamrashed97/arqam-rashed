@@ -1,4 +1,4 @@
-import { haptic, prefersReduced } from './env.js';
+import { finePointerQuery, haptic, mobileQuery, prefersReduced } from './env.js';
 import { langText } from './lang.js';
 import { scrollEngine, scrollToTarget } from './scroll.js';
 import { refs, state } from './state.js';
@@ -169,6 +169,35 @@ export function initMotionPreference() {
   if (prefersReduced) applyMotion(false, false);
   else if (stored === 'off') applyMotion(false, false);
   else applyMotion(true, false);
+}
+
+export function updateHeroPortrait() {
+  const portrait = refs.heroPortrait;
+  const frame = refs.heroPortraitFrame;
+  if (!portrait || !frame) return;
+  if (!state.motion) {
+    frame.style.removeProperty('--tilt-x');
+    frame.style.removeProperty('--tilt-y');
+    frame.style.removeProperty('--spot-x');
+    frame.style.removeProperty('--spot-y');
+    frame.style.removeProperty('--parallax-y');
+    portrait.style.opacity = '';
+    return;
+  }
+  const canTilt = finePointerQuery.matches && !mobileQuery.matches && state.pointerMoved;
+  const nx = canTilt ? clamp(state.pointerNX, -1, 1) : 0;
+  const ny = canTilt ? clamp(state.pointerNY, -1, 1) : 0;
+  frame.style.setProperty('--tilt-y', `${(nx * 7.5).toFixed(2)}deg`);
+  frame.style.setProperty('--tilt-x', `${(-ny * 6.5).toFixed(2)}deg`);
+  frame.style.setProperty('--spot-x', `${(50 + nx * 24).toFixed(1)}%`);
+  frame.style.setProperty('--spot-y', `${(42 + ny * 20).toFixed(1)}%`);
+
+  const parallax = mobileQuery.matches ? 0 : clamp(-state.scroll * 0.12, -72, 0);
+  frame.style.setProperty('--parallax-y', `${parallax.toFixed(1)}px`);
+  if (state.ready) {
+    const fade = clamp(1 - (state.m1 || 0) * 1.12, 0, 1);
+    portrait.style.opacity = fade.toFixed(3);
+  }
 }
 
 /* Anchor navigation */

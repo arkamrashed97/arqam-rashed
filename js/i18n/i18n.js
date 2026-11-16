@@ -28,7 +28,8 @@ const CURSOR_AR = {
   SAVE: 'حفظ',
   CHAT: 'محادثة',
   DEEP: 'تفاصيل',
-  DOWNLOAD: 'تحميل'
+  DOWNLOAD: 'تحميل',
+  IDENTITY: 'الهوية'
 };
 
 export function currentLang() {

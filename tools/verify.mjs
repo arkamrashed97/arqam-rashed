@@ -341,7 +341,7 @@ async function verifySeo(browser, baseUrl) {
     const body = fs.readFileSync(path.join(ROOT, file), 'utf8');
     assert.ok(body.includes(needle), `${file} must contain ${needle}`);
   }
-  for (const file of ['favicon.ico', 'favicon.svg', 'ar/index.html', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
+  for (const file of ['favicon.ico', 'favicon.svg', 'ar/index.html', 'assets/img/arqam-portrait.png', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
     assert.ok(fs.existsSync(path.join(ROOT, file)), `${file} must exist`);
   }
 
@@ -363,6 +363,8 @@ async function verifySeo(browser, baseUrl) {
       const alternates = Object.fromEntries(
         [...document.querySelectorAll('link[rel="alternate"][hreflang]')].map((el) => [el.getAttribute('hreflang'), el.href])
       );
+      const nodes = ld.flatMap((d) => d['@graph'] || [d]);
+      const person = nodes.find((n) => n['@type'] === 'Person');
       return {
         lang: document.documentElement.lang,
         h1Count: document.querySelectorAll('h1').length,
@@ -371,7 +373,9 @@ async function verifySeo(browser, baseUrl) {
         canonical: document.querySelector('link[rel="canonical"]')?.href,
         ogImage: document.querySelector('meta[property="og:image"]')?.content,
         alternates,
-        ldTypes: ld.flatMap((d) => (d['@graph'] || [d]).map((n) => n['@type']))
+        sameAs: person?.sameAs || [],
+        hasFooterLinkedIn: Boolean(document.querySelector('.footer-links a[href*="linkedin.com/in/arqam-m-aa5327ba"]')),
+        ldTypes: nodes.map((n) => n['@type'])
       };
     });
     await page.close();
@@ -383,6 +387,8 @@ async function verifySeo(browser, baseUrl) {
     assert.equal(seo.alternates.en, 'https://arqamrashed.com/', `${route}: hreflang=en mismatch`);
     assert.equal(seo.alternates.ar, 'https://arqamrashed.com/ar/', `${route}: hreflang=ar mismatch`);
     assert.equal(seo.alternates['x-default'], 'https://arqamrashed.com/', `${route}: hreflang=x-default mismatch`);
+    assert.ok(seo.sameAs.some((u) => u.includes('linkedin.com/in/arqam-m-aa5327ba')), `${route}: JSON-LD Person.sameAs must include LinkedIn`);
+    assert.equal(seo.hasFooterLinkedIn, true, `${route}: Footer must include LinkedIn channel link`);
     assert.ok(seo.ogImage && seo.ogImage.endsWith('og-image.jpg'), `${route}: og:image must be set`);
     assert.ok(seo.ldTypes.includes('Person') && seo.ldTypes.includes('ProfilePage'), `${route}: JSON-LD must include Person + ProfilePage`);
   }
@@ -400,20 +406,28 @@ async function verifySeo(browser, baseUrl) {
   });
   await arPage.goto(`${baseUrl}/ar/`, { waitUntil: 'load' });
   await arPage.waitForTimeout(500);
-  const arRuntime = await arPage.evaluate(() => ({
-    lang: document.documentElement.lang,
-    dir: document.documentElement.dir,
-    hasGate: Boolean(document.getElementById('lang-gate')),
-    scrollWidth: document.documentElement.scrollWidth,
-    innerWidth: window.innerWidth,
-    nameA: document.getElementById('name-a')?.textContent?.trim(),
-    nameB: document.getElementById('name-b')?.textContent?.trim()
-  }));
+  const arRuntime = await arPage.evaluate(() => {
+    const pImg = document.getElementById('hero-portrait-img');
+    const pRect = pImg ? pImg.getBoundingClientRect() : null;
+    return {
+      lang: document.documentElement.lang,
+      dir: document.documentElement.dir,
+      hasGate: Boolean(document.getElementById('lang-gate')),
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+      nameA: document.getElementById('name-a')?.textContent?.trim(),
+      nameB: document.getElementById('name-b')?.textContent?.trim(),
+      portraitLoaded: Boolean(pImg && pImg.complete && pImg.naturalWidth > 0),
+      portraitAboveFold: Boolean(pRect && pRect.top >= 0 && pRect.bottom <= window.innerHeight + 20 && pRect.height > 100)
+    };
+  });
   assert.equal(arRuntime.lang, 'ar');
   assert.equal(arRuntime.dir, 'rtl');
   assert.equal(arRuntime.hasGate, false);
   assert.equal(arRuntime.nameA, 'أرقم');
   assert.equal(arRuntime.nameB, 'راشد');
+  assert.equal(arRuntime.portraitLoaded, true, '/ar/ hero portrait must load cleanly');
+  assert.equal(arRuntime.portraitAboveFold, true, '/ar/ mobile hero portrait must appear above the fold on first load');
   assert.ok(arRuntime.scrollWidth <= arRuntime.innerWidth, `/ar/ mobile overflow: ${arRuntime.scrollWidth} > ${arRuntime.innerWidth}`);
   await arPage.locator('[data-case="0"]').dispatchEvent('click');
   await arPage.waitForTimeout(300);

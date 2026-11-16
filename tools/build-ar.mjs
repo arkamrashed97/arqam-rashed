@@ -115,7 +115,10 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
           'Astro', 'Sanity CMS', 'Flutter', 'Dart', 'Python', 'Rust',
           'PostgreSQL', 'Supabase', 'SQLite', 'Three.js', 'أنظمة ERP'
         ],
-        sameAs: ['https://github.com/arkamrashed97']
+        sameAs: [
+          'https://github.com/arkamrashed97',
+          'https://www.linkedin.com/in/arqam-m-aa5327ba'
+        ]
       },
       {
         '@type': 'WebSite',
@@ -277,6 +280,18 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
       <span>${AR.heroAside2}</span>
     </div>`,
     'hero-name__aside'
+  );
+  html = replacePattern(
+    html,
+    /(<img\s+class="hero-portrait__img"\s+id="hero-portrait-img"[^>]*alt=")[^"]*(")/,
+    `$1${escAttr(AR.portraitAlt)}$2`,
+    'portrait alt'
+  );
+  html = replacePattern(
+    html,
+    /<span id="hero-portrait-label">[^<]*<\/span>/,
+    `<span id="hero-portrait-label">${AR.portraitLabel}</span>`,
+    'portrait label'
   );
   html = replacePattern(
     html,
@@ -567,6 +582,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
       <div class="kicker">${AR.channelsLabel}</div>
       <nav class="footer-links" aria-label="${escAttr(AR.footerNavLabel)}">
         <a href="https://github.com/arkamrashed97" target="_blank" rel="noopener noreferrer" data-cursor="OPEN">${AR.footerLinkGh}</a>
+        <a href="https://www.linkedin.com/in/arqam-m-aa5327ba" target="_blank" rel="noopener noreferrer" data-cursor="OPEN">${AR.footerLinkLi}</a>
         <a href="https://tawfeektours.com" target="_blank" rel="noopener noreferrer" data-cursor="OPEN">${AR.footerLinkTawfeek}</a>
         <a href="https://rtsupplements.vercel.app" target="_blank" rel="noopener noreferrer" data-cursor="OPEN">${AR.footerLinkRt}</a>
         <a href="https://github.com/arkamrashed97/ArkoClick" target="_blank" rel="noopener noreferrer" data-cursor="VIEW CODE">${AR.footerLinkArko}</a>

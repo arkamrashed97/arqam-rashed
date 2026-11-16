@@ -109,20 +109,32 @@ export function prepareIntro() {
   nameChars.push(...splitName(refs.nameA), ...splitName(refs.nameB));
   refs.skewTargets.forEach((el) => el.classList.add('skew'));
   if (!state.motion) return;
-  gsap.set(nameChars, { yPercent: 118 });
+  const isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
+  if (isAr) {
+    gsap.set(nameChars, { y: 20, autoAlpha: 0 });
+  } else {
+    gsap.set(nameChars, { yPercent: 118 });
+  }
+  if (refs.heroPortrait) {
+    gsap.set(refs.heroPortrait, { clipPath: 'inset(0 0 18% 0)', y: 14, scale: 1.03 });
+  }
   gsap.set([refs.heroTop, refs.heroCopy, refs.heroFacts, refs.capabilities], { autoAlpha: 0, y: 18 });
 }
 
 export function runIntro() {
   if (!state.motion) {
-    gsap.set(nameChars, { clearProps: 'transform' });
+    gsap.set(nameChars, { clearProps: 'all' });
+    if (refs.heroPortrait) gsap.set(refs.heroPortrait, { clearProps: 'all' });
     gsap.set([refs.heroTop, refs.heroCopy, refs.heroFacts, refs.capabilities], { clearProps: 'all' });
     return;
   }
-  const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: 0.08 });
-  tl.to(nameChars, { yPercent: 0, duration: 1.12, stagger: 0.038 })
-    .to(refs.heroTop, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.7')
-    .to(refs.heroCopy, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.45')
-    .to(refs.heroFacts, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.55')
-    .to(refs.capabilities, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.55');
+  const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: 0.06 });
+  tl.to(nameChars, { yPercent: 0, y: 0, autoAlpha: 1, duration: 0.92, stagger: 0.036 });
+  if (refs.heroPortrait) {
+    tl.to(refs.heroPortrait, { clipPath: 'inset(0 0 0% 0)', y: 0, scale: 1, duration: 0.85, ease: 'power3.out' }, '-=0.82');
+  }
+  tl.to(refs.heroTop, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.65')
+    .to(refs.heroCopy, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.4')
+    .to(refs.heroFacts, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.45')
+    .to(refs.capabilities, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.45');
 }
