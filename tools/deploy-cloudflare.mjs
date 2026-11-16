@@ -19,6 +19,7 @@ const STAGE_ITEMS = [
   'css',
   'js',
   'assets',
+  'ar',
   'cv',
   'single-file'
 ];

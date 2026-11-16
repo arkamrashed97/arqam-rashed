@@ -1,5 +1,11 @@
 export const $ = (selector, root = document) => root.querySelector(selector);
 export const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+const ASSET_BASE = document.documentElement.dataset.assetBase || '';
+export const assetPath = (rel) => {
+  if (!rel || /^(?:[a-z]+:|data:|\/|\.\.\/)/i.test(rel)) return rel;
+  return `${ASSET_BASE}${rel}`;
+};
 export const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 export const lerp = (a, b, t) => (1 - t) * a + t * b;
 export const damp = (a, b, rate, dt) => lerp(a, b, 1 - Math.exp(-rate * dt));

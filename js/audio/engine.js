@@ -1,4 +1,5 @@
 import { AMBIENT, SFX } from './manifest.js';
+import { assetPath } from '../core/utils.js';
 
 /**
  * Web Audio sound engine V5 — measured loudness balance.
@@ -335,7 +336,7 @@ class SoundEngine {
     if (this.buffers.has(url)) return this.buffers.get(url);
     if (this.loading.has(url)) return this.loading.get(url);
     const isAmbient = AMBIENT_URLS.has(url);
-    const job = fetch(url)
+    const job = fetch(assetPath(url))
       .then((r) => r.arrayBuffer())
       .then((data) => new Promise((resolve, reject) => this.ctx.decodeAudioData(data, resolve, reject)))
       .then((buffer) => {

@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://arqamrashed.com/</loc>
     <lastmod>2026-11-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arqamrashed.com/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://arqamrashed.com/ar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arqamrashed.com/"/>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/og-image.jpg</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-tawfeek.jpg</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-arko-dark.jpg</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-rt.jpg</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://arqamrashed.com/ar/</loc>
+    <lastmod>2026-11-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arqamrashed.com/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://arqamrashed.com/ar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arqamrashed.com/"/>
     <image:image><image:loc>https://arqamrashed.com/assets/img/og-image.jpg</image:loc></image:image>
     <image:image><image:loc>https://arqamrashed.com/assets/img/project-tawfeek.jpg</image:loc></image:image>
     <image:image><image:loc>https://arqamrashed.com/assets/img/project-arko-dark.jpg</image:loc></image:image>

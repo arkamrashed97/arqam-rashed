@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import * as esbuild from 'esbuild';
+import { buildArabicPage } from './build-ar.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -74,6 +75,9 @@ async function buildSingleFile() {
 
   // Write the updated cache-busted modular root index.html back to disk
   fs.writeFileSync(htmlPath, rootHtml, 'utf8');
+
+  // Generate static crawlable Arabic SEO route (ar/index.html) in lockstep
+  buildArabicPage(ROOT);
 
   let html = rootHtml;
 

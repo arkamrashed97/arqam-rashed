@@ -23,6 +23,10 @@ const MIME_TYPES = {
   '.js': 'application/javascript; charset=utf-8',
   '.mjs': 'application/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
+  '.ico': 'image/x-icon',
   '.svg': 'image/svg+xml',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -38,10 +42,10 @@ function startStaticServer() {
       const reqUrl = new URL(req.url, 'http://127.0.0.1');
       let relPath = decodeURIComponent(reqUrl.pathname);
       if (relPath === '/') relPath = '/index.html';
-      if (relPath === '/single-file' || relPath === '/single-file/') {
-        relPath = '/single-file/index.html';
+      let absPath = path.join(ROOT, relPath);
+      if (absPath.startsWith(ROOT) && fs.existsSync(absPath) && fs.statSync(absPath).isDirectory()) {
+        absPath = path.join(absPath, 'index.html');
       }
-      const absPath = path.join(ROOT, relPath);
       if (!absPath.startsWith(ROOT) || !fs.existsSync(absPath) || fs.statSync(absPath).isDirectory()) {
         res.writeHead(404);
         res.end('Not Found');
@@ -325,35 +329,106 @@ async function verifyMobileOverflow(browser, baseUrl) {
 }
 
 async function verifySeo(browser, baseUrl) {
-  console.log('\n=== Verifying SEO essentials ===');
-  for (const [file, needle] of [['robots.txt', 'Sitemap: https://arqamrashed.com/sitemap.xml'], ['sitemap.xml', '<loc>https://arqamrashed.com/</loc>'], ['site.webmanifest', '"start_url"'], ['404.html', 'noindex']]) {
+  console.log('\n=== Verifying SEO essentials & /ar/ Arabic route ===');
+  for (const [file, needle] of [
+    ['robots.txt', 'Sitemap: https://arqamrashed.com/sitemap.xml'],
+    ['sitemap.xml', '<loc>https://arqamrashed.com/</loc>'],
+    ['sitemap.xml', '<loc>https://arqamrashed.com/ar/</loc>'],
+    ['sitemap.xml', 'xhtml:link rel="alternate" hreflang="ar"'],
+    ['site.webmanifest', '"start_url"'],
+    ['404.html', 'noindex']
+  ]) {
     const body = fs.readFileSync(path.join(ROOT, file), 'utf8');
     assert.ok(body.includes(needle), `${file} must contain ${needle}`);
   }
-  for (const file of ['favicon.ico', 'favicon.svg', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
+  for (const file of ['favicon.ico', 'favicon.svg', 'ar/index.html', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
     assert.ok(fs.existsSync(path.join(ROOT, file)), `${file} must exist`);
   }
-  const page = await browser.newPage();
-  await page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
-  const seo = await page.evaluate(() => {
-    const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent));
-    return {
-      h1Count: document.querySelectorAll('h1').length,
-      title: document.title,
-      desc: document.querySelector('meta[name="description"]')?.content || '',
-      canonical: document.querySelector('link[rel="canonical"]')?.href,
-      ogImage: document.querySelector('meta[property="og:image"]')?.content,
-      ldTypes: ld.flatMap((d) => (d['@graph'] || [d]).map((n) => n['@type']))
-    };
+
+  // Raw HTML check of /ar/ (verifies what search crawlers see without JS)
+  const rawArHtml = fs.readFileSync(path.join(ROOT, 'ar/index.html'), 'utf8');
+  assert.ok(rawArHtml.includes('<html lang="ar" dir="rtl"'), 'ar/index.html must declare lang="ar" dir="rtl"');
+  assert.ok(!rawArHtml.includes('id="lang-gate"'), 'ar/index.html must not block first paint with #lang-gate');
+  assert.ok(rawArHtml.includes('بُنيت<br><em>لأقصى كفاءة.</em>'), 'ar/index.html must contain static Arabic work heading');
+  assert.ok(rawArHtml.includes('تطوير الأعمال والأنظمة'), 'ar/index.html must contain Arabic capabilities');
+
+  for (const [route, expectedCanonical, expectedLang] of [
+    ['/', 'https://arqamrashed.com/', 'en'],
+    ['/ar/', 'https://arqamrashed.com/ar/', 'ar']
+  ]) {
+    const page = await browser.newPage();
+    await page.goto(`${baseUrl}${route}`, { waitUntil: 'domcontentloaded' });
+    const seo = await page.evaluate(() => {
+      const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map((s) => JSON.parse(s.textContent));
+      const alternates = Object.fromEntries(
+        [...document.querySelectorAll('link[rel="alternate"][hreflang]')].map((el) => [el.getAttribute('hreflang'), el.href])
+      );
+      return {
+        lang: document.documentElement.lang,
+        h1Count: document.querySelectorAll('h1').length,
+        title: document.title,
+        desc: document.querySelector('meta[name="description"]')?.content || '',
+        canonical: document.querySelector('link[rel="canonical"]')?.href,
+        ogImage: document.querySelector('meta[property="og:image"]')?.content,
+        alternates,
+        ldTypes: ld.flatMap((d) => (d['@graph'] || [d]).map((n) => n['@type']))
+      };
+    });
+    await page.close();
+    assert.equal(seo.lang, expectedLang, `${route}: lang mismatch`);
+    assert.equal(seo.h1Count, 1, `${route}: Exactly one <h1> expected, got ${seo.h1Count}`);
+    assert.ok(seo.title.length >= 20 && seo.title.length <= 70, `${route}: Title length out of range: ${seo.title}`);
+    assert.ok(seo.desc.length >= 70 && seo.desc.length <= 240, `${route}: Meta description length out of range (${seo.desc.length})`);
+    assert.equal(seo.canonical, expectedCanonical, `${route}: canonical mismatch`);
+    assert.equal(seo.alternates.en, 'https://arqamrashed.com/', `${route}: hreflang=en mismatch`);
+    assert.equal(seo.alternates.ar, 'https://arqamrashed.com/ar/', `${route}: hreflang=ar mismatch`);
+    assert.equal(seo.alternates['x-default'], 'https://arqamrashed.com/', `${route}: hreflang=x-default mismatch`);
+    assert.ok(seo.ogImage && seo.ogImage.endsWith('og-image.jpg'), `${route}: og:image must be set`);
+    assert.ok(seo.ldTypes.includes('Person') && seo.ldTypes.includes('ProfilePage'), `${route}: JSON-LD must include Person + ProfilePage`);
+  }
+
+  // Runtime interactive check on /ar/ (mobile + desktop): 0 404s, case study modal, RTL 0px overflow
+  const arCtx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const arPage = await arCtx.newPage();
+  const arErrors = [];
+  const arFailedRequests = [];
+  arPage.on('pageerror', (err) => arErrors.push(err.message));
+  arPage.on('response', (res) => {
+    if (res.url().startsWith(baseUrl) && res.status() >= 400) {
+      arFailedRequests.push(`${res.status()} ${res.url()}`);
+    }
   });
-  await page.close();
-  assert.equal(seo.h1Count, 1, `Exactly one <h1> expected, got ${seo.h1Count}`);
-  assert.ok(seo.title.length >= 20 && seo.title.length <= 70, `Title length out of range: ${seo.title}`);
-  assert.ok(seo.desc.length >= 70 && seo.desc.length <= 220, `Meta description length out of range (${seo.desc.length})`);
-  assert.equal(seo.canonical, 'https://arqamrashed.com/');
-  assert.ok(seo.ogImage && seo.ogImage.endsWith('og-image.jpg'), 'og:image must be set');
-  assert.ok(seo.ldTypes.includes('Person') && seo.ldTypes.includes('ProfilePage'), `JSON-LD must include Person + ProfilePage: ${seo.ldTypes}`);
-  console.log(`  [PASS] robots.txt, sitemap.xml, manifest, 404, favicons, single <h1>, canonical, og:image, JSON-LD (${seo.ldTypes.join(', ')})`);
+  await arPage.goto(`${baseUrl}/ar/`, { waitUntil: 'load' });
+  await arPage.waitForTimeout(500);
+  const arRuntime = await arPage.evaluate(() => ({
+    lang: document.documentElement.lang,
+    dir: document.documentElement.dir,
+    hasGate: Boolean(document.getElementById('lang-gate')),
+    scrollWidth: document.documentElement.scrollWidth,
+    innerWidth: window.innerWidth,
+    nameA: document.getElementById('name-a')?.textContent?.trim(),
+    nameB: document.getElementById('name-b')?.textContent?.trim()
+  }));
+  assert.equal(arRuntime.lang, 'ar');
+  assert.equal(arRuntime.dir, 'rtl');
+  assert.equal(arRuntime.hasGate, false);
+  assert.equal(arRuntime.nameA, 'أرقم');
+  assert.equal(arRuntime.nameB, 'راشد');
+  assert.ok(arRuntime.scrollWidth <= arRuntime.innerWidth, `/ar/ mobile overflow: ${arRuntime.scrollWidth} > ${arRuntime.innerWidth}`);
+  await arPage.locator('[data-case="0"]').dispatchEvent('click');
+  await arPage.waitForTimeout(300);
+  const modalImgsLoaded = await arPage.evaluate(async () => {
+    const imgs = [...document.querySelectorAll('#modal-frame img')];
+    imgs.forEach((img) => { img.loading = 'eager'; });
+    await Promise.all(imgs.map((img) => (img.complete ? Promise.resolve() : new Promise((r) => { img.onload = r; img.onerror = r; }))));
+    return imgs.length >= 4 && imgs.every((img) => img.naturalWidth > 0);
+  });
+  assert.equal(modalImgsLoaded, true, '/ar/ modal screenshots must load via ../assets/img/');
+  assert.equal(arErrors.length, 0, `/ar/ pageerrors: ${arErrors.join('; ')}`);
+  assert.equal(arFailedRequests.length, 0, `/ar/ failed local requests: ${arFailedRequests.join('; ')}`);
+  await arCtx.close();
+
+  console.log('  [PASS] robots.txt, sitemap.xml, manifest, 404, favicons, /ar/ static & runtime RTL, reciprocal hreflang, canonical, JSON-LD');
 }
 
 async function main() {

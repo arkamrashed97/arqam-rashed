@@ -1,5 +1,6 @@
 import { CASE_STUDIES } from './case-studies-data.js';
 import { scrollEngine } from '../core/scroll.js';
+import { assetPath } from '../core/utils.js';
 
 /**
  * Case-study drawer. Content comes from case-studies-data.js (EN + AR).
@@ -46,7 +47,7 @@ export function initModal() {
       parts.frame.innerHTML = data.images
         .map((item, i) => {
           const cap = isAr ? (item.labelAr || item.label) : item.label;
-          return `<figure class="project-modal__shot" id="modal-shot-${i}"><img${i === 0 ? ' id="modal-img"' : ''} src="${item.src}" alt="${cap}" loading="lazy"><figcaption class="project-modal__caption">0${i + 1} // ${cap}</figcaption></figure>`;
+          return `<figure class="project-modal__shot" id="modal-shot-${i}"><img${i === 0 ? ' id="modal-img"' : ''} src="${assetPath(item.src)}" alt="${cap}" loading="lazy"><figcaption class="project-modal__caption">0${i + 1} // ${cap}</figcaption></figure>`;
         })
         .join('');
 

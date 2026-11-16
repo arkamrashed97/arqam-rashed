@@ -1,6 +1,7 @@
 import EN from './en.js';
 import AR from './ar.js';
 import { BINDINGS } from './bindings.js';
+import { assetPath } from '../core/utils.js';
 
 /**
  * Language layer.
@@ -104,11 +105,11 @@ export function applyLanguage(lang, persist) {
   const arkoImg = document.getElementById('img-arko');
   const arkoExtra = document.getElementById('img-arko-extra');
   if (arkoImg) {
-    arkoImg.src = code === 'ar' ? 'assets/img/project-arko-dark.jpg' : 'assets/img/project-arko-light.jpg';
+    arkoImg.src = assetPath(code === 'ar' ? 'assets/img/project-arko-dark.jpg' : 'assets/img/project-arko-light.jpg');
     arkoImg.alt = code === 'ar' ? 'واجهة برنامج أركوكليك لأتمتة سطح المكتب' : 'ArkoClick desktop automation interface';
   }
   if (arkoExtra) {
-    arkoExtra.src = code === 'ar' ? 'assets/img/project-arko-light.jpg' : 'assets/img/project-arko-dark.jpg';
+    arkoExtra.src = assetPath(code === 'ar' ? 'assets/img/project-arko-light.jpg' : 'assets/img/project-arko-dark.jpg');
     arkoExtra.alt = code === 'ar' ? 'الوضع الفاتح لبرنامج أركوكليك' : 'ArkoClick dark mode Arabic interface';
   }
   document.title = t('pageTitle', code);
@@ -117,8 +118,13 @@ export function applyLanguage(lang, persist) {
   window.dispatchEvent(new CustomEvent('arqam:lang', { detail: { lang: code } }));
 }
 
-/** Applies the stored language. Returns true while the onboarding gate must stay open. */
+/** Applies the stored language (or forces the page's route language). Returns true while the gate must stay open. */
 export function initLanguage() {
+  if (root.dataset.pageLang === 'ar') {
+    applyLanguage('ar', false);
+    root.classList.add('lang-set');
+    return false;
+  }
   const stored = readStoredLang();
   if (stored) {
     applyLanguage(stored, false);
