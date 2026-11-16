@@ -9,10 +9,10 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://arqamrashed.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://arqamrashed.com/"/>
     <image:image><image:loc>https://arqamrashed.com/assets/img/og-image.jpg</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/arqam-portrait.png</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/project-tawfeek.jpg</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/project-arko-dark.jpg</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/project-rt.jpg</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/arqam-portrait.webp</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-tawfeek.webp</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-arko-dark.webp</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-rt.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://arqamrashed.com/ar/</loc>
@@ -21,10 +21,10 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://arqamrashed.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://arqamrashed.com/"/>
     <image:image><image:loc>https://arqamrashed.com/assets/img/og-image.jpg</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/arqam-portrait.png</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/project-tawfeek.jpg</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/project-arko-dark.jpg</image:loc></image:image>
-    <image:image><image:loc>https://arqamrashed.com/assets/img/project-rt.jpg</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/arqam-portrait.webp</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-tawfeek.webp</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-arko-dark.webp</image:loc></image:image>
+    <image:image><image:loc>https://arqamrashed.com/assets/img/project-rt.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://arqamrashed.com/assets/docs/Arqam-Rashed-CV.pdf</loc>

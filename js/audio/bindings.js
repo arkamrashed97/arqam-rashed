@@ -23,10 +23,12 @@ export function initSoundUI() {
   function syncButton(on) {
     if (!btn) return;
     btn.classList.toggle('is-active', on);
+    btn.classList.toggle('is-muted', !on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    const ar = document.documentElement.lang === 'ar';
+    btn.setAttribute('title', on ? (ar ? 'إيقاف الصوت المحيطي' : 'Mute ambient sound') : (ar ? 'تشغيل الصوت المحيطي' : 'Enable ambient sound'));
     if (label) {
-      const ar = document.documentElement.lang === 'ar';
-      label.textContent = on ? (ar ? 'الصوت: مفعّل' : 'SOUND: ON') : (ar ? 'الصوت' : 'SOUND');
+      label.textContent = on ? (ar ? 'الصوت: يعمل' : 'SOUND: ON') : (ar ? 'الصوت: صامت' : 'SOUND: OFF');
     }
   }
 
@@ -36,34 +38,55 @@ export function initSoundUI() {
 
   if (btn) {
     btn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      haptic(12);
+      haptic(10);
       sound.toggle();
     });
   }
 
-  // Track pointer X across the viewport for clean stereo placement
+  // Track pointer X across the viewport for subtle stereo placement & wake idle ambience
+  let lastActivityPing = 0;
+  const pingActivity = () => {
+    const now = performance.now();
+    if (now - lastActivityPing > 450) {
+      lastActivityPing = now;
+      sound.touchActivity();
+    }
+  };
+
   const handleMove = (clientX) => {
     const nx = (clientX / Math.max(1, window.innerWidth)) * 2 - 1;
     sound.setPointer(nx);
+    pingActivity();
   };
 
   window.addEventListener('pointermove', (e) => {
     handleMove(e.clientX);
   }, { passive: true });
 
-  window.addEventListener('touchmove', (e) => {
+  window.addEventListener('touchstart', (e) => {
     if (e.touches && e.touches[0]) {
       handleMove(e.touches[0].clientX);
+    } else {
+      pingActivity();
     }
   }, { passive: true });
 
-  // Delegated click sound — only on actual interactive elements
+  window.addEventListener('scroll', pingActivity, { passive: true });
+
+  // Delegated click sound — only on actual interactive elements, with clean debounce
+  let lastClickSfxAt = 0;
   document.addEventListener('click', (e) => {
     if (!(e.target instanceof Element)) return;
     if (e.target.closest('#sound-toggle, [data-lang-choice]')) return;
     const hit = e.target.closest('[data-sfx], ' + INTERACTIVE);
-    if (!hit) return; // Clean silence on empty page clicks
+    if (!hit) return;
+
+    const now = performance.now();
+    if (now - lastClickSfxAt < 130) return;
+    lastClickSfxAt = now;
+    sound.touchActivity();
 
     const explicit = hit.getAttribute('data-sfx');
     if (explicit === 'none') return;
@@ -75,14 +98,20 @@ export function initSoundUI() {
     sound.play(ACT_BUTTON_SFX[act] || 'btn-act1');
   }, true);
 
-  // Subtle hover cue on real links, buttons, and cluster cards only
+  // Subtle hover cue on desktop mouse only, with gentle spacing so sweeping never chatters
   let lastHoverEl = null;
+  let lastHoverAt = 0;
   document.addEventListener('pointerover', (e) => {
-    if (e.pointerType && e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+    if (e.pointerType !== 'mouse') return;
+    if (!sound.enabled) return;
     if (!(e.target instanceof Element)) return;
+    if (e.target.closest('#sound-toggle, [data-lang-choice]')) return;
     const hit = e.target.closest('a, button, [role="button"], .cluster');
     if (!hit || hit === lastHoverEl) return;
     lastHoverEl = hit;
+    const now = performance.now();
+    if (now - lastHoverAt < 220) return;
+    lastHoverAt = now;
     sound.play('hover-soft');
   }, { passive: true });
 
@@ -90,18 +119,21 @@ export function initSoundUI() {
   const form = document.getElementById('inquiry-form');
   if (form) {
     form.addEventListener('keydown', (e) => {
+      sound.touchActivity();
       if (e.key.length === 1 || e.key === 'Backspace') sound.play('type-tick');
     });
   }
 }
 
 export function armAutoStart() {
-  if (sound.preferenceOff) return;
-  const events = ['click', 'pointerup', 'touchend', 'keydown'];
-  const start = () => {
+  const events = ['click', 'keydown'];
+  const start = (e) => {
+    if (e && e.target instanceof Element) {
+      if (e.target.closest('#sound-toggle, #lang-gate, [data-lang-choice]')) return;
+    }
     events.forEach((ev) => window.removeEventListener(ev, start, true));
-    if (sound.preferenceOff) return;
-    sound.enable();
+    if (sound.preferenceOff || sound.enabled) return;
+    sound.enable({ delayAmbientMs: 250, playCue: false });
   };
   events.forEach((ev) => window.addEventListener(ev, start, { capture: true, passive: true }));
 }

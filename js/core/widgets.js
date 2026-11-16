@@ -142,7 +142,7 @@ export function probeDomain() {
   const timer = window.setTimeout(() => finish('error', 'domainTimeout'), 6500);
   img.onload = () => finish('live', 'domainLive');
   img.onerror = () => finish('error', 'domainPending');
-  img.src = 'https://arqamrashed.com/assets/img/project-arko.jpg?probe=' + Date.now();
+  img.src = 'https://arqamrashed.com/assets/img/project-arko-dark.webp?probe=' + Date.now();
 }
 
 refs.domainBtn.addEventListener('click', probeDomain);
@@ -171,32 +171,50 @@ export function initMotionPreference() {
   else applyMotion(true, false);
 }
 
+let lastPortraitKey = '';
+let portraitMotionCleared = false;
+
 export function updateHeroPortrait() {
   const portrait = refs.heroPortrait;
   const frame = refs.heroPortraitFrame;
   if (!portrait || !frame) return;
   if (!state.motion) {
-    frame.style.removeProperty('--tilt-x');
-    frame.style.removeProperty('--tilt-y');
-    frame.style.removeProperty('--spot-x');
-    frame.style.removeProperty('--spot-y');
-    frame.style.removeProperty('--parallax-y');
-    portrait.style.opacity = '';
+    if (!portraitMotionCleared) {
+      portraitMotionCleared = true;
+      lastPortraitKey = '';
+      frame.style.removeProperty('--tilt-x');
+      frame.style.removeProperty('--tilt-y');
+      frame.style.removeProperty('--spot-x');
+      frame.style.removeProperty('--spot-y');
+      frame.style.removeProperty('--parallax-y');
+      portrait.style.opacity = '';
+    }
     return;
   }
+  portraitMotionCleared = false;
   const canTilt = finePointerQuery.matches && !mobileQuery.matches && state.pointerMoved;
   const nx = canTilt ? clamp(state.pointerNX, -1, 1) : 0;
   const ny = canTilt ? clamp(state.pointerNY, -1, 1) : 0;
-  frame.style.setProperty('--tilt-y', `${(nx * 7.5).toFixed(2)}deg`);
-  frame.style.setProperty('--tilt-x', `${(-ny * 6.5).toFixed(2)}deg`);
-  frame.style.setProperty('--spot-x', `${(50 + nx * 24).toFixed(1)}%`);
-  frame.style.setProperty('--spot-y', `${(42 + ny * 20).toFixed(1)}%`);
-
   const parallax = mobileQuery.matches ? 0 : clamp(-state.scroll * 0.12, -72, 0);
-  frame.style.setProperty('--parallax-y', `${parallax.toFixed(1)}px`);
+  const fade = state.ready ? clamp(1 - (state.m1 || 0) * 1.12, 0, 1) : 1;
+
+  const ty = (nx * 7.5).toFixed(2);
+  const tx = (-ny * 6.5).toFixed(2);
+  const sx = (50 + nx * 24).toFixed(1);
+  const sy = (42 + ny * 20).toFixed(1);
+  const py = parallax.toFixed(1);
+  const op = fade.toFixed(3);
+  const key = `${ty}|${tx}|${sx}|${sy}|${py}|${op}`;
+  if (key === lastPortraitKey) return;
+  lastPortraitKey = key;
+
+  frame.style.setProperty('--tilt-y', `${ty}deg`);
+  frame.style.setProperty('--tilt-x', `${tx}deg`);
+  frame.style.setProperty('--spot-x', `${sx}%`);
+  frame.style.setProperty('--spot-y', `${sy}%`);
+  frame.style.setProperty('--parallax-y', `${py}px`);
   if (state.ready) {
-    const fade = clamp(1 - (state.m1 || 0) * 1.12, 0, 1);
-    portrait.style.opacity = fade.toFixed(3);
+    portrait.style.opacity = op;
   }
 }
 

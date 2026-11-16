@@ -29,11 +29,17 @@ export function initGate(pending) {
     return;
   }
 
-  // Ensure page starts at the very top and pre-decode all onboarding cues immediately
-  window.scrollTo(0, 0);
-  sound.preloadGate();
+  if (window.scrollY > 0) window.scrollTo(0, 0);
+  let audioPreloaded = false;
+  const armGateAudio = () => {
+    if (audioPreloaded) return;
+    audioPreloaded = true;
+    sound.preloadGate();
+  };
 
   const playGateCue = (name, opts = {}) => {
+    if (sound.preferenceOff) return;
+    armGateAudio();
     sound.unlock();
     sound.playNow(name, { force: true, ...opts });
   };
@@ -48,16 +54,13 @@ export function initGate(pending) {
   gate.addEventListener('touchmove', preventGateScroll, { passive: false });
 
   gate.removeAttribute('aria-hidden');
-  window.setTimeout(() => {
-    if (!root.classList.contains('lang-pending')) return;
-    const first = gate.querySelector('[data-lang-choice]');
-    if (first) first.focus({ preventScroll: true });
-  }, 90);
 
-  // Gate pointerdown unlocks WebAudio context silently without jarring sound bursts
+  // Gate pointerdown unlocks WebAudio context cleanly on real user interaction
   gate.addEventListener('pointerdown', () => {
+    armGateAudio();
     sound.unlock();
   });
+  gate.addEventListener('keydown', armGateAudio, { once: true });
 
   const finish = () => {
     window.scrollTo(0, 0);
@@ -87,21 +90,20 @@ export function initGate(pending) {
     const selectCue = lang === 'ar' ? 'gate-select-ar' : 'gate-select-en';
     const pan = lang === 'ar' ? -0.22 : 0.22;
 
-    button.addEventListener('pointerenter', () => {
-      playGateCue(hoverCue, { pan });
-    });
-    button.addEventListener('focus', () => {
+    button.addEventListener('pointerenter', (e) => {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
       playGateCue(hoverCue, { pan });
     });
     button.addEventListener('pointerdown', () => {
       haptic(8);
-      playGateCue(hoverCue, { pan, rate: 1.04 });
     });
     button.addEventListener('click', () => {
       haptic(14);
-      // Unlock and enable ambient soundscape inside the user gesture, then play language-specific portal cue
-      sound.enable();
-      sound.playNow(selectCue, { force: true, pan });
+      // Play soft portal selection chime first, then bloom Act I ambient soundscape in smoothly
+      if (!sound.preferenceOff) {
+        sound.enable({ delayAmbientMs: 650, playCue: false });
+        sound.playNow(selectCue, { force: true, pan });
+      }
       applyLanguage(lang, true);
       finish();
     });

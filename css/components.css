@@ -11,11 +11,12 @@ body.no-js .project__img{opacity:.92!important}
 
 /* Audio engine HUD toggle */
 .sound-toggle{
-  display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  min-width:116px;min-height:44px;padding:0 12px;
   background:transparent;border:1px solid var(--line);
   font:400 12px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;
-  color:var(--muted);transition:all .2s var(--ease);cursor:pointer;
-  touch-action:manipulation;
+  color:var(--muted);transition:border-color .2s var(--ease),color .2s var(--ease),background .2s var(--ease);
+  cursor:pointer;touch-action:manipulation;white-space:nowrap;
 }
 .sound-toggle:hover,.sound-toggle:focus-visible{
   color:var(--accent);border-color:var(--accent);
@@ -28,15 +29,20 @@ body.no-js .project__img{opacity:.92!important}
   transition:transform .2s var(--ease);
 }
 .sound-toggle.is-active .sound-toggle__icon{
-  color:var(--accent);animation:soundPulse 1.8s infinite ease-in-out;
+  color:var(--accent);animation:soundPulse 2.2s infinite ease-in-out;
+}
+.sound-toggle.is-muted .sound-toggle__icon{
+  opacity:.45;
 }
 @keyframes soundPulse{
   0%,100%{transform:scale(1);opacity:.85}
-  50%{transform:scale(1.25);opacity:1}
+  50%{transform:scale(1.18);opacity:1}
 }
 @media (max-width:480px){
-  .sound-toggle__text{display:none}
-  .sound-toggle{padding:0 8px;min-width:32px;justify-content:center}
+  .sound-toggle{
+    padding:0 9px;min-width:86px;min-height:40px;
+    font-size:10.5px;letter-spacing:.05em;gap:5px;justify-content:center;
+  }
 }
 
 /* Enhanced Project Link touch response */

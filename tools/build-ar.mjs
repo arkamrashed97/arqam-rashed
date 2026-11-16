@@ -157,7 +157,16 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
     'JSON-LD'
   );
 
-  // 2. Replace pre-paint language script & remove #lang-gate fullscreen blocker
+  // 2. Replace EN hero font preloads with Arabic hero preloads + strip gate
+  html = replacePattern(
+    html,
+    /<link rel="preload" href="assets\/fonts\/archivo-black-latin-4eecb62d\.woff2"[^>]*>\s*<link rel="preload" href="assets\/fonts\/ibm-plex-mono-latin-cf8d2b0e\.woff2"[^>]*>/,
+    `<link rel="preload" href="../assets/fonts/alexandria-arabic-d73b83a0.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/ibm-plex-sans-arabic-arabic-00b30da7.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/ibm-plex-sans-arabic-arabic-5ab42dd5.woff2" as="font" type="font/woff2" crossorigin>`,
+    'ar font preloads'
+  );
+
   html = replacePattern(
     html,
     /<script>\s*\(function \(\) \{\s*var root = document\.documentElement;[\s\S]*?\}\)\(\);\s*<\/script>/,
@@ -184,7 +193,11 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   html = html
     .replace(/href="css\//g, 'href="../css/')
     .replace(/href="assets\/docs\//g, 'href="../assets/docs/')
+    .replace(/href="assets\/img\//g, 'href="../assets/img/')
     .replace(/src="assets\//g, 'src="../assets/')
+    .replace(/srcset="assets\//g, 'srcset="../assets/')
+    .replace(/imagesrcset="assets\//g, 'imagesrcset="../assets/')
+    .replace(/, assets\/img\//g, ', ../assets/img/')
     .replace(/src="js\/main\.js/g, 'src="../js/main.js')
     .replace(/"\.\/assets\/vendor\//g, '"../assets/vendor/')
     .replace(/"\.\/js\//g, '"../js/');
@@ -196,7 +209,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   html = replacePattern(
     html,
     /<div id="boot"[\s\S]*?<div class="boot__pct">/,
-    `<div id="boot" class="boot" aria-hidden="true">
+    `<div id="boot" class="boot" hidden aria-hidden="true">
   <div class="boot__top">
     <span>${AR.bootTop1}</span>
     <span>${AR.bootTop2}</span>
@@ -226,7 +239,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   html = replacePattern(
     html,
     /<button class="sound-toggle"[\s\S]*?<\/button>/,
-    `<button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="${escAttr(AR.soundAria)}" title="الصوت" data-sfx="none">
+    `<button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" title="الصوت" data-sfx="none">
       <span class="sound-toggle__icon" aria-hidden="true">☊</span>
       <span class="sound-toggle__text" id="sound-label">${AR.soundLabel}</span>
     </button>`,
@@ -234,8 +247,8 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   );
   html = replacePattern(
     html,
-    /<button class="lang-toggle" id="lang-toggle"[^>]*>[^<]*<\/button>/,
-    `<button class="lang-toggle" id="lang-toggle" type="button" lang="en" aria-label="${escAttr(AR.switchToEn)}" title="English">EN</button>`,
+    /<button class="lang-toggle" id="lang-toggle"[^>]*>[\s\S]*?<\/button>/,
+    `<button class="lang-toggle" id="lang-toggle" type="button" lang="en" aria-label="EN — ${escAttr(AR.switchToEn)}" title="English">EN</button>`,
     'lang-toggle'
   );
   html = replacePattern(html, /<span id="motion-label">[^<]*<\/span>/, `<span id="motion-label">${AR.motionOn}</span>`, 'motion-label');
@@ -422,14 +435,14 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   );
   html = replacePattern(
     html,
-    /id="img-arko" data-tex="1" src="\.\.\/assets\/img\/project-arko\.jpg" width="976" height="759" alt="ArkoClick application interface"/,
-    'id="img-arko" data-tex="1" src="../assets/img/project-arko-dark.jpg" width="976" height="759" alt="واجهة برنامج أركوكليك لأتمتة سطح المكتب"',
+    /id="img-arko"([^>]*)alt="ArkoClick application interface"/,
+    'id="img-arko"$1alt="واجهة برنامج أركوكليك لأتمتة سطح المكتب"',
     'alt arko 1'
   );
   html = replacePattern(
     html,
-    /id="img-arko-extra" src="\.\.\/assets\/img\/project-arko-light\.jpg" width="976" height="759" alt="ArkoClick light theme English interface"/,
-    'id="img-arko-extra" src="../assets/img/project-arko-light.jpg" width="976" height="759" alt="الوضع الفاتح لبرنامج أركوكليك"',
+    /id="img-arko-extra"([^>]*)alt="ArkoClick light theme English interface"/,
+    'id="img-arko-extra"$1alt="الوضع الفاتح لبرنامج أركوكليك"',
     'alt arko 2'
   );
   html = replacePattern(
@@ -538,7 +551,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
         <span class="email-copy__value">me@arqamrashed.com</span>
         <span class="email-copy__action" id="copy-action">${AR.copy}</span>
       </button>
-      <button class="domain-status" id="domain-status" type="button" data-state="checking" aria-label="${escAttr(AR.domainAria)}">
+      <button class="domain-status" id="domain-status" type="button" data-state="checking">
         <span class="domain-status__dot" aria-hidden="true"></span>
         <span id="domain-text" aria-live="polite">${AR.domainChecking}</span>
       </button>

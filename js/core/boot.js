@@ -11,6 +11,7 @@ export let bootTimerId = 0;
 export let bootStartedAt = performance.now();
 
 export function paintBoot(v) {
+  if (!refs.boot || refs.boot.hidden) return;
   const n = clamp(Math.round(v), 0, 100);
   if (refs.bootPct) refs.bootPct.textContent = String(n).padStart(3, '0');
   if (refs.bootBar) refs.bootBar.style.transform = 'scaleX(' + (n / 100) + ')';
@@ -22,10 +23,11 @@ export function paintBoot(v) {
 
 export function startBoot() {
   bootStartedAt = performance.now();
+  if (!refs.boot || refs.boot.hidden) return;
   paintBoot(0);
   gsap.to(bootValue, {
     v: 88,
-    duration: prefersReduced ? 0.5 : 2.1,
+    duration: prefersReduced ? 0.4 : 1.2,
     ease: 'power2.out',
     onUpdate: () => paintBoot(bootValue.v)
   });
@@ -39,7 +41,7 @@ export function finishBoot(forceImmediate = false) {
     bootTimerId = 0;
     bootFinishScheduled = false;
   }
-  const minimum = forceImmediate ? 0 : (state.motion ? 280 : 120);
+  const minimum = 0;
   const wait = Math.max(0, minimum - (performance.now() - bootStartedAt));
   if (wait > 30) {
     bootFinishScheduled = true;
@@ -60,26 +62,34 @@ export function finishBoot(forceImmediate = false) {
   const done = () => {
     state.ready = true;
     refs.body.classList.remove('is-booting');
-    if (refs.boot) refs.boot.style.display = 'none';
+    if (refs.boot) {
+      refs.boot.hidden = true;
+      refs.boot.setAttribute('aria-hidden', 'true');
+      refs.boot.style.display = 'none';
+    }
     runIntro();
     measureLayout();
-    ScrollTrigger.refresh();
+    if (typeof window.ScrollTrigger !== 'undefined') window.ScrollTrigger.refresh();
   };
 
   window.__ARQAM_FINISH_BOOT = finishBoot;
   window.__ARQAM_RUN_INTRO = runIntro;
 
-  if (!state.motion || forceImmediate) {
+  if (!state.motion || forceImmediate || !refs.boot || refs.boot.hidden) {
     paintBoot(100);
-    if (refs.boot) refs.boot.style.display = 'none';
+    if (refs.boot) {
+      refs.boot.hidden = true;
+      refs.boot.setAttribute('aria-hidden', 'true');
+      refs.boot.style.display = 'none';
+    }
     done();
     return;
   }
 
   paintBoot(100);
   gsap.timeline()
-    .to(bootValue, { v: 100, duration: 0.16, ease: 'power2.out', onUpdate: () => paintBoot(bootValue.v) })
-    .to(refs.boot, { autoAlpha: 0, duration: 0.24, ease: 'power2.inOut' })
+    .to(bootValue, { v: 100, duration: 0.14, ease: 'power2.out', onUpdate: () => paintBoot(bootValue.v) })
+    .to(refs.boot, { autoAlpha: 0, duration: 0.2, ease: 'power2.inOut' })
     .set(refs.boot, { display: 'none' })
     .add(done);
 }
@@ -106,35 +116,9 @@ export function splitName(el) {
 
 export const nameChars = [];
 export function prepareIntro() {
-  nameChars.push(...splitName(refs.nameA), ...splitName(refs.nameB));
   refs.skewTargets.forEach((el) => el.classList.add('skew'));
-  if (!state.motion) return;
-  const isAr = document.documentElement.lang === 'ar' || document.documentElement.dir === 'rtl';
-  if (isAr) {
-    gsap.set(nameChars, { y: 20, autoAlpha: 0 });
-  } else {
-    gsap.set(nameChars, { yPercent: 118 });
-  }
-  if (refs.heroPortrait) {
-    gsap.set(refs.heroPortrait, { clipPath: 'inset(0 0 18% 0)', y: 14, scale: 1.03 });
-  }
-  gsap.set([refs.heroTop, refs.heroCopy, refs.heroFacts, refs.capabilities], { autoAlpha: 0, y: 18 });
 }
 
 export function runIntro() {
-  if (!state.motion) {
-    gsap.set(nameChars, { clearProps: 'all' });
-    if (refs.heroPortrait) gsap.set(refs.heroPortrait, { clearProps: 'all' });
-    gsap.set([refs.heroTop, refs.heroCopy, refs.heroFacts, refs.capabilities], { clearProps: 'all' });
-    return;
-  }
-  const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: 0.06 });
-  tl.to(nameChars, { yPercent: 0, y: 0, autoAlpha: 1, duration: 0.92, stagger: 0.036 });
-  if (refs.heroPortrait) {
-    tl.to(refs.heroPortrait, { clipPath: 'inset(0 0 0% 0)', y: 0, scale: 1, duration: 0.85, ease: 'power3.out' }, '-=0.82');
-  }
-  tl.to(refs.heroTop, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.65')
-    .to(refs.heroCopy, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.4')
-    .to(refs.heroFacts, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.45')
-    .to(refs.capabilities, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.45');
+  // Hero renders immediately in its final layout at 0ms for instant LCP & Speed Index
 }

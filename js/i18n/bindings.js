@@ -94,7 +94,6 @@ export const BINDINGS = [
     { sel: '.contact-note', key: 'contactNote' },
     { sel: '.email-copy__label', key: 'emailLabel' },
     { sel: '#copy-action', key: 'copy' },
-    { sel: '#domain-status', key: 'domainAria', prop: 'aria-label' },
     { sel: '#domain-text', key: 'domainChecking' },
     { sel: '#footer-cv-kicker', key: 'cvKicker' },
     { sel: '#footer-cv-copy', key: 'cvCopy' },

@@ -31,6 +31,8 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.woff2': 'font/woff2',
   '.mp3': 'audio/mpeg',
   '.pdf': 'application/pdf',
   '.vcf': 'text/vcard; charset=utf-8'
@@ -145,6 +147,30 @@ async function verifyEdition(browser, baseUrl, route, label) {
   assert.equal(postGateCheck.gateDone, true, `${label}: #lang-gate should have .is-done after click`);
   assert.equal(postGateCheck.soundPressed, 'true', `${label}: sound toggle should be enabled after onboarding click`);
   console.log(`  [PASS] Onboarding dismissed & audio unlocked (aria-pressed=${postGateCheck.soundPressed})`);
+
+  // 2b. Sound Toggle OFF -> ON Verification
+  await page.click('#sound-toggle');
+  await page.waitForTimeout(80);
+  const soundOffCheck = await page.evaluate(() => ({
+    pressed: document.getElementById('sound-toggle')?.getAttribute('aria-pressed'),
+    label: document.getElementById('sound-label')?.textContent?.trim(),
+    pref: localStorage.getItem('arqam-sound')
+  }));
+  assert.equal(soundOffCheck.pressed, 'false', `${label}: #sound-toggle click should turn sound OFF`);
+  assert.equal(soundOffCheck.label, 'SOUND: OFF', `${label}: #sound-label should read SOUND: OFF when muted`);
+  assert.equal(soundOffCheck.pref, 'off', `${label}: localStorage arqam-sound should be 'off'`);
+
+  await page.click('#sound-toggle');
+  await page.waitForTimeout(80);
+  const soundOnCheck = await page.evaluate(() => ({
+    pressed: document.getElementById('sound-toggle')?.getAttribute('aria-pressed'),
+    label: document.getElementById('sound-label')?.textContent?.trim(),
+    pref: localStorage.getItem('arqam-sound')
+  }));
+  assert.equal(soundOnCheck.pressed, 'true', `${label}: second #sound-toggle click should turn sound back ON`);
+  assert.equal(soundOnCheck.label, 'SOUND: ON', `${label}: #sound-label should read SOUND: ON when enabled`);
+  assert.equal(soundOnCheck.pref, 'on', `${label}: localStorage arqam-sound should be 'on'`);
+  console.log('  [PASS] Sound toggle OFF <-> ON verified cleanly');
 
   // 3. Language Toggle (EN -> AR -> EN)
   await page.click('#lang-toggle');
@@ -341,7 +367,7 @@ async function verifySeo(browser, baseUrl) {
     const body = fs.readFileSync(path.join(ROOT, file), 'utf8');
     assert.ok(body.includes(needle), `${file} must contain ${needle}`);
   }
-  for (const file of ['favicon.ico', 'favicon.svg', 'ar/index.html', 'assets/img/arqam-portrait.png', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
+  for (const file of ['favicon.ico', 'favicon.svg', 'ar/index.html', 'assets/img/arqam-portrait.webp', 'assets/img/arqam-portrait-sm.webp', 'assets/img/og-image.jpg', 'assets/img/icons/apple-touch-icon.png']) {
     assert.ok(fs.existsSync(path.join(ROOT, file)), `${file} must exist`);
   }
 

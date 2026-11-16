@@ -52,7 +52,7 @@ body.is-ready #boot {
   display:flex;justify-content:space-between;gap:20px;
   border-bottom:1px solid rgba(212,255,0,.24);padding-bottom:12px;
   font:400 12.5px/1.5 var(--mono);letter-spacing:.09em;text-transform:uppercase;
-  color:rgba(226,226,229,.55);
+  color:rgba(226,226,229,.78);
 }
 .lang-gate__top span,
 .lang-gate__bottom span,
@@ -75,7 +75,7 @@ body.is-ready #boot {
 .lang-gate__kicker{
   display:flex;align-items:center;gap:10px;
   font:400 9.5px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(226,226,229,.5);
+  color:rgba(226,226,229,.78);
 }
 .lang-gate__kicker::before{content:"";width:26px;height:1px;background:#D4FF00}
 .lang-gate .lang-gate__title{
@@ -93,12 +93,12 @@ body.is-ready #boot {
 }
 .lang-gate__note{
   max-width:42ch;margin-top:3vh;
-  font-size:clamp(14px,1.1vw,18px);line-height:1.6;color:rgba(226,226,229,.62);
+  font-size:clamp(14px,1.1vw,18px);line-height:1.6;color:rgba(226,226,229,.8);
 }
 .lang-gate__note .ar{
   display:block;direction:rtl;margin-top:.55em;
   font-family:'IBM Plex Sans Arabic','Noto Sans Arabic',Tahoma,sans-serif;
-  font-size:.94em;line-height:1.8;color:rgba(226,226,229,.52);
+  font-size:.94em;line-height:1.8;color:rgba(226,226,229,.78);
 }
 .lang-options{display:grid;gap:12px;width:min(100%,520px);justify-self:end}
 .lang-option{
@@ -120,7 +120,7 @@ body.is-ready #boot {
 .lang-option__sub{
   display:block;margin-top:7px;
   font:400 12px/1.5 var(--mono);letter-spacing:.06em;text-transform:uppercase;
-  color:rgba(226,226,229,.5);
+  color:rgba(226,226,229,.78);
 }
 .lang-option__arrow{font-size:18px;line-height:1;color:#D4FF00;transition:transform .2s}
 .lang-option:hover .lang-option__arrow,.lang-option:focus-visible .lang-option__arrow{transform:translate(3px,-3px)}
@@ -146,7 +146,7 @@ body.is-ready #boot {
   display:flex;justify-content:space-between;gap:20px;
   border-top:1px solid rgba(226,226,229,.18);padding-top:12px;
   font:400 12px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(226,226,229,.42);
+  color:rgba(226,226,229,.76);
 }
 
 /* Persistent language switch */

@@ -2,7 +2,11 @@ import { palette, paletteAt, paletteCss, rgbCss, rgbaCss } from './color.js';
 import { mobileQuery } from './env.js';
 import { refs, state } from './state.js';
 import { clamp } from './utils.js';
-import { syncScenePalette } from '../gl/palette-sync.js';
+
+let glPaletteSync = null;
+export function setPaletteSync(fn) {
+  glPaletteSync = fn;
+}
 
 /**
  * Palette + scroll-reactive chrome.
@@ -46,7 +50,7 @@ export function updatePalette(now = performance.now()) {
     paletteCss.strong = rgbCss(p.strong);
     paletteCss.muted = rgbCss(p.muted);
     paletteCss.line = rgbaCss(p.line, p.la);
-    syncScenePalette();
+    if (glPaletteSync) glPaletteSync();
     cssDirty = true;
   }
   const interval = mobileQuery.matches ? CSS_INTERVAL_MOBILE : CSS_INTERVAL_DESKTOP;

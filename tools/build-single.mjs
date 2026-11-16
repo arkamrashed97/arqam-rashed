@@ -11,6 +11,23 @@ const OUT_DIR = path.join(ROOT, 'single-file');
 const OUT_FILE = path.join(OUT_DIR, 'index.html');
 const EMBED_ALL = process.argv.includes('--embed-all');
 
+const CSS_MODULES = [
+  'css/fonts.css',
+  'css/base.css',
+  'css/chrome.css',
+  'css/lang-gate.css',
+  'css/typography.css',
+  'css/act1.css',
+  'css/act2.css',
+  'css/act3.css',
+  'css/act4.css',
+  'css/footer.css',
+  'css/responsive.css',
+  'css/components.css',
+  'css/modal-actions.css',
+  'css/act5.css'
+];
+
 function toDataUri(relPath, mime) {
   const abs = path.join(ROOT, relPath);
   const buf = fs.readFileSync(abs);
@@ -35,13 +52,21 @@ async function buildSingleFile() {
   const htmlPath = path.join(ROOT, 'index.html');
   let rootHtml = fs.readFileSync(htmlPath, 'utf8');
 
-  // 0. Compute a content hash across all modular CSS and JS files so the MAIN modular
-  //    project (index.html + css/ + js/) always busts stale browser caches in lockstep
-  //    with single-file/index.html.
-  const allCssRel = listFilesRecursive(path.join(ROOT, 'css')).map((f) => `css/${f}`);
+  // 0. Compile & minify all modular CSS into css/app.min.css and compute a content hash
+  //    across source CSS and JS files so the modular site always busts caches cleanly.
+  const rawCss = CSS_MODULES
+    .map((rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8'))
+    .join('\n');
+
+  const minifiedCss = await esbuild.transform(rawCss, {
+    loader: 'css',
+    minify: true
+  });
+  fs.writeFileSync(path.join(ROOT, 'css/app.min.css'), minifiedCss.code.trim(), 'utf8');
+
   const allJsRel = listFilesRecursive(path.join(ROOT, 'js')).map((f) => `js/${f}`);
   const hash = crypto.createHash('sha256');
-  for (const rel of [...allCssRel, ...allJsRel]) {
+  for (const rel of [...CSS_MODULES, ...allJsRel]) {
     hash.update(rel);
     hash.update(fs.readFileSync(path.join(ROOT, rel)));
   }
@@ -81,23 +106,8 @@ async function buildSingleFile() {
 
   let html = rootHtml;
 
-  // 1. Collect all linked CSS files in order and minify via esbuild
+  // 1. Replace compiled stylesheet link with inline <style> block for single-file/index.html
   const cssRegex = /<link\s+rel="stylesheet"\s+href="(css\/[^"?]+)(?:\?v=[^"]*)?"\s*>/g;
-  const cssFiles = [];
-  let match = cssRegex.exec(html);
-  while (match !== null) {
-    cssFiles.push(match[1]);
-    match = cssRegex.exec(html);
-  }
-
-  const rawCss = cssFiles
-    .map((rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8'))
-    .join('\n');
-
-  const minifiedCss = await esbuild.transform(rawCss, {
-    loader: 'css',
-    minify: true
-  });
 
   // Replace the block of <link rel="stylesheet" href="css/..."> tags with a single <style> block
   let replacedFirstCss = false;
@@ -125,10 +135,11 @@ async function buildSingleFile() {
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
-    '.svg': 'image/svg+xml'
+    '.svg': 'image/svg+xml',
+    '.webp': 'image/webp'
   };
 
-  // Rewrite audio, image, and doc paths in the bundled JS for single-file/index.html
+  // Rewrite audio, image, vendor, and doc paths in the bundled JS for single-file/index.html
   const vcardPath = path.join(ROOT, 'assets/docs/Arqam-Rashed.vcf');
   const vcardDataUri = fs.existsSync(vcardPath) ? toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard') : '';
   const cvPath = path.join(ROOT, 'assets/docs/Arqam-Rashed-CV.pdf');
@@ -143,6 +154,7 @@ async function buildSingleFile() {
       const mime = imgMimeMap[ext] || 'application/octet-stream';
       return JSON.stringify(toDataUri(`assets/img/${file}`, mime));
     });
+    bundledJs = bundledJs.replace(/["']assets\/vendor\/([^"']+)["']/g, '"../assets/vendor/$1"');
     if (cvDataUri) {
       bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, JSON.stringify(cvDataUri));
     }
@@ -152,13 +164,18 @@ async function buildSingleFile() {
   } else {
     bundledJs = bundledJs.replace(/["']assets\/audio\/([^"']+\.mp3)["']/g, '"../assets/audio/$1"');
     bundledJs = bundledJs.replace(/["']assets\/img\/([^"']+)["']/g, '"../assets/img/$1"');
+    bundledJs = bundledJs.replace(/["']assets\/vendor\/([^"']+)["']/g, '"../assets/vendor/$1"');
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, '"../assets/docs/Arqam-Rashed-CV.pdf"');
     if (vcardDataUri) {
       bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
     }
   }
 
-  // 3. Inline project images as data URIs so WebGL texture loader works even on file://
+  // 3. Inline project & portrait images as data URIs so offline/single-file works everywhere;
+  //    rewrite font preloads to ../assets/fonts/ and strip srcset on inline-URI images.
+  html = html.replace(/href="assets\/fonts\/([^"]+)"/g, 'href="../assets/fonts/$1"');
+  html = html.replace(/<link rel="preload" as="image"[^>]*>\s*/g, '');
+  html = html.replace(/\s+srcset="assets\/img\/[^"]+"/g, '');
   html = html.replace(/src="(assets\/img\/[^"]+)"/g, (_, relPath) => {
     const ext = path.extname(relPath).toLowerCase();
     const mime = imgMimeMap[ext] || 'application/octet-stream';
@@ -211,7 +228,7 @@ async function buildSingleFile() {
   fs.writeFileSync(OUT_FILE, html, 'utf8');
 
   const sizeKb = (Buffer.byteLength(html, 'utf8') / 1024).toFixed(1);
-  console.log(`Built single-file/index.html (${sizeKb} KB, ${cssFiles.length} CSS modules + 29 JS modules bundled)`);
+  console.log(`Built single-file/index.html (${sizeKb} KB, ${CSS_MODULES.length} CSS modules + ${allJsRel.length} JS modules bundled)`);
 }
 
 buildSingleFile().catch((err) => {

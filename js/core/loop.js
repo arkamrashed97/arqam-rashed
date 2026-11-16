@@ -1,21 +1,53 @@
 import { updateCursor } from './cursor.js';
-import { mobileQuery } from './env.js';
 import { updateHUD } from './hud.js';
 import { updatePalette } from './palette.js';
 import { computeActMix } from './scroll.js';
 import { state } from './state.js';
 import { clamp, damp } from './utils.js';
-import { setDynamicResolution } from '../gl/renderer.js';
-import { sceneState } from '../gl/scene-state.js';
-import { updateScene } from '../gl/update.js';
 import { sound } from '../audio/index.js';
-import { updateActWorlds } from '../features/act-worlds.js';
 import { updateHeroPortrait } from './widgets.js';
 
 let loopStarted = false;
+let tickerActive = false;
+let idleClockTimer = 0;
+let idleUntil = 0;
 let avgDt = 0.0167;
+let sceneUpdater = null;
+let worldsUpdater = null;
+let glResizer = null;
+let glRenderFn = null;
 let lowPowerPost = false;
 export let lastFrame = performance.now();
+
+function attachTicker() {
+  if (tickerActive) return;
+  tickerActive = true;
+  lastFrame = performance.now();
+  gsap.ticker.add(tick);
+}
+
+function detachTicker() {
+  if (!tickerActive) return;
+  tickerActive = false;
+  gsap.ticker.remove(tick);
+}
+
+export function wakeLoop(ms = 450) {
+  idleUntil = Math.max(idleUntil, performance.now() + ms);
+  if (loopStarted) attachTicker();
+}
+
+export function setSceneUpdater(fn, renderFn = null, resizer = null) {
+  sceneUpdater = fn;
+  glRenderFn = renderFn;
+  glResizer = resizer;
+  if (sceneUpdater && loopStarted) attachTicker();
+}
+
+export function setWorldsUpdater(fn) {
+  worldsUpdater = fn;
+  if (worldsUpdater && loopStarted) attachTicker();
+}
 
 export function tick() {
   const now = performance.now();
@@ -24,51 +56,55 @@ export function tick() {
   if (document.hidden) return;
 
   const dt = clamp(rawDt, 0.001, 0.05);
+  const langPending = document.documentElement.classList.contains('lang-pending');
 
-  // While onboarding gate (#lang-gate) covers the viewport, only update the custom cursor
-  if (document.documentElement.classList.contains('lang-pending')) {
+  // While onboarding gate (#lang-gate) covers the viewport without active pointer movement, sleep
+  if (langPending) {
     updateCursor(dt);
+    if (now > idleUntil) detachTicker();
     return;
   }
 
   avgDt = avgDt * 0.92 + dt * 0.08;
 
-  state.scroll = window.scrollY;
   if (state.motion) state.time += dt;
 
   const velocityTarget = state.motion ? clamp(state.velocity * 0.02, -1.6, 1.6) : 0;
   state.velocitySmooth = damp(state.velocitySmooth, velocityTarget, 10, dt);
+  state.velocity *= Math.pow(0.02, dt);
+  if (Math.abs(state.velocity) < 0.005) state.velocity = 0;
   state.burst = Math.max(0, state.burst - dt * 1.6);
 
   state.actMix = computeActMix();
   updatePalette(now);
 
-  const activeAct = clamp(Math.round(state.actMix), 0, 4);
-  sound.setAct(activeAct);
+  sound.setActFromMix(state.actMix, { announce: state.ready });
   sound.setEnergy(state.velocitySmooth);
 
-  updateScene(dt);
-  updateActWorlds(dt);
+  if (sceneUpdater) sceneUpdater(dt);
+  if (worldsUpdater) worldsUpdater(dt);
   updateHeroPortrait();
   updateCursor(dt);
   updateHUD(now);
 
   // Adaptive resolution + post-processing governor keeps transitions smooth on all GPUs
-  if (avgDt > 0.021 && !lowPowerPost) {
-    lowPowerPost = true;
-    setDynamicResolution(0.76);
-  } else if (avgDt < 0.0168 && lowPowerPost) {
-    lowPowerPost = false;
-    setDynamicResolution(1);
+  if (glResizer) {
+    if (avgDt > 0.021 && !lowPowerPost) {
+      lowPowerPost = true;
+      glResizer(0.76);
+    } else if (avgDt < 0.0168 && lowPowerPost) {
+      lowPowerPost = false;
+      glResizer(1);
+    }
   }
 
-  if (sceneState.renderer && !sceneState.glContextLost) {
-    const fastScroll = Math.abs(state.velocitySmooth) > 0.28;
-    const lowBloom = sceneState.bloom && sceneState.bloom.strength < 0.085;
-    if (mobileQuery.matches || lowPowerPost || fastScroll || lowBloom || !sceneState.composer) {
-      sceneState.renderer.render(sceneState.scene, sceneState.camera);
-    } else {
-      sceneState.composer.render();
+  if (glRenderFn) glRenderFn(lowPowerPost);
+
+  // On CSS static fallback (no WebGL / no mini-game), sleep between scroll/pointer activity
+  if (!sceneUpdater && !worldsUpdater) {
+    const activeMotion = Math.abs(state.velocitySmooth) > 0.002 || Math.abs(state.velocity) > 0.01 || state.burst > 0.002 || now < idleUntil;
+    if (!activeMotion) {
+      detachTicker();
     }
   }
 }
@@ -76,6 +112,13 @@ export function tick() {
 export function startLoop() {
   if (loopStarted) return;
   loopStarted = true;
-  lastFrame = performance.now();
-  gsap.ticker.add(tick);
+  if (!idleClockTimer) {
+    idleClockTimer = window.setInterval(() => {
+      if (!document.hidden && !tickerActive && !document.documentElement.classList.contains('lang-pending')) {
+        updateHUD(performance.now());
+      }
+    }, 1000);
+  }
+  wakeLoop(250);
+  tick();
 }

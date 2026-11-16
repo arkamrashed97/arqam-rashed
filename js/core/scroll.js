@@ -1,21 +1,67 @@
-import { finePointerQuery, prefersReduced } from './env.js';
+import { finePointerQuery, mobileQuery, prefersReduced } from './env.js';
+import { wakeLoop } from './loop.js';
 import { layout, refs, state } from './state.js';
-import { $, clamp, smoothstep } from './utils.js';
+import { $, assetPath, clamp, smoothstep } from './utils.js';
 
 /** Holder so other modules can reach the Lenis instance (null on touch devices / reduced motion). */
 export const scrollEngine = { lenis: null };
 
-/**
- * Scroll engine.
- * Desktop pointers get Lenis smooth wheel scrolling. Touch devices keep native scrolling:
- * it is what the browser can composite off the main thread, so it stays fluid even while WebGL renders.
- */
-export function initScroll() {
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.config({ ignoreMobileResize: true });
+const loadedScripts = new Map();
+let desktopInitialized = false;
 
-  if (typeof Lenis !== 'undefined' && !prefersReduced && finePointerQuery.matches) {
-    scrollEngine.lenis = new Lenis({
+function loadScriptOnce(relSrc) {
+  const url = assetPath(relSrc);
+  if (loadedScripts.has(url)) return loadedScripts.get(url);
+  const promise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error(`Failed to load ${url}`));
+    document.head.appendChild(s);
+  });
+  loadedScripts.set(url, promise);
+  return promise;
+}
+
+function attachPassiveScroll(withTriggerUpdate) {
+  let lastY = state.scroll || 0;
+  let lastT = performance.now();
+  window.addEventListener('scroll', () => {
+    if (document.documentElement.classList.contains('lang-pending')) {
+      if (window.scrollY !== 0) window.scrollTo(0, 0);
+      return;
+    }
+    const now = performance.now();
+    const dt = Math.max(8, now - lastT);
+    const y = window.scrollY;
+    state.scroll = y;
+    state.velocity = ((y - lastY) / dt) * 16.667;
+    lastY = y;
+    lastT = now;
+    wakeLoop(500);
+    if (withTriggerUpdate && typeof window.ScrollTrigger !== 'undefined') {
+      window.ScrollTrigger.update();
+    }
+  }, { passive: true });
+}
+
+function wireDesktopScroll() {
+  if (desktopInitialized) return;
+  desktopInitialized = true;
+
+  if (typeof window.ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(window.ScrollTrigger);
+    window.ScrollTrigger.config({ ignoreMobileResize: true });
+    window.ScrollTrigger.addEventListener('refresh', measureLayout);
+    window.ScrollTrigger.addEventListener('refreshInit', () => {
+      if (scrollEngine.lenis) scrollEngine.lenis.resize();
+    });
+    initHorizontal();
+  }
+
+  if (typeof window.Lenis !== 'undefined' && !prefersReduced && finePointerQuery.matches) {
+    scrollEngine.lenis = new window.Lenis({
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
@@ -27,7 +73,8 @@ export function initScroll() {
     scrollEngine.lenis.on('scroll', (e) => {
       state.scroll = e.scroll;
       state.velocity = e.velocity;
-      ScrollTrigger.update();
+      wakeLoop(500);
+      if (typeof window.ScrollTrigger !== 'undefined') window.ScrollTrigger.update();
     });
     gsap.ticker.add((time) => scrollEngine.lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(500, 33);
@@ -36,22 +83,42 @@ export function initScroll() {
       scrollEngine.lenis.stop();
     }
   } else {
-    let lastY = window.scrollY;
-    let lastT = performance.now();
-    window.addEventListener('scroll', () => {
-      if (document.documentElement.classList.contains('lang-pending')) {
-        if (window.scrollY !== 0) window.scrollTo(0, 0);
-        return;
-      }
-      const now = performance.now();
-      const dt = Math.max(8, now - lastT);
-      const y = window.scrollY;
-      state.scroll = y;
-      state.velocity = ((y - lastY) / dt) * 16.667;
-      lastY = y;
-      lastT = now;
-      ScrollTrigger.update();
-    }, { passive: true });
+    attachPassiveScroll(true);
+  }
+
+  requestAnimationFrame(() => {
+    measureLayout();
+    if (typeof window.ScrollTrigger !== 'undefined') window.ScrollTrigger.refresh();
+  });
+}
+
+async function setupDesktopScroll() {
+  if (desktopInitialized || mobileQuery.matches) return;
+  const tasks = [];
+  if (typeof window.ScrollTrigger === 'undefined') {
+    tasks.push(loadScriptOnce('assets/vendor/ScrollTrigger.min.js').catch(() => {}));
+  }
+  if (!prefersReduced && finePointerQuery.matches && typeof window.Lenis === 'undefined') {
+    tasks.push(loadScriptOnce('assets/vendor/lenis.min.js').catch(() => {}));
+  }
+  if (tasks.length) await Promise.all(tasks);
+  wireDesktopScroll();
+}
+
+/**
+ * Scroll engine.
+ * Desktop viewports (>900px) load ScrollTrigger & Lenis smoothly.
+ * Mobile viewports keep native composited touch scrolling with zero ScrollTrigger/Lenis overhead.
+ */
+export function initScroll() {
+  if (mobileQuery.matches) {
+    attachPassiveScroll(false);
+    requestAnimationFrame(() => measureLayout());
+    mobileQuery.addEventListener('change', (e) => {
+      if (!e.matches) setupDesktopScroll();
+    });
+  } else {
+    setupDesktopScroll();
   }
 
   window.addEventListener('arqam:gate-closed', () => {
@@ -64,18 +131,10 @@ export function initScroll() {
     }
     requestAnimationFrame(() => {
       measureLayout();
-      ScrollTrigger.refresh();
+      if (!mobileQuery.matches && typeof window.ScrollTrigger !== 'undefined') {
+        window.ScrollTrigger.refresh();
+      }
     });
-  });
-
-  initHorizontal();
-  ScrollTrigger.addEventListener('refresh', measureLayout);
-  ScrollTrigger.addEventListener('refreshInit', () => {
-    if (scrollEngine.lenis) scrollEngine.lenis.resize();
-  });
-  requestAnimationFrame(() => {
-    measureLayout();
-    ScrollTrigger.refresh();
   });
 }
 

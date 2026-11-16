@@ -5,7 +5,7 @@ export default {
       hudName: 'ARQAM RASHED',
       nameA: 'ARQAM',
       nameB: 'RASHED',
-      soundLabel: 'SOUND',
+      soundLabel: 'SOUND: OFF',
       soundLabelOn: 'SOUND: ON',
       bootTop1: 'ARQAM RASHED / PORTFOLIO 2026',
       bootTop2: 'SYSTEM BOOT / V.01',

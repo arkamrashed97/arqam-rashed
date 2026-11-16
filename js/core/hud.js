@@ -1,3 +1,4 @@
+import { mobileQuery } from './env.js';
 import { langText } from './lang.js';
 import { measureLayout } from './scroll.js';
 import { ACT_NAME_KEYS, refs, state } from './state.js';
@@ -48,10 +49,10 @@ export function updateHUD(now) {
     if (refs.velReadout) refs.velReadout.textContent = Math.abs(state.velocitySmooth).toFixed(3);
   }
 
-  if (now - hudStats.lastWave > 70) {
+  if (now - hudStats.lastWave > 95 && !mobileQuery.matches && refs.wave && state.motion) {
     hudStats.lastWave = now;
     const points = [];
-    const amplitude = state.motion ? 1 + Math.min(3.4, Math.abs(state.velocitySmooth) * 1.5) : 0.25;
+    const amplitude = 1 + Math.min(3.4, Math.abs(state.velocitySmooth) * 1.5);
     for (let i = 0; i < 13; i++) {
       const x = (i / 12) * 74;
       const base = Math.sin(state.time * 3.4 + i * 0.85) * 1.35;
@@ -59,7 +60,7 @@ export function updateHUD(now) {
       const y = 10 + (base + mod) * amplitude * (i === 0 || i === 12 ? 0.2 : 1);
       points.push(x.toFixed(1) + ',' + clamp(y, 1, 19).toFixed(1));
     }
-    if (refs.wave) refs.wave.setAttribute('points', points.join(' '));
+    refs.wave.setAttribute('points', points.join(' '));
   }
 
   const actIndex = clamp(Math.round(state.actMix), 0, 4);
@@ -89,5 +90,7 @@ window.addEventListener('arqam:lang', () => {
     if (hovered && refs.cursorLabel) refs.cursorLabel.textContent = hovered.dataset.cursor || '';
   }
   measureLayout();
-  ScrollTrigger.refresh();
+  if (typeof window.ScrollTrigger !== 'undefined' && !mobileQuery.matches) {
+    window.ScrollTrigger.refresh();
+  }
 });

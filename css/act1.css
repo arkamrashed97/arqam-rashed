@@ -46,11 +46,8 @@ html[dir="rtl"] .hero-name .line--2{text-align:left;padding-left:2vw;padding-rig
   border:1px solid color-mix(in srgb,var(--accent) 32%,var(--line));
   background:radial-gradient(circle at var(--spot-x,50%) var(--spot-y,42%),
     color-mix(in srgb,var(--accent) 16%,transparent),
-    color-mix(in srgb,var(--bg) 72%,transparent) 74%);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  transform-style:preserve-3d;
+    color-mix(in srgb,var(--bg) 86%,#070708) 74%);
   transform:translate3d(0,var(--parallax-y,0px),0) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));
-  will-change:transform;
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease);
 }
 .hero-portrait:hover .hero-portrait__frame{
@@ -69,6 +66,8 @@ html[dir="rtl"] .hero-name .line--2{text-align:left;padding-left:2vw;padding-rig
   position:absolute;left:50%;top:48%;width:78%;aspect-ratio:1;z-index:1;pointer-events:none;
   border:1px dashed color-mix(in srgb,var(--accent) 36%,transparent);border-radius:50%;
   transform:translate(-50%,-50%);
+}
+.hero-portrait:hover .hero-portrait__orbit{
   animation:portraitOrbit 34s linear infinite;
 }
 body.motion-off .hero-portrait__orbit{animation:none}
@@ -80,7 +79,6 @@ body.motion-off .hero-portrait__orbit{animation:none}
   position:relative;width:100%;height:100%;z-index:2;
   display:flex;align-items:flex-end;justify-content:center;
   padding-top:4%;
-  transform:translateZ(22px);
 }
 .hero-portrait__img{
   width:100%;height:100%;object-fit:contain;object-position:bottom center;

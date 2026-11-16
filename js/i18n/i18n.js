@@ -88,9 +88,10 @@ function applyCursorLabels(code) {
 function updateLangToggle(code) {
   const toggle = document.getElementById('lang-toggle');
   if (!toggle) return;
-  toggle.textContent = code === 'en' ? 'ع' : 'EN';
+  const sym = code === 'en' ? 'ع' : 'EN';
+  toggle.textContent = sym;
   toggle.setAttribute('lang', code === 'en' ? 'ar' : 'en');
-  toggle.setAttribute('aria-label', t(code === 'en' ? 'switchToAr' : 'switchToEn', code));
+  toggle.setAttribute('aria-label', `${sym} — ${t(code === 'en' ? 'switchToAr' : 'switchToEn', code)}`);
   toggle.setAttribute('title', code === 'en' ? 'العربية' : 'English');
 }
 
@@ -106,11 +107,17 @@ export function applyLanguage(lang, persist) {
   const arkoImg = document.getElementById('img-arko');
   const arkoExtra = document.getElementById('img-arko-extra');
   if (arkoImg) {
-    arkoImg.src = assetPath(code === 'ar' ? 'assets/img/project-arko-dark.jpg' : 'assets/img/project-arko-light.jpg');
+    const sm = assetPath(code === 'ar' ? 'assets/img/project-arko-dark-sm.webp' : 'assets/img/project-arko-light-sm.webp');
+    const full = assetPath(code === 'ar' ? 'assets/img/project-arko-dark.webp' : 'assets/img/project-arko-light.webp');
+    arkoImg.src = full;
+    arkoImg.srcset = `${sm} 660w, ${full} 976w`;
     arkoImg.alt = code === 'ar' ? 'واجهة برنامج أركوكليك لأتمتة سطح المكتب' : 'ArkoClick desktop automation interface';
   }
   if (arkoExtra) {
-    arkoExtra.src = assetPath(code === 'ar' ? 'assets/img/project-arko-light.jpg' : 'assets/img/project-arko-dark.jpg');
+    const sm = assetPath(code === 'ar' ? 'assets/img/project-arko-light-sm.webp' : 'assets/img/project-arko-dark-sm.webp');
+    const full = assetPath(code === 'ar' ? 'assets/img/project-arko-light.webp' : 'assets/img/project-arko-dark.webp');
+    arkoExtra.src = full;
+    arkoExtra.srcset = `${sm} 660w, ${full} 976w`;
     arkoExtra.alt = code === 'ar' ? 'الوضع الفاتح لبرنامج أركوكليك' : 'ArkoClick dark mode Arabic interface';
   }
   document.title = t('pageTitle', code);

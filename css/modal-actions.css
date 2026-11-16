@@ -89,10 +89,10 @@
 
 /* WhatsApp and vCard buttons in Act IV */
 .cta--wa{
-  border-color:#25D366 !important;color:#25D366 !important;
+  background:#0C6B3B !important;border-color:#0C6B3B !important;color:#FFFFFF !important;
 }
 .cta--wa:hover,.cta--wa:focus-visible{
-  background:rgba(37,211,102,.12) !important;
+  background:#09552E !important;border-color:#16A34A !important;
 }
 .vcard-btn{
   display:flex;justify-content:space-between;align-items:center;gap:12px;

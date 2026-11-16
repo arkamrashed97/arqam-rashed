@@ -45,13 +45,22 @@ export function setDynamicResolution(scale) {
   }
 }
 
-export function initGL() {
+export function initGL(existingContext = null) {
   const canvas = document.getElementById('gl');
   if (!canvas) return false;
   try {
+    const context = existingContext || canvas.getContext('webgl2', {
+      antialias: false,
+      alpha: false,
+      powerPreference: 'high-performance',
+      stencil: false,
+      depth: true
+    });
+    if (!context) return false;
     const dpr = getDPR();
     const renderer = new THREE.WebGLRenderer({
       canvas,
+      context,
       antialias: false,
       alpha: false,
       powerPreference: 'high-performance',
@@ -164,11 +173,12 @@ export function applyResize() {
   }
 
   measureLayout();
-  ScrollTrigger.refresh();
+  if (typeof window.ScrollTrigger !== 'undefined') window.ScrollTrigger.refresh();
 }
 
 export function setupResize() {
   let resizeRaf = 0;
+  let lastDocHeight = document.documentElement.scrollHeight;
   window.addEventListener('resize', () => {
     if (resizeRaf) return;
     resizeRaf = requestAnimationFrame(() => {
@@ -179,23 +189,25 @@ export function setupResize() {
 
   if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(() => {
-      if (resizeRaf) return;
+      const h = document.documentElement.scrollHeight;
+      if (h === lastDocHeight || resizeRaf) return;
+      lastDocHeight = h;
       resizeRaf = requestAnimationFrame(() => {
         resizeRaf = 0;
         measureLayout();
       });
     });
-    ro.observe(document.body);
+    ro.observe(document.documentElement);
   }
 }
 
-export function renderStaticFallback() {
-  refs.body.classList.add('no-gl', 'static-work');
-  state.gl = false;
-  if (refs.gpuMode) refs.gpuMode.textContent = 'STATIC / NO WEBGL2';
-  if (refs.gpuReadout) refs.gpuReadout.textContent = 'NONE';
-  refs.mediaEls.forEach((el) => {
-    const img = el.querySelector('.project__img');
-    if (img) img.style.opacity = '.92';
-  });
+export function renderGLFrame(lowPowerPost = false) {
+  if (!sceneState.renderer || sceneState.glContextLost) return;
+  const fastScroll = Math.abs(state.velocitySmooth) > 0.28;
+  const lowBloom = sceneState.bloom && sceneState.bloom.strength < 0.085;
+  if (mobileQuery.matches || lowPowerPost || fastScroll || lowBloom || !sceneState.composer) {
+    sceneState.renderer.render(sceneState.scene, sceneState.camera);
+  } else {
+    sceneState.composer.render();
+  }
 }

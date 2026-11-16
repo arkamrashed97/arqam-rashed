@@ -14,10 +14,10 @@ export const CASE_STUDIES = [
       link: 'https://tawfeektours.com',
       btnText: 'VISIT TAWFEEKTOURS.COM ↗',
       images: [
-        { src: 'assets/img/project-tawfeek.jpg', label: 'Landing & Multi-Currency Entry', labelAr: 'الواجهة الرئيسية ومحول العملات' },
-        { src: 'assets/img/project-tawfeek-tours.jpg', label: 'Interactive Tours Catalog & Filters', labelAr: 'دليل الجولات والتصفية الفورية' },
-        { src: 'assets/img/project-tawfeek-booking.jpg', label: 'Nile Cruise Detail & Direct Booking', labelAr: 'تفاصيل الباخرة النيلية ومسار الحجز' },
-        { src: 'assets/img/project-tawfeek-studio.jpg', label: 'Sanity CMS Operations Dashboard', labelAr: 'لوحة تحكم إدارة المحتوى Sanity Studio' }
+        { src: 'assets/img/project-tawfeek.webp', label: 'Landing & Multi-Currency Entry', labelAr: 'الواجهة الرئيسية ومحول العملات' },
+        { src: 'assets/img/project-tawfeek-tours.webp', label: 'Interactive Tours Catalog & Filters', labelAr: 'دليل الجولات والتصفية الفورية' },
+        { src: 'assets/img/project-tawfeek-booking.webp', label: 'Nile Cruise Detail & Direct Booking', labelAr: 'تفاصيل الباخرة النيلية ومسار الحجز' },
+        { src: 'assets/img/project-tawfeek-studio.webp', label: 'Sanity CMS Operations Dashboard', labelAr: 'لوحة تحكم إدارة المحتوى Sanity Studio' }
       ],
       // Arabic version
       ar: {
@@ -50,8 +50,8 @@ export const CASE_STUDIES = [
       link: 'https://github.com/arkamrashed97/ArkoClick',
       btnText: 'VIEW GITHUB REPOSITORY ↗',
       images: [
-        { src: 'assets/img/project-arko-dark.jpg', label: 'Dark Mode (Arabic UI)', labelAr: 'الوضع الداكن (الواجهة العربية)' },
-        { src: 'assets/img/project-arko-light.jpg', label: 'Light Mode (English UI)', labelAr: 'الوضع الفاتح (الواجهة الإنجليزية)' }
+        { src: 'assets/img/project-arko-dark.webp', label: 'Dark Mode (Arabic UI)', labelAr: 'الوضع الداكن (الواجهة العربية)' },
+        { src: 'assets/img/project-arko-light.webp', label: 'Light Mode (English UI)', labelAr: 'الوضع الفاتح (الواجهة الإنجليزية)' }
       ],
       // Arabic version
       ar: {
@@ -84,7 +84,7 @@ export const CASE_STUDIES = [
       link: 'https://rtsupplements.vercel.app',
       btnText: 'VISIT RTSUPPLEMENTS.VERCEL.APP ↗',
       images: [
-        { src: 'assets/img/project-rt.jpg', label: 'Production Dashboard', labelAr: 'لوحة التحكم الحية' }
+        { src: 'assets/img/project-rt.webp', label: 'Production Dashboard', labelAr: 'لوحة التحكم الحية' }
       ],
       // Arabic version
       ar: {
