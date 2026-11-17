@@ -1,11 +1,11 @@
 /* Act IV: gravitational singularity */
 .act-4{
-  min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;gap:6vh;
-  padding:calc(var(--hud-h) + 8vh) var(--pad) 5vh;
+  min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;gap:4vh;
+  padding:calc(var(--hud-h) + 5vh) var(--pad) clamp(54px,7vh,78px);
 }
 .act-4::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;height:60%;z-index:-1;pointer-events:none;
-  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg) 68%,transparent) 38%,color-mix(in srgb,var(--bg) 92%,transparent));
+  content:"";position:absolute;left:0;right:0;bottom:0;height:66%;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg) 78%,transparent) 26%,color-mix(in srgb,var(--bg) 95%,transparent));
 }
 .contact-head{
   display:flex;justify-content:space-between;gap:20px;
@@ -14,8 +14,8 @@
 }
 .contact-title{
   font-family:var(--display);font-weight:400;
-  font-size:clamp(64px,17vw,300px);line-height:.74;letter-spacing:-.05em;text-transform:uppercase;
-  margin:2vh 0;
+  font-size:clamp(58px,14vw,240px);line-height:.82;letter-spacing:-.05em;text-transform:uppercase;
+  margin:1vh 0;
   text-shadow:0 0 26px color-mix(in srgb,var(--bg) 82%,transparent),0 0 70px color-mix(in srgb,var(--bg) 55%,transparent);
 }
 .contact-title .line{display:block}

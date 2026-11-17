@@ -1,15 +1,15 @@
 import { clamp, lerp } from './utils.js';
 
 export const PALETTE_STOPS = [
-  { m: 0.00, bg: '070708', ink: 'E2E2E5', accent: 'D4FF00', strong: 'D4FF00', muted: '8A8A90', line: 'E2E2E5', la: 0.18 },
-  { m: 0.72, bg: '070708', ink: 'E2E2E5', accent: 'D4FF00', strong: 'D4FF00', muted: '8A8A90', line: 'E2E2E5', la: 0.18 },
-  { m: 1.00, bg: 'F2EFE9', ink: '111111', accent: 'FF3B00', strong: 'B82800', muted: '6B665E', line: '111111', la: 0.16 },
-  { m: 1.72, bg: 'F2EFE9', ink: '111111', accent: 'FF3B00', strong: 'B82800', muted: '6B665E', line: '111111', la: 0.16 },
-  { m: 2.00, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: '8AA2B8', line: 'E8F7FF', la: 0.18 },
-  { m: 2.72, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: '8AA2B8', line: 'E8F7FF', la: 0.18 },
-  { m: 3.00, bg: '14100E', ink: 'FDFBF7', accent: 'FF8A2A', strong: 'FFA654', muted: 'C2B3A4', line: 'FDFBF7', la: 0.18 },
-  { m: 3.72, bg: '14100E', ink: 'FDFBF7', accent: 'FF8A2A', strong: 'FFA654', muted: 'C2B3A4', line: 'FDFBF7', la: 0.18 },
-  { m: 4.00, bg: '080B10', ink: 'F0F6FC', accent: '38EF7D', strong: '00E5FF', muted: '8B949E', line: '30363D', la: 0.20 }
+  { m: 0.00, bg: '070708', ink: 'E2E2E5', accent: 'D4FF00', strong: 'D4FF00', muted: 'A6A6AE', line: 'E2E2E5', la: 0.18 },
+  { m: 0.72, bg: '070708', ink: 'E2E2E5', accent: 'D4FF00', strong: 'D4FF00', muted: 'A6A6AE', line: 'E2E2E5', la: 0.18 },
+  { m: 1.00, bg: 'F2EFE9', ink: '111111', accent: 'E03500', strong: 'B82800', muted: '3D3B37', line: '111111', la: 0.18 },
+  { m: 1.72, bg: 'F2EFE9', ink: '111111', accent: 'E03500', strong: 'B82800', muted: '3D3B37', line: '111111', la: 0.18 },
+  { m: 2.00, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: 'A5BDD2', line: 'E8F7FF', la: 0.18 },
+  { m: 2.72, bg: '040814', ink: 'E8F7FF', accent: '00F0FF', strong: '00F0FF', muted: 'A5BDD2', line: 'E8F7FF', la: 0.18 },
+  { m: 3.00, bg: '14100E', ink: 'FDFBF7', accent: 'FF8A2A', strong: 'FFA654', muted: 'CFC0B2', line: 'FDFBF7', la: 0.18 },
+  { m: 3.72, bg: '14100E', ink: 'FDFBF7', accent: 'FF8A2A', strong: 'FFA654', muted: 'CFC0B2', line: 'FDFBF7', la: 0.18 },
+  { m: 4.00, bg: '080B10', ink: 'F0F6FC', accent: '38EF7D', strong: '00E5FF', muted: 'A6B0BC', line: '30363D', la: 0.20 }
 ];
 
 export const hexToRgb = (hex) => {

@@ -63,7 +63,9 @@
   display:flex;gap:18px;
   font:400 13px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);pointer-events:none;
+  transition:opacity .28s var(--ease);
 }
+body.past-hero .readout{opacity:0}
 .readout b{font-weight:400;color:var(--ink)}
 .skew{transform:skewY(var(--vskew,0deg));will-change:transform}
 

@@ -43,6 +43,7 @@ export function updateHUD(now) {
   if (now - hudStats.lastCoords > 90) {
     hudStats.lastCoords = now;
     document.body.classList.toggle('contact-in-view', (state.m3 || 0) > 0.18);
+    document.body.classList.toggle('past-hero', state.scroll > 80);
     if (refs.pointerCoords) {
       refs.pointerCoords.textContent = String(Math.round(state.pointerX)).padStart(4, '0') + ' / ' + String(Math.round(state.pointerY)).padStart(4, '0');
     }

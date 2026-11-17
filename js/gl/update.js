@@ -10,37 +10,11 @@ export function worldViewSize() {
   return { h, w: h * camera.aspect };
 }
 
-export function updatePlanes(planesWeight, dt) {
-  if (!sceneState.planes.length || !sceneState.camera) return;
-  const canShow = planesWeight > 0.008 && !mobileQuery.matches;
-  if (sceneState.planeGroup) sceneState.planeGroup.visible = canShow;
-  if (!canShow) {
-    for (let i = 0; i < sceneState.planes.length; i++) {
-      sceneState.planes[i].mesh.visible = false;
-    }
-    return;
-  }
-  const view = worldViewSize();
+export function updatePlanes(planesWeight) {
+  // Project cards render full-resolution uncropped DOM screenshots directly inside each theater frame
+  if (sceneState.planeGroup) sceneState.planeGroup.visible = planesWeight > 0.008;
   for (let i = 0; i < sceneState.planes.length; i++) {
-    const plane = sceneState.planes[i];
-    const rect = plane.mediaEl.getBoundingClientRect();
-    const onScreen = rect.width > 2 && rect.height > 2 &&
-      rect.bottom > -80 && rect.top < window.innerHeight + 80 &&
-      rect.right > -80 && rect.left < window.innerWidth + 80;
-    plane.mesh.visible = onScreen;
-    if (!onScreen) continue;
-
-    const hoverTarget = state.hoverProject === i && state.pointerMoved ? 1 : 0;
-    plane.material.uniforms.uHover.value = damp(plane.material.uniforms.uHover.value, hoverTarget, 7, dt);
-    plane.material.uniforms.uTime.value = state.time;
-    plane.material.uniforms.uVelocity.value = state.velocitySmooth;
-    plane.material.uniforms.uOpacity.value = planesWeight;
-
-    const cx = (rect.left + rect.width * 0.5) / window.innerWidth - 0.5;
-    const cy = 0.5 - (rect.top + rect.height * 0.5) / window.innerHeight;
-    plane.mesh.position.set(cx * view.w, cy * view.h, 0);
-    plane.mesh.scale.set((rect.width / window.innerWidth) * view.w, (rect.height / window.innerHeight) * view.h, 1);
-    plane.material.uniforms.uPlaneAspect.value = rect.width / Math.max(1, rect.height);
+    sceneState.planes[i].mesh.visible = false;
   }
 }
 

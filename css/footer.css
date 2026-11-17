@@ -27,5 +27,5 @@
 .footer-meta a:hover{color:var(--ink)}
 
 @media (min-width:1101px){
-  .act-3 .panels{padding-right:86px}
+  .act-3 .panels{padding-inline-end:86px}
 }

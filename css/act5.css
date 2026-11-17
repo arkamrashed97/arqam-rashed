@@ -1,7 +1,7 @@
 /* Act V: Direct Transmission & Inquiry Form */
 .act-5{
   position:relative;overflow:hidden;
-  min-height:100svh;padding:12vh var(--pad) 10vh;
+  min-height:100svh;padding:calc(var(--hud-h) + 6vh) var(--pad) 10vh;
   display:flex;flex-direction:column;gap:4vh;
   background:
     radial-gradient(circle at 78% 22%,rgba(16,185,129,.12),transparent 52%),

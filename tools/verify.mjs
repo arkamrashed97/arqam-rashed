@@ -231,9 +231,31 @@ async function verifyEdition(browser, baseUrl, route, label) {
   assert.equal(cvRemovalCheck.hasBostaOrGrandMemphis, false, `${label}: inline CV work history must not appear in page text`);
   console.log('  [PASS] Footer CV dossier restored and redundant Act IV buttons confirmed removed');
 
-  // 5. Case Study Modal & Scroll Transitions across Acts I..V
+  // 5. Desktop Multi-Screenshot Gallery, Case Study Modal & Scroll Transitions across Acts I..V
   await page.evaluate(() => window.scrollTo(0, document.getElementById('work').offsetTop + 60));
   await page.waitForTimeout(300);
+  const desktopGalleryInit = await page.evaluate(() => {
+    const media = document.querySelector('[data-project="0"] .project__media');
+    const thumbs = media ? media.querySelectorAll('.project__thumb') : [];
+    const activeImg = media ? media.querySelector('img.is-active-shot') : null;
+    const imgStyle = activeImg ? getComputedStyle(activeImg) : null;
+    const count = media?.querySelector('.project__shot-count')?.textContent?.trim();
+    return {
+      thumbCount: thumbs.length,
+      count,
+      opacity: imgStyle ? Number(imgStyle.opacity) : 0,
+      objectFit: imgStyle ? imgStyle.objectFit : ''
+    };
+  });
+  assert.equal(desktopGalleryInit.thumbCount, 4, `${label}: TawfeekTours desktop gallery must render 4 thumbnails`);
+  assert.equal(desktopGalleryInit.count, '01 / 04', `${label}: desktop gallery counter should initialize at 01 / 04`);
+  assert.equal(desktopGalleryInit.opacity, 1, `${label}: active project screenshot must remain opaque on desktop`);
+  assert.equal(desktopGalleryInit.objectFit, 'contain', `${label}: desktop project screenshot must render uncropped (contain)`);
+  await page.locator('[data-project="0"] .project__thumb').nth(1).dispatchEvent('click');
+  await page.waitForTimeout(120);
+  const switchedCount = await page.locator('[data-project="0"] .project__shot-count').textContent();
+  assert.equal(switchedCount?.trim(), '02 / 04', `${label}: clicking second thumbnail should switch desktop preview to 02 / 04`);
+  console.log('  [PASS] Desktop uncropped multi-screenshot gallery switcher verified (01/04 -> 02/04)');
   await page.locator('[data-case="0"]').dispatchEvent('click');
   await page.waitForTimeout(250);
   const modalCheck = await page.evaluate(() => ({
@@ -312,16 +334,16 @@ async function verifyMobileOverflow(browser, baseUrl) {
   await page.waitForTimeout(400);
 
   // Trigger lazy-loaded images along Act II by scrolling through each project
-  const imgCount = await page.locator('.project__media img').count();
+  const imgCount = await page.locator('.project__media > img').count();
   for (let i = 0; i < imgCount; i++) {
-    await page.locator('.project__media img').nth(i).scrollIntoViewIfNeeded();
+    await page.locator('.project__media > img').nth(i).scrollIntoViewIfNeeded();
     await page.waitForTimeout(150);
   }
 
   const mobileWorkCheck = await page.evaluate(() => {
     const track = document.getElementById('work-track');
     const projects = [...document.querySelectorAll('.project')];
-    const imgs = [...document.querySelectorAll('.project__media img')];
+    const imgs = [...document.querySelectorAll('.project__media > img')];
     const tops = projects.map((p) => p.getBoundingClientRect().top + window.scrollY);
     const imgMetrics = imgs.map((img) => {
       const rect = img.getBoundingClientRect();

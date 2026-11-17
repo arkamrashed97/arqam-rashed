@@ -11,6 +11,7 @@ import { initLanguage } from './i18n/i18n.js';
 import { armAutoStart, initSoundUI } from './audio/index.js';
 import { initGate } from './features/gate.js';
 import { initModal } from './features/modal.js';
+import { initProjectGalleries } from './features/project-gallery.js';
 import { initContact } from './features/contact.js';
 import { initInquiry } from './features/inquiry.js';
 
@@ -59,6 +60,7 @@ async function init() {
   initSoundUI();
   armAutoStart();
   initGate(pendingGate);
+  initProjectGalleries();
   initModal();
   initContact();
   initInquiry();

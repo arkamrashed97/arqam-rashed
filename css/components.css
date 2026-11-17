@@ -1,13 +1,13 @@
-/* No-JS and static fallback states */
+/* No-JS fallback state */
 body.no-js .boot{display:none}
-body.no-js .work-track,body.static-work .work-track{
+body.no-js .work-track{
   display:flex;flex-direction:column;width:100%;
   padding:12vh var(--pad);gap:28px;transform:none!important;
 }
-body.no-js .work-pin,body.static-work .work-pin{height:auto;display:block;overflow:visible}
-body.no-js .project,body.static-work .project{width:100%;flex:none;height:auto;grid-template-columns:1fr}
-body.no-js .project__body,body.static-work .project__body{border-right:0;border-bottom:1px solid var(--line)}
-body.no-js .project__img{opacity:.92!important}
+body.no-js .work-pin{height:auto;display:block;overflow:visible}
+body.no-js .project{width:100%;flex:none;height:auto;grid-template-columns:1fr}
+body.no-js .project__body{border-right:0;border-bottom:1px solid var(--line)}
+body.no-js .project__img{opacity:1!important}
 
 /* Audio engine HUD toggle */
 .sound-toggle{

@@ -8,7 +8,6 @@ import { buildActOne } from './act1.js';
 import { buildActTwo } from './act2.js';
 import { buildActThree } from './act3.js';
 import { buildActFour } from './act4.js';
-import { observeProjectTextures } from './textures.js';
 import { updateScene } from './update.js';
 
 /**
@@ -37,7 +36,6 @@ export function bootWebGLScene(existingContext, setSceneUpdater) {
   runIdle(() => {
     if (!sceneState.planeGroup) {
       buildActTwo();
-      observeProjectTextures();
     }
   }, 90);
 

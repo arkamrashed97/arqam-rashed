@@ -75,6 +75,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   background-size:24px 24px;
 }
 .act-1,.act-3,.act-4,.act-5,.site-footer{contain:layout style}
+.act{scroll-margin-top:calc(var(--hud-h) + 12px)}
 .grain::after{
   content:"";position:absolute;inset:0;
   background:linear-gradient(to bottom,rgba(255,255,255,.035),transparent 18%,transparent 82%,rgba(0,0,0,.08));

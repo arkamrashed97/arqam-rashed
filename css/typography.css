@@ -1,133 +1,227 @@
-/* Arabic typesetting & brutalist font hierarchy */
+/* Arabic typesetting & legible RTL hierarchy (loaded after act1-act5 styles) */
 html[lang="ar"]{
-  --display:'Alexandria','Cairo','Archivo Black',sans-serif;
-  --body:'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif;
-  --mono:'IBM Plex Mono','IBM Plex Sans Arabic',monospace;
-  --serif:'Aref Ruqaa Ink','Amiri',serif;
+  --display:'Alexandria','IBM Plex Sans Arabic',sans-serif;
+  --body:'IBM Plex Sans Arabic','Alexandria',sans-serif;
+  --mono:'IBM Plex Sans Arabic','IBM Plex Mono',sans-serif;
+  --serif:'Alexandria','IBM Plex Sans Arabic',sans-serif;
 }
 html[lang="ar"] *{letter-spacing:normal!important}
+html[lang="ar"] .hud__time,
+html[lang="ar"] .hud__fps,
+html[lang="ar"] .readout,
+html[lang="ar"] .email-copy__value,
+html[lang="ar"] .project__shot-count{
+  font-family:'IBM Plex Mono',monospace!important;
+  direction:ltr;
+  unicode-bidi:isolate;
+}
 html[lang="ar"] .hero-name h1{
   font-family:var(--display)!important;
   font-weight:900!important;
-  letter-spacing:normal!important;
-  line-height:1.24!important;
+  font-size:clamp(44px,6.4vw,108px);
+  line-height:1.28!important;
+  text-transform:none;
 }
 html[lang="ar"] .hero-name .line{
   overflow:visible!important;
-  padding-top:0.18em!important;
-  padding-bottom:0.1em!important;
+  padding-top:.12em!important;
+  padding-bottom:.08em!important;
 }
 html[lang="ar"] .hero-name .line-inner{
   overflow:visible!important;
   display:inline-block;
 }
 html[lang="ar"] .hero-name h1 .first,
-html[lang="ar"] .hero-name h1 .last{
+html[lang="ar"] .hero-name h1 .last,
+html[lang="ar"] .hero-name h1 span{
   font-family:var(--display)!important;
   font-weight:900!important;
 }
-html[lang="ar"] .hero-name h1 span{
-  font-family:var(--display)!important;
-}
 html[lang="ar"] .hero-copy{
-  font-size:clamp(17px,1.5vw,22px);
-  line-height:1.82;
+  font-size:clamp(16.5px,1.32vw,20px);
+  line-height:1.78;
   font-weight:400;
+  color:var(--ink);
+  max-width:44ch;
 }
 html[lang="ar"] em{
-  font-family:var(--serif)!important;
+  font-family:var(--body)!important;
   font-style:normal!important;
   font-weight:700!important;
 }
-html[lang="ar"] .hero-copy em,
-html[lang="ar"] .work-intro h2 em,
-html[lang="ar"] .act-3 h2 span,
-html[lang="ar"] .contact-title span{
-  font-family:var(--serif)!important;
-  font-weight:700!important;
+html[lang="ar"] .hero-copy em{
+  color:var(--accent);
 }
 html[lang="ar"] .work-intro h2{
   font-family:var(--display)!important;
   font-weight:900!important;
-  line-height:1.15;
+  font-size:clamp(32px,3.8vw,60px);
+  line-height:1.36!important;
+  text-transform:none;
+}
+html[lang="ar"] .work-intro h2 em{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  color:var(--strong);
+}
+html[lang="ar"] .work-intro p,
+html[lang="ar"] .project__desc{
+  font-size:clamp(15px,1.12vw,17.5px);
+  line-height:1.76;
+  max-width:42ch;
 }
 html[lang="ar"] .act-3 h2{
   font-family:var(--display)!important;
   font-weight:900!important;
-  line-height:1.15;
+  font-size:clamp(36px,4.7vw,76px);
+  line-height:1.38!important;
+  text-transform:none;
+}
+html[lang="ar"] .act-3 h2 span{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  color:var(--accent);
+}
+html[lang="ar"] .act-3__head p,
+html[lang="ar"] .contact-copy,
+html[lang="ar"] .inquiry-intro{
+  font-size:clamp(16px,1.25vw,19px);
+  line-height:1.78;
+  max-width:46ch;
 }
 html[lang="ar"] .contact-title{
   font-family:var(--display)!important;
   font-weight:900!important;
-  line-height:1.08;
+  font-size:clamp(42px,7.2vw,118px);
+  line-height:1.28!important;
+  text-transform:none;
+  margin:.5vh 0;
 }
 html[lang="ar"] .contact-title .line:last-child span{
   font-family:var(--display)!important;
-  -webkit-text-stroke-width:1.5px;
+  font-weight:900!important;
+  color:var(--accent)!important;
+  -webkit-text-stroke:0!important;
+}
+html[lang="ar"] .act-5 h2{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  font-size:clamp(32px,4.6vw,72px);
+  line-height:1.34!important;
+  text-transform:none;
+}
+html[lang="ar"] .act-5 h2 span{
+  font-family:var(--display)!important;
+  font-weight:900!important;
+  color:var(--accent);
 }
 html[lang="ar"] .project h3{
   font-family:var(--display)!important;
   font-weight:800!important;
-  letter-spacing:-.01em!important;
   line-height:1.2;
 }
 html[lang="ar"] .hud__brand b{
   font-family:var(--display)!important;
   font-weight:900!important;
-  letter-spacing:.03em!important;
 }
 html[lang="ar"] .cta{
   font-family:var(--display)!important;
   font-weight:800!important;
+  font-size:clamp(15px,1.2vw,18px);
   line-height:1.5;
+  text-transform:none;
 }
 html[lang="ar"] .lang-toggle{
   font-family:var(--body)!important;
-  font-size:13px;
+  font-size:13.5px;
   font-weight:600;
 }
 html[lang="ar"] .project__link,
+html[lang="ar"] .project__deep,
 html[lang="ar"] .lang-option,
 html[lang="ar"] .cluster-btn{
   font-family:var(--body)!important;
   font-weight:600;
 }
+/* Ensure readable minimum font sizes & generous line-height on all Arabic UI metadata */
+html[lang="ar"] .capabilities{
+  font-family:var(--body);
+  font-size:13px;
+  line-height:1.55;
+  text-transform:none;
+}
 html[lang="ar"] .hero-top,
 html[lang="ar"] .hero-name__aside,
-html[lang="ar"] .capabilities,
+html[lang="ar"] .hero-facts span,
 html[lang="ar"] .work-intro__foot,
+html[lang="ar"] .project__top,
+html[lang="ar"] .project__stack,
+html[lang="ar"] .project__tag,
+html[lang="ar"] .kicker,
 html[lang="ar"] .cluster-status,
 html[lang="ar"] .panel-note,
+html[lang="ar"] .data-row,
 html[lang="ar"] .act-3__context,
 html[lang="ar"] .contact-head,
 html[lang="ar"] .contact-note,
 html[lang="ar"] .footer-meta,
-html[lang="ar"] .domain-status{
-  line-height:1.75;
+html[lang="ar"] .domain-status,
+html[lang="ar"] .form-group label{
+  font-family:var(--body);
+  font-size:14px;
+  line-height:1.72;
+  text-transform:none;
+}
+html[lang="ar"] .cluster b{
+  font-family:var(--body);
+  font-size:14.5px;
+  font-weight:700;
+  text-transform:none;
+}
+html[lang="ar"] .cluster span{
+  font-family:var(--body);
+  font-size:13px;
+  text-transform:none;
 }
 html[lang="ar"] .motion-toggle,
 html[lang="ar"] .mobile-nav a,
 html[lang="ar"] .scroll-cue,
 html[lang="ar"] .footer-links a,
 html[lang="ar"] .act-nav a{
+  font-family:var(--body);
+  font-size:13.5px;
   line-height:1.65;
+  text-transform:none;
 }
-/* Right-to-left composition */
+/* Protect dark-act text legibility against 3D particles */
+html[lang="ar"] .act-1 .hero-name,
+html[lang="ar"] .act-1 .hero-copy,
+html[lang="ar"] .act-1 .scroll-cue,
+html[lang="ar"] .act-4 .contact-copy,
+html[lang="ar"] .act-4 .contact-note{
+  text-shadow:0 2px 18px rgba(7,7,8,.92),0 0 28px rgba(7,7,8,.78);
+}
+
+/* Right-to-left layout composition */
 html[dir="rtl"] .skip{left:auto;right:16px}
 html[dir="rtl"] .scroll-progress{transform-origin:100% 50%}
 html[dir="rtl"] .readout{left:auto;right:22px}
 html[dir="rtl"] .hud__brand{direction:rtl}
 html[dir="rtl"] .hero-name h1{direction:rtl}
 html[dir="rtl"] .hero-name .line:first-child{text-align:right}
-html[dir="rtl"] .hero-name .line--2{text-align:right;padding-right:3vw;padding-left:0}
+html[dir="rtl"] .hero-name .line--2{
+  text-align:right;
+  padding-right:clamp(24px,5vw,84px);
+  padding-left:0;
+}
 html[dir="rtl"] .hero-top__right{text-align:left}
 html[dir="rtl"] .capabilities li{border-right:0;border-left:1px solid var(--line)}
 html[dir="rtl"] .capabilities li:last-child{border-left:0}
 html[dir="rtl"] .work-pin{direction:ltr}
 html[dir="rtl"] .work-track > *{direction:rtl}
 html[dir="rtl"] .project__body{border-right:0;border-left:1px solid var(--line)}
-html[dir="rtl"] .project__tag{left:auto;right:10px}
-html[dir="rtl"] .project__cross{right:auto;left:10px}
+html[dir="rtl"] .project__tag{left:auto;right:12px}
+html[dir="rtl"] .project__cross{right:auto;left:12px}
 html[dir="rtl"] .project h3{direction:ltr;text-align:right}
 html[dir="rtl"] .cluster{text-align:right}
 html[dir="rtl"] .data-row dd{text-align:left}

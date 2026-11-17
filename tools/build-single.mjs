@@ -16,16 +16,16 @@ const CSS_MODULES = [
   'css/base.css',
   'css/chrome.css',
   'css/lang-gate.css',
-  'css/typography.css',
   'css/act1.css',
   'css/act2.css',
   'css/act3.css',
   'css/act4.css',
   'css/footer.css',
-  'css/responsive.css',
   'css/components.css',
   'css/modal-actions.css',
-  'css/act5.css'
+  'css/act5.css',
+  'css/typography.css',
+  'css/responsive.css'
 ];
 
 function toDataUri(relPath, mime) {
