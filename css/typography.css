@@ -31,8 +31,6 @@ html[lang="ar"] .hero-name .line-inner{
   overflow:visible!important;
   display:inline-block;
 }
-html[lang="ar"] .hero-name h1 .first,
-html[lang="ar"] .hero-name h1 .last,
 html[lang="ar"] .hero-name h1 span{
   font-family:var(--display)!important;
   font-weight:900!important;
@@ -62,7 +60,7 @@ html[lang="ar"] .work-intro h2{
 html[lang="ar"] .work-intro h2 em{
   font-family:var(--display)!important;
   font-weight:900!important;
-  color:var(--strong);
+  color:var(--accent-strong);
 }
 html[lang="ar"] .work-intro p,
 html[lang="ar"] .project__desc{
@@ -139,7 +137,7 @@ html[lang="ar"] .lang-toggle{
 html[lang="ar"] .project__link,
 html[lang="ar"] .project__deep,
 html[lang="ar"] .lang-option,
-html[lang="ar"] .cluster-btn{
+html[lang="ar"] .cluster{
   font-family:var(--body)!important;
   font-weight:600;
 }

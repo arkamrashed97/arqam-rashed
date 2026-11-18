@@ -42,7 +42,7 @@
   display:flex;justify-content:space-between;gap:12px;
   font:400 13px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
 }
-.project__index{color:var(--strong);font-size:14px;font-weight:600}
+.project__index{color:var(--accent-strong);font-size:14px;font-weight:600}
 .project h3{
   font-family:var(--display);font-weight:400;
   font-size:clamp(32px,3.8vw,60px);line-height:.9;letter-spacing:-.035em;text-transform:uppercase;
@@ -57,7 +57,7 @@
   font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
   transition:color .2s;
 }
-.project__link:hover,.project__link:focus-visible{color:var(--strong)}
+.project__link:hover,.project__link:focus-visible{color:var(--accent-strong)}
 .project__media{
   position:relative;z-index:1;overflow:hidden;min-width:0;
   background:#0C0D12;
@@ -106,9 +106,9 @@
   display:flex;align-items:center;gap:6px;flex:none;
 }
 .project__shot-btn{
-  width:28px;height:28px;display:grid;place-items:center;
+  width:34px;height:34px;display:grid;place-items:center;
   border:1px solid rgba(226,226,229,.24);color:#E2E2E5;
-  font-size:15px;line-height:1;transition:border-color .2s,color .2s;
+  font-size:16px;line-height:1;transition:border-color .2s,color .2s;
 }
 .project__shot-btn:hover,.project__shot-btn:focus-visible{border-color:#D4FF00;color:#D4FF00}
 .project__shot-count{

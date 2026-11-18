@@ -149,20 +149,13 @@ function syncActAttr() {
 }
 
 function applyTransform() {
-  if (!refs.cursor || !refs.cursorDot) return;
+  if (!refs.cursor) return;
   const rx = Math.round(cursorState.ringX * 20) / 20;
   const ry = Math.round(cursorState.ringY * 20) / 20;
-  const dx = Math.round(cursorState.dotX * 20) / 20;
-  const dy = Math.round(cursorState.dotY * 20) / 20;
   if (rx !== cursorState.lastRingX || ry !== cursorState.lastRingY) {
     cursorState.lastRingX = rx;
     cursorState.lastRingY = ry;
     refs.cursor.style.transform = `translate3d(${rx.toFixed(2)}px,${ry.toFixed(2)}px,0)`;
-  }
-  if (dx !== cursorState.lastDotX || dy !== cursorState.lastDotY) {
-    cursorState.lastDotX = dx;
-    cursorState.lastDotY = dy;
-    refs.cursorDot.style.transform = `translate3d(${dx.toFixed(2)}px,${dy.toFixed(2)}px,0)`;
   }
 }
 
@@ -184,8 +177,6 @@ function stepCursor(dt) {
   const prevX = cursorState.ringX;
   cursorState.ringX = damp(cursorState.ringX, cursorState.x, 22, dt);
   cursorState.ringY = damp(cursorState.ringY, cursorState.y, 22, dt);
-  cursorState.dotX = damp(cursorState.dotX, cursorState.x, 36, dt);
-  cursorState.dotY = damp(cursorState.dotY, cursorState.y, 36, dt);
 
   if (cursorState.hookGroup && cursorState.act === 4) {
     const dx = cursorState.ringX - prevX;

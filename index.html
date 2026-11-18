@@ -71,7 +71,7 @@
       "name": "Arqam Rashed — Full-Stack Developer in Luxor, Egypt",
       "isPartOf": { "@id": "https://arqamrashed.com/#website" },
       "mainEntity": { "@id": "https://arqamrashed.com/#person" },
-      "dateModified": "2026-11-16"
+      "dateModified": "2026-04-18"
     },
     {
       "@type": "ItemList",
@@ -104,12 +104,13 @@
     root.lang = lang;
     root.dir = lang === 'ar' ? 'rtl' : 'ltr';
     root.classList.add('lang-set');
+    if (lang === 'ar' && !root.dataset.pageLang) root.classList.add('i18n-hydrating');
   } else {
     root.classList.add('lang-pending');
   }
 })();
 </script>
-<link rel="stylesheet" href="css/app.min.css?v=eca85a4e">
+<link rel="stylesheet" href="css/app.min.css?v=e3f36866">
 </head>
 <body>
 <div class="lang-gate" id="lang-gate" role="dialog" aria-modal="true" aria-labelledby="lang-gate-title" aria-describedby="lang-gate-note">
@@ -215,7 +216,7 @@
 <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
 
 <main id="main" tabindex="-1">
-<section id="act-1" class="act act-1" aria-labelledby="hero-title">
+<section id="act-1" class="act act-1" data-act="0" aria-labelledby="hero-title">
   <div class="hero-top">
     <span>FULL-STACK ARCHITECT / CREATIVE DEVELOPER</span>
     <span class="hero-top__right"><b>LUXOR, EGYPT</b> / 25.6872 N, 32.6396 E</span>
@@ -275,7 +276,7 @@
 
   <ul class="capabilities" aria-label="Core capabilities">
     <li><b>BUSINESS DEVELOPMENT</b></li>
-    <li><b>NEXT.JS</b></li>
+    <li><b>NEXT.JS / ASTRO</b></li>
     <li>REACT</li>
     <li>TYPESCRIPT</li>
     <li>FLUTTER / DART</li>
@@ -289,18 +290,18 @@
   </ul>
 </section>
 
-<section id="work" class="act act-2" aria-labelledby="work-title">
+<section id="work" class="act act-2" data-act="1" aria-labelledby="work-title">
   <div class="work-pin">
     <div class="work-track" id="work-track">
       <div class="work-intro">
         <div>
           <div class="kicker">ACT II / SELECTED WORK</div>
           <h2 id="work-title">BUILT<br><em>to hold.</em></h2>
-          <p>Three systems, shipped end to end. Two production platforms and one open-source desktop release. Schema, auth, interface, deployment: no handoff.</p>
+          <p>Three core systems designed, built, and shipped end to end. Two production platforms and one open-source desktop release — schema, auth, interface, and automated deployment with zero delegation.</p>
         </div>
         <div class="work-intro__foot">
           <span>PRODUCTION DEPLOYMENTS / HARDENED ARCHITECTURE</span><br>
-          <span>HORIZONTAL AXIS / SWIPE OR SCROLL ←</span>
+          <span>HORIZONTAL SHOWCASE / SCROLL TO EXPLORE →</span>
         </div>
       </div>
 
@@ -383,7 +384,7 @@
   </div>
 </section>
 
-<section id="architecture" class="act act-3" aria-labelledby="system-title">
+<section id="architecture" class="act act-3" data-act="2" aria-labelledby="system-title">
   <div class="act-3__head">
     <div>
       <div class="kicker">ACT III / SYSTEM ARCHITECTURE</div>
@@ -394,10 +395,10 @@
 
   <div class="panels">
     <div class="glass" data-cursor="EXPLORE">
-      <h3 class="glass__head"><span>CLUSTER SELECT</span><b id="cluster-label">FRONTEND</b></h3>
+      <h3 class="glass__head"><span>CLUSTER SELECT</span><b id="cluster-label">01 / WEB &amp; MOBILE</b></h3>
       <div class="cluster-grid" role="group" aria-label="System clusters">
         <button class="cluster" type="button" data-cluster="0" data-sfx="cluster-select" aria-pressed="true">
-          <b>01 / WEB &amp; MOBILE</b><span>Next.js / React / Flutter / Dart</span>
+          <b>01 / WEB &amp; MOBILE</b><span>Next.js / Astro / Flutter / Dart</span>
         </button>
         <button class="cluster" type="button" data-cluster="1" data-sfx="cluster-select" aria-pressed="false">
           <b>02 / DATA &amp; STORAGE</b><span>Postgres / Supabase / SQLite</span>
@@ -406,24 +407,24 @@
           <b>03 / SYSTEMS</b><span>Python / Rust / Win32</span>
         </button>
         <button class="cluster" type="button" data-cluster="3" data-sfx="cluster-select" aria-pressed="false">
-          <b>04 / BIZDEV &amp; ERP</b><span>Hotels, Clinics, Retail &amp; Strategy</span>
+          <b>04 / BIZDEV &amp; ENTERPRISE ERP</b><span>Hotels, Clinics, Retail &amp; Strategy</span>
         </button>
       </div>
-      <p class="cluster-status" id="cluster-status" role="status" aria-live="polite">FRONTEND CLUSTER ACTIVE</p>
+      <p class="cluster-status" id="cluster-status" role="status" aria-live="polite">WEB &amp; MOBILE CLUSTER ACTIVE / NEXT.JS + ASTRO + FLUTTER + DART</p>
       <p class="panel-note">The graph is live, not a diagram. Selecting a cluster pulls its nodes forward and marks its edges in the 3D topology.</p>
     </div>
 
     <div class="glass">
       <h3 class="glass__head"><span>RUNTIME / VERIFIED</span><b>LIVE</b></h3>
       <dl>
-        <div class="data-row"><dt>Web Platform</dt><dd>Next.js App Router / React</dd></div>
+        <div class="data-row"><dt>Web Platform</dt><dd>Next.js / Astro / React</dd></div>
         <div class="data-row"><dt>Mobile Apps</dt><dd>Flutter / Dart (iOS &amp; Android)</dd></div>
         <div class="data-row"><dt>Enterprise ERP</dt><dd>Hotels, Clinics, Retail &amp; BizDev</dd></div>
         <div class="data-row"><dt>Cloud Data</dt><dd>Supabase / PostgreSQL / RLS</dd></div>
         <div class="data-row"><dt>Local Storage</dt><dd>SQLite / Python Data Pipelines</dd></div>
         <div class="data-row"><dt>Desktop Native</dt><dd>Rust / Win32 Low-Level APIs</dd></div>
         <div class="data-row"><dt>Security &amp; Auth</dt><dd>Granular Role-Based Access (RBAC)</dd></div>
-        <div class="data-row"><dt>Deploy</dt><dd>Vercel / Custom Production DNS</dd></div>
+        <div class="data-row"><dt>Deploy</dt><dd>Cloudflare Pages / Vercel / Custom DNS</dd></div>
         <div class="data-row"><dt>Render</dt><dd><span id="fps-2">60</span> FPS / <span id="gpu-mode">WEBGL2</span></dd></div>
       </dl>
       <p class="panel-note">Custom GLSL shaders run on WebGL2. WebGPU capability is detected for telemetry, but this shader path stays on GLSL.</p>
@@ -436,10 +437,10 @@
   </div>
 </section>
 
-<section id="contact" class="act act-4" aria-labelledby="contact-title">
+<section id="contact" class="act act-4" data-act="3" aria-labelledby="contact-title">
   <div class="contact-head">
     <span>ACT IV / DIRECT SIGNAL</span>
-    <span id="contact-head-meta">AVAILABILITY / OPEN FOR SELECT Q1–Q2 2026 BUILDS</span>
+    <span id="contact-head-meta">AVAILABILITY / OPEN FOR SELECT 2026 BUILDS</span>
   </div>
 
   <h2 id="contact-title" class="contact-title">
@@ -466,7 +467,7 @@
   </div>
 </section>
 
-<section id="inquiry" class="act act-5" aria-labelledby="inquiry-title">
+<section id="inquiry" class="act act-5" data-act="4" aria-labelledby="inquiry-title">
   <div class="act-5__head">
     <div class="kicker" id="inquiry-kicker">ACT V / PROJECT SCOPING &amp; INQUIRY</div>
     <h2 id="inquiry-title">START A<br><span>PROJECT.</span></h2>
@@ -475,6 +476,7 @@
 
   <div class="inquiry-container">
     <form id="inquiry-form" class="inquiry-form" novalidate>
+      <input type="text" id="form-honey" name="_honey" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="form-row form-row--split">
         <div class="form-group">
           <label for="form-name" id="label-name">YOUR NAME <span class="req">*</span></label>
@@ -489,12 +491,12 @@
       <div class="form-group">
         <label for="form-domain" id="label-domain">SYSTEM DOMAIN</label>
         <select id="form-domain" name="domain">
-          <option value="Tourism &amp; Booking Platforms">Tourism &amp; Booking Platforms / منصات حجوزات وإدارة سياحية</option>
-          <option value="Business Development &amp; Strategy">Business Development &amp; Strategy / استشارات وتطوير الأعمال والأنظمة المؤسسية</option>
-          <option value="Native Windows Automation">Native Windows Desktop Automation / برمجيات وأتمتة سطح المكتب (Windows)</option>
-          <option value="Retail &amp; Inventory ERP">Retail &amp; Inventory ERP / أنظمة مخازن ونقاط بيع وإدارة تجارية</option>
-          <option value="Mobile App (Flutter / Dart)">Mobile Application / تطبيقات الموبايل للهواتف الذكية (Flutter)</option>
-          <option value="Enterprise Architecture &amp; Python">Enterprise Architecture &amp; Python / معمارية وتطوير أنظمة برمجية مخصصة</option>
+          <option value="Tourism &amp; Booking Platforms">Tourism &amp; Booking Platforms</option>
+          <option value="Business Development &amp; Strategy">Business Development &amp; Enterprise Strategy</option>
+          <option value="Native Windows Automation">Native Windows Desktop Automation</option>
+          <option value="Retail &amp; Inventory ERP">Retail, Inventory &amp; POS Systems (ERP)</option>
+          <option value="Mobile App (Flutter / Dart)">Cross-Platform Mobile App (Flutter)</option>
+          <option value="Enterprise Architecture &amp; Python">Custom Backend Architecture &amp; Python</option>
         </select>
       </div>
 
@@ -574,9 +576,7 @@
       <div class="project-modal__metrics" id="modal-metrics"></div>
       <div class="project-modal__preview" id="modal-preview" hidden>
         <div class="project-modal__tabs" id="modal-tabs"></div>
-        <div class="project-modal__frame" id="modal-frame">
-          <img id="modal-img" src="" alt="Project interface screenshot" loading="lazy">
-        </div>
+        <div class="project-modal__frame" id="modal-frame"></div>
       </div>
       <div class="project-modal__section">
         <h4 id="modal-arch-title">SYSTEM ARCHITECTURE &amp; CHOICES</h4>
@@ -618,49 +618,48 @@
   "imports": {
     "three": "./assets/vendor/three/build/three.module.js",
     "three/addons/": "./assets/vendor/three/examples/jsm/",
-    "./js/audio/bindings.js": "./js/audio/bindings.js?v=eca85a4e",
-    "./js/audio/engine.js": "./js/audio/engine.js?v=eca85a4e",
-    "./js/audio/index.js": "./js/audio/index.js?v=eca85a4e",
-    "./js/audio/manifest.js": "./js/audio/manifest.js?v=eca85a4e",
-    "./js/config.js": "./js/config.js?v=eca85a4e",
-    "./js/core/boot.js": "./js/core/boot.js?v=eca85a4e",
-    "./js/core/color.js": "./js/core/color.js?v=eca85a4e",
-    "./js/core/cursor.js": "./js/core/cursor.js?v=eca85a4e",
-    "./js/core/env.js": "./js/core/env.js?v=eca85a4e",
-    "./js/core/hud.js": "./js/core/hud.js?v=eca85a4e",
-    "./js/core/lang.js": "./js/core/lang.js?v=eca85a4e",
-    "./js/core/loop.js": "./js/core/loop.js?v=eca85a4e",
-    "./js/core/palette.js": "./js/core/palette.js?v=eca85a4e",
-    "./js/core/scroll.js": "./js/core/scroll.js?v=eca85a4e",
-    "./js/core/state.js": "./js/core/state.js?v=eca85a4e",
-    "./js/core/utils.js": "./js/core/utils.js?v=eca85a4e",
-    "./js/core/widgets.js": "./js/core/widgets.js?v=eca85a4e",
-    "./js/features/act-worlds.js": "./js/features/act-worlds.js?v=eca85a4e",
-    "./js/features/case-studies-data.js": "./js/features/case-studies-data.js?v=eca85a4e",
-    "./js/features/contact.js": "./js/features/contact.js?v=eca85a4e",
-    "./js/features/gate.js": "./js/features/gate.js?v=eca85a4e",
-    "./js/features/inquiry.js": "./js/features/inquiry.js?v=eca85a4e",
-    "./js/features/modal.js": "./js/features/modal.js?v=eca85a4e",
-    "./js/features/project-gallery.js": "./js/features/project-gallery.js?v=eca85a4e",
-    "./js/gl/act1.js": "./js/gl/act1.js?v=eca85a4e",
-    "./js/gl/act2.js": "./js/gl/act2.js?v=eca85a4e",
-    "./js/gl/act3.js": "./js/gl/act3.js?v=eca85a4e",
-    "./js/gl/act4.js": "./js/gl/act4.js?v=eca85a4e",
-    "./js/gl/bootstrap.js": "./js/gl/bootstrap.js?v=eca85a4e",
-    "./js/gl/palette-sync.js": "./js/gl/palette-sync.js?v=eca85a4e",
-    "./js/gl/renderer.js": "./js/gl/renderer.js?v=eca85a4e",
-    "./js/gl/scene-state.js": "./js/gl/scene-state.js?v=eca85a4e",
-    "./js/gl/shaders.js": "./js/gl/shaders.js?v=eca85a4e",
-    "./js/gl/textures.js": "./js/gl/textures.js?v=eca85a4e",
-    "./js/gl/update.js": "./js/gl/update.js?v=eca85a4e",
-    "./js/i18n/ar.js": "./js/i18n/ar.js?v=eca85a4e",
-    "./js/i18n/bindings.js": "./js/i18n/bindings.js?v=eca85a4e",
-    "./js/i18n/en.js": "./js/i18n/en.js?v=eca85a4e",
-    "./js/i18n/i18n.js": "./js/i18n/i18n.js?v=eca85a4e",
-    "./js/main.js": "./js/main.js?v=eca85a4e"
+    "./js/audio/bindings.js": "./js/audio/bindings.js?v=e3f36866",
+    "./js/audio/engine.js": "./js/audio/engine.js?v=e3f36866",
+    "./js/audio/index.js": "./js/audio/index.js?v=e3f36866",
+    "./js/audio/manifest.js": "./js/audio/manifest.js?v=e3f36866",
+    "./js/config.js": "./js/config.js?v=e3f36866",
+    "./js/core/boot.js": "./js/core/boot.js?v=e3f36866",
+    "./js/core/color.js": "./js/core/color.js?v=e3f36866",
+    "./js/core/cursor.js": "./js/core/cursor.js?v=e3f36866",
+    "./js/core/env.js": "./js/core/env.js?v=e3f36866",
+    "./js/core/hud.js": "./js/core/hud.js?v=e3f36866",
+    "./js/core/lang.js": "./js/core/lang.js?v=e3f36866",
+    "./js/core/loop.js": "./js/core/loop.js?v=e3f36866",
+    "./js/core/palette.js": "./js/core/palette.js?v=e3f36866",
+    "./js/core/scroll.js": "./js/core/scroll.js?v=e3f36866",
+    "./js/core/state.js": "./js/core/state.js?v=e3f36866",
+    "./js/core/utils.js": "./js/core/utils.js?v=e3f36866",
+    "./js/core/widgets.js": "./js/core/widgets.js?v=e3f36866",
+    "./js/features/act-worlds.js": "./js/features/act-worlds.js?v=e3f36866",
+    "./js/features/case-studies-data.js": "./js/features/case-studies-data.js?v=e3f36866",
+    "./js/features/contact.js": "./js/features/contact.js?v=e3f36866",
+    "./js/features/gate.js": "./js/features/gate.js?v=e3f36866",
+    "./js/features/inquiry.js": "./js/features/inquiry.js?v=e3f36866",
+    "./js/features/modal.js": "./js/features/modal.js?v=e3f36866",
+    "./js/features/project-gallery.js": "./js/features/project-gallery.js?v=e3f36866",
+    "./js/gl/act1.js": "./js/gl/act1.js?v=e3f36866",
+    "./js/gl/act2.js": "./js/gl/act2.js?v=e3f36866",
+    "./js/gl/act3.js": "./js/gl/act3.js?v=e3f36866",
+    "./js/gl/act4.js": "./js/gl/act4.js?v=e3f36866",
+    "./js/gl/bootstrap.js": "./js/gl/bootstrap.js?v=e3f36866",
+    "./js/gl/palette-sync.js": "./js/gl/palette-sync.js?v=e3f36866",
+    "./js/gl/renderer.js": "./js/gl/renderer.js?v=e3f36866",
+    "./js/gl/scene-state.js": "./js/gl/scene-state.js?v=e3f36866",
+    "./js/gl/shaders.js": "./js/gl/shaders.js?v=e3f36866",
+    "./js/gl/update.js": "./js/gl/update.js?v=e3f36866",
+    "./js/i18n/ar.js": "./js/i18n/ar.js?v=e3f36866",
+    "./js/i18n/bindings.js": "./js/i18n/bindings.js?v=e3f36866",
+    "./js/i18n/en.js": "./js/i18n/en.js?v=e3f36866",
+    "./js/i18n/i18n.js": "./js/i18n/i18n.js?v=e3f36866",
+    "./js/main.js": "./js/main.js?v=e3f36866"
   }
 }
 </script>
-<script type="module" src="js/main.js?v=eca85a4e"></script>
+<script type="module" src="js/main.js?v=e3f36866"></script>
 </body>
 </html>

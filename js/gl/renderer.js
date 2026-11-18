@@ -203,11 +203,14 @@ export function setupResize() {
 
 export function renderGLFrame(lowPowerPost = false) {
   if (!sceneState.renderer || sceneState.glContextLost) return;
+  if (mobileQuery.matches || !sceneState.composer) {
+    sceneState.renderer.render(sceneState.scene, sceneState.camera);
+    return;
+  }
   const fastScroll = Math.abs(state.velocitySmooth) > 0.28;
   const lowBloom = sceneState.bloom && sceneState.bloom.strength < 0.085;
-  if (mobileQuery.matches || lowPowerPost || fastScroll || lowBloom || !sceneState.composer) {
-    sceneState.renderer.render(sceneState.scene, sceneState.camera);
-  } else {
-    sceneState.composer.render();
+  if (sceneState.bloom) {
+    sceneState.bloom.enabled = !lowPowerPost && !fastScroll && !lowBloom;
   }
+  sceneState.composer.render();
 }

@@ -33,6 +33,13 @@ export function initInquiry() {
     const email = field('form-email');
     const domain = field('form-domain');
     const message = field('form-message');
+    const honey = field('form-honey');
+
+    if (honey && honey.value.trim()) {
+      say('success', t('formOk'));
+      form.reset();
+      return;
+    }
 
     const badName = !name.value.trim();
     const badEmail = !EMAIL_RE.test(email.value.trim());

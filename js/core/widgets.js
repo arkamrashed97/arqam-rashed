@@ -40,6 +40,8 @@ refs.clusterBtns.forEach((btn) => {
 /* Email copy and physical burst */
 export function burstFrom(x, y) {
   if (!state.motion) return;
+  state.burst = 1;
+  if (typeof window.gsap === 'undefined') return;
   const amount = 22;
   for (let i = 0; i < amount; i++) {
     const bit = document.createElement('span');
@@ -50,7 +52,7 @@ export function burstFrom(x, y) {
     document.body.appendChild(bit);
     const angle = Math.random() * Math.PI * 2;
     const distance = 45 + Math.random() * 150;
-    gsap.fromTo(bit,
+    window.gsap.fromTo(bit,
       { x: x, y: y, scale: 1, rotation: 0, opacity: 1 },
       {
         x: x + Math.cos(angle) * distance,
@@ -64,7 +66,6 @@ export function burstFrom(x, y) {
       }
     );
   }
-  state.burst = 1;
 }
 
 export function legacyCopy(text) {
@@ -101,7 +102,8 @@ export async function copyEmail() {
   refs.emailCopy.classList.toggle('is-copied', ok);
   renderCopyLabel();
   const r = refs.emailCopy.getBoundingClientRect();
-  if (ok) burstFrom(r.left + r.width - 20, r.top + r.height / 2);
+  const isRtl = document.documentElement.dir === 'rtl';
+  if (ok) burstFrom(isRtl ? r.left + 20 : r.left + r.width - 20, r.top + r.height / 2);
   window.setTimeout(() => {
     copyFeedback = 'copy';
     refs.emailCopy.classList.remove('is-copied');
@@ -142,7 +144,7 @@ export function probeDomain() {
   const timer = window.setTimeout(() => finish('error', 'domainTimeout'), 6500);
   img.onload = () => finish('live', 'domainLive');
   img.onerror = () => finish('error', 'domainPending');
-  img.src = 'https://arqamrashed.com/assets/img/project-arko-dark.webp?probe=' + Date.now();
+  img.src = 'https://arqamrashed.com/favicon.svg?probe=' + Date.now();
 }
 
 refs.domainBtn.addEventListener('click', probeDomain);
@@ -151,6 +153,7 @@ refs.domainBtn.addEventListener('click', probeDomain);
 export function applyMotion(on, announce) {
   state.motion = Boolean(on);
   refs.motionToggle.setAttribute('aria-pressed', String(state.motion));
+  refs.motionToggle.setAttribute('data-sfx', state.motion ? 'toggle-off' : 'toggle-on');
   refs.motionLabel.textContent = langText(state.motion ? 'motionOn' : 'motionOff');
   document.body.classList.toggle('motion-off', !state.motion);
   if (!state.motion) state.velocitySmooth = 0;

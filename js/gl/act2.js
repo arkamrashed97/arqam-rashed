@@ -1,87 +1,10 @@
 import * as THREE from 'three';
-import { refs } from '../core/state.js';
 import { sceneState } from './scene-state.js';
-
-export function makePlanePlaceholder(color) {
-  const data = new Uint8Array([color[0], color[1], color[2], 255]);
-  const texture = new THREE.DataTexture(data, 1, 1, THREE.RGBAFormat);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.needsUpdate = true;
-  return texture;
-}
 
 export function buildActTwo() {
   const group = new THREE.Group();
   sceneState.scene.add(group);
   sceneState.planeGroup = group;
-
-  refs.mediaEls.forEach((mediaEl, index) => {
-    const uniforms = {
-      uTex: { value: makePlanePlaceholder([242, 239, 233]) },
-      uTime: { value: 0 },
-      uHover: { value: 0 },
-      uVelocity: { value: 0 },
-      uOpacity: { value: 0 },
-      uPlaneAspect: { value: 1.6 },
-      uTexAspect: { value: 1.6 }
-    };
-    const material = new THREE.ShaderMaterial({
-      uniforms,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      side: THREE.DoubleSide,
-      vertexShader: /* glsl */`
-        varying vec2 vUv;
-        void main(){
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }`,
-      fragmentShader: /* glsl */`
-        uniform sampler2D uTex;
-        uniform float uTime;
-        uniform float uHover;
-        uniform float uVelocity;
-        uniform float uOpacity;
-        uniform float uPlaneAspect;
-        uniform float uTexAspect;
-        varying vec2 vUv;
-
-        vec2 coverUv(vec2 uv){
-          if (uPlaneAspect > uTexAspect) {
-            uv.y = (uv.y - 0.5) * (uTexAspect / uPlaneAspect) + 0.5;
-          } else {
-            uv.x = (uv.x - 0.5) * (uPlaneAspect / uTexAspect) + 0.5;
-          }
-          return uv;
-        }
-
-        void main(){
-          vec2 uv = coverUv(vUv);
-          float wave = sin(uv.y * 24.0 + uTime * 1.6) * 0.0013 + sin(uv.x * 15.0 - uTime * 1.2) * 0.0009;
-          uv += wave * (1.0 + uHover * 1.7);
-          float shift = 0.00008 + uHover * 0.0011 + abs(uVelocity) * 0.0009;
-          vec3 col;
-          col.r = texture2D(uTex, uv + vec2(shift, 0.0)).r;
-          col.g = texture2D(uTex, uv).g;
-          col.b = texture2D(uTex, uv - vec2(shift, 0.0)).b;
-          float luma = dot(col, vec3(0.299, 0.587, 0.114));
-          col = mix(col, vec3(luma), 0.16 - uHover * 0.16);
-          float grain = fract(sin(dot(uv * vec2(1417.0, 831.0) + uTime, vec2(12.9898, 78.233))) * 43758.5453);
-          col += (grain - 0.5) * 0.010;
-          float edge = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
-          col = mix(col, vec3(0.04), smoothstep(0.006, 0.0, edge) * 0.7);
-          gl_FragColor = vec4(col, uOpacity);
-        }`
-    });
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
-    mesh.frustumCulled = false;
-    mesh.renderOrder = 3;
-    mesh.visible = false;
-    group.add(mesh);
-    sceneState.planes.push({ mesh, material, mediaEl, index });
-  });
-
   buildMonoliths(group);
 }
 

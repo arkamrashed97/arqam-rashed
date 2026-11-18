@@ -6,6 +6,7 @@ import { whenLanguageReady } from './core/lang.js';
 import { setSceneUpdater, setWorldsUpdater, startLoop } from './core/loop.js';
 import { initScroll, measureLayout } from './core/scroll.js';
 import { refs, state } from './core/state.js';
+import { assetPath } from './core/utils.js';
 import { applyMotion, initMotionPreference, probeDomain, renderCopyLabel, setCluster } from './core/widgets.js';
 import { initLanguage } from './i18n/i18n.js';
 import { armAutoStart, initSoundUI } from './audio/index.js';
@@ -15,11 +16,41 @@ import { initProjectGalleries } from './features/project-gallery.js';
 import { initContact } from './features/contact.js';
 import { initInquiry } from './features/inquiry.js';
 
+let fallbackResizeBound = false;
+function bindFallbackResize() {
+  if (fallbackResizeBound) return;
+  fallbackResizeBound = true;
+  let raf = 0;
+  const schedule = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      measureLayout();
+      if (!mobileQuery.matches && typeof window.ScrollTrigger !== 'undefined') {
+        window.ScrollTrigger.refresh();
+      }
+    });
+  };
+  window.addEventListener('resize', schedule, { passive: true });
+  if ('ResizeObserver' in window) {
+    let lastH = document.documentElement.scrollHeight;
+    const ro = new ResizeObserver(() => {
+      const h = document.documentElement.scrollHeight;
+      if (h !== lastH) {
+        lastH = h;
+        schedule();
+      }
+    });
+    ro.observe(document.documentElement);
+  }
+}
+
 function renderStaticFallback() {
   document.body.classList.add('no-gl', 'static-work');
   if (refs.gpuMode) refs.gpuMode.textContent = 'STATIC / MONOLITH FALLBACK';
   if (refs.gpuReadout) refs.gpuReadout.textContent = 'CSS';
   state.gl = false;
+  bindFallbackResize();
   measureLayout();
 }
 
@@ -66,6 +97,10 @@ async function init() {
   initInquiry();
 
   if (CONFIG.enableFishingGame) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = assetPath('css/fishing.css');
+    document.head.appendChild(link);
     import('./features/act-worlds.js')
       .then(({ initActWorlds, updateActWorlds }) => {
         initActWorlds();

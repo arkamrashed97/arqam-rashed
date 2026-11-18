@@ -16,6 +16,7 @@ const STAGE_ITEMS = [
   'favicon.ico',
   'favicon.svg',
   '_headers',
+  '_redirects',
   'css',
   'js',
   'assets',
@@ -76,6 +77,12 @@ async function main() {
 
     // Mirror synchronized files to /mnt/sdcard/arqam rashed if present
     if (fs.existsSync(SDCARD_DIR)) {
+      for (const cleanSub of ['assets/img', 'js/gl']) {
+        const cleanDest = path.join(SDCARD_DIR, cleanSub);
+        if (fs.existsSync(cleanDest)) {
+          fs.rmSync(cleanDest, { recursive: true, force: true });
+        }
+      }
       for (const item of [...STAGE_ITEMS, 'AGENTS.md', 'CLAUDE.md', 'README.md', 'package.json', 'tools', 'functions', 'plans']) {
         const src = path.join(ROOT, item);
         const dest = path.join(SDCARD_DIR, item);

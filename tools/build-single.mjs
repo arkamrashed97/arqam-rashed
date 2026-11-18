@@ -139,11 +139,10 @@ async function buildSingleFile() {
     '.webp': 'image/webp'
   };
 
-  // Rewrite audio, image, vendor, and doc paths in the bundled JS for single-file/index.html
-  const vcardPath = path.join(ROOT, 'assets/docs/Arqam-Rashed.vcf');
-  const vcardDataUri = fs.existsSync(vcardPath) ? toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard') : '';
+  // Rewrite audio, image, css, vendor, and doc paths in the bundled JS for single-file/index.html
   const cvPath = path.join(ROOT, 'assets/docs/Arqam-Rashed-CV.pdf');
   const cvDataUri = fs.existsSync(cvPath) ? toDataUri('assets/docs/Arqam-Rashed-CV.pdf', 'application/pdf') : '';
+  bundledJs = bundledJs.replace(/["']css\/fishing\.css["']/g, '"../css/fishing.css"');
   if (EMBED_ALL) {
     bundledJs = bundledJs.replace(/["']assets\/audio\/([^"']+\.mp3)["']/g, (_, file) => {
       const uri = toDataUri(`assets/audio/${file}`, 'audio/mpeg');
@@ -158,17 +157,11 @@ async function buildSingleFile() {
     if (cvDataUri) {
       bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, JSON.stringify(cvDataUri));
     }
-    if (vcardDataUri) {
-      bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
-    }
   } else {
     bundledJs = bundledJs.replace(/["']assets\/audio\/([^"']+\.mp3)["']/g, '"../assets/audio/$1"');
     bundledJs = bundledJs.replace(/["']assets\/img\/([^"']+)["']/g, '"../assets/img/$1"');
     bundledJs = bundledJs.replace(/["']assets\/vendor\/([^"']+)["']/g, '"../assets/vendor/$1"');
     bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed-CV\.pdf["']/g, '"../assets/docs/Arqam-Rashed-CV.pdf"');
-    if (vcardDataUri) {
-      bundledJs = bundledJs.replace(/["']assets\/docs\/Arqam-Rashed\.vcf["']/g, JSON.stringify(vcardDataUri));
-    }
   }
 
   // 3. Inline project & portrait images as data URIs so offline/single-file works everywhere;
@@ -182,24 +175,16 @@ async function buildSingleFile() {
     return `src="${toDataUri(relPath, mime)}"`;
   });
 
-  // 4. Rewrite CV & vCard links for single-file/index.html
+  // 4. Rewrite CV PDF links for single-file/index.html
   if (EMBED_ALL) {
     html = html.replace(
       /href="assets\/docs\/Arqam-Rashed-CV\.pdf"/g,
       `href="${toDataUri('assets/docs/Arqam-Rashed-CV.pdf', 'application/pdf')}"`
     );
-    html = html.replace(
-      /href="assets\/docs\/Arqam-Rashed\.vcf"/g,
-      `href="${toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard')}"`
-    );
   } else {
     html = html.replace(
       /href="assets\/docs\/Arqam-Rashed-CV\.pdf"/g,
       'href="../assets/docs/Arqam-Rashed-CV.pdf"'
-    );
-    html = html.replace(
-      /href="assets\/docs\/Arqam-Rashed\.vcf"/g,
-      `href="${toDataUri('assets/docs/Arqam-Rashed.vcf', 'text/vcard')}"`
     );
   }
 

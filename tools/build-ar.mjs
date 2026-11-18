@@ -137,7 +137,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
         inLanguage: 'ar',
         isPartOf: { '@id': 'https://arqamrashed.com/#website' },
         mainEntity: { '@id': 'https://arqamrashed.com/#person' },
-        dateModified: '2026-11-16'
+        dateModified: '2026-04-18'
       },
       {
         '@type': 'ItemList',
@@ -500,10 +500,10 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
     `<div class="glass">
       <h3 class="glass__head"><span>${AR.runtimeLabel}</span><b>${AR.runtimeLive}</b></h3>
       <dl>
-        <div class="data-row"><dt>${AR.rowApp}</dt><dd>Next.js App Router / React</dd></div>
+        <div class="data-row"><dt>${AR.rowApp}</dt><dd>${AR.rowAppValue}</dd></div>
         <div class="data-row"><dt>${AR.rowMobile}</dt><dd>${AR.rowMobileValue}</dd></div>
         <div class="data-row"><dt>${AR.rowEnterprise}</dt><dd>${AR.rowEnterpriseValue}</dd></div>
-        <div class="data-row"><dt>${AR.rowData}</dt><dd>Supabase / PostgreSQL / RLS</dd></div>
+        <div class="data-row"><dt>${AR.rowData}</dt><dd>${AR.rowDataValue}</dd></div>
         <div class="data-row"><dt>${AR.rowEmbedded}</dt><dd>${AR.rowLocalValue}</dd></div>
         <div class="data-row"><dt>${AR.rowNative}</dt><dd>${AR.rowNativeValue}</dd></div>
         <div class="data-row"><dt>${AR.rowAuth}</dt><dd>${AR.authValue}</dd></div>
@@ -530,7 +530,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   html = replacePattern(
     html,
     /<section id="contact"[\s\S]*?<\/section>/,
-    `<section id="contact" class="act act-4" aria-labelledby="contact-title">
+    `<section id="contact" class="act act-4" data-act="3" aria-labelledby="contact-title">
   <div class="contact-head">
     <span>${AR.signalKicker}</span>
     <span id="contact-head-meta">${AR.contactHeadMeta}</span>
@@ -569,6 +569,19 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
   html = replacePattern(html, /(<input type="text" id="form-name"[^>]*placeholder=")[^"]*("[^>]*>)/, `$1${escAttr(AR.placeholderName)}$2`, 'placeholderName');
   html = replacePattern(html, /<label for="form-email" id="label-email">[\s\S]*?<\/label>/, `<label for="form-email" id="label-email">${AR.labelEmail}</label>`, 'label-email');
   html = replacePattern(html, /<label for="form-domain" id="label-domain">[^<]*<\/label>/, `<label for="form-domain" id="label-domain">${AR.labelDomain}</label>`, 'label-domain');
+  html = replacePattern(
+    html,
+    /<select id="form-domain" name="domain">[\s\S]*?<\/select>/,
+    `<select id="form-domain" name="domain">
+          <option value="Tourism &amp; Booking Platforms">${escAttr(AR.domainOpt0)}</option>
+          <option value="Business Development &amp; Strategy">${escAttr(AR.domainOpt1)}</option>
+          <option value="Native Windows Automation">${escAttr(AR.domainOpt2)}</option>
+          <option value="Retail &amp; Inventory ERP">${escAttr(AR.domainOpt3)}</option>
+          <option value="Mobile App (Flutter / Dart)">${escAttr(AR.domainOpt4)}</option>
+          <option value="Enterprise Architecture &amp; Python">${escAttr(AR.domainOpt5)}</option>
+        </select>`,
+    'form-domain options'
+  );
   html = replacePattern(html, /<label for="form-message" id="label-message">[\s\S]*?<\/label>/, `<label for="form-message" id="label-message">${AR.labelMessage}</label>`, 'label-message');
   html = replacePattern(html, /(<textarea id="form-message"[^>]*placeholder=")[^"]*("[^>]*>)/, `$1${escAttr(AR.placeholderMsg)}$2`, 'placeholderMsg');
   html = replacePattern(html, /<span id="submit-btn-text">[^<]*<\/span>/, `<span id="submit-btn-text">${AR.submitBtnText}</span>`, 'submit-btn-text');

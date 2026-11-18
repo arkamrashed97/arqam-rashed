@@ -10,14 +10,6 @@ export function worldViewSize() {
   return { h, w: h * camera.aspect };
 }
 
-export function updatePlanes(planesWeight) {
-  // Project cards render full-resolution uncropped DOM screenshots directly inside each theater frame
-  if (sceneState.planeGroup) sceneState.planeGroup.visible = planesWeight > 0.008;
-  for (let i = 0; i < sceneState.planes.length; i++) {
-    sceneState.planes[i].mesh.visible = false;
-  }
-}
-
 /**
  * Per-frame scene update with strict offscreen culling:
  * Any Act group whose opacity weight is <= 0.004 is hidden and its uniform/matrix work is
@@ -33,6 +25,9 @@ export function updateScene(dt) {
   const pointsWeight = m2 * (1 - smoothstep(0.45, 0.92, m3));
   const portalGate = smoothstep(0.32, 0.82, m3);
   const gridGate = smoothstep(0.52, 0.95, m3);
+
+  state.pointerSX = damp(state.pointerSX || 0, state.pointerNX || 0, 5.5, dt);
+  state.pointerSY = damp(state.pointerSY || 0, state.pointerNY || 0, 5.5, dt);
 
   const view = worldViewSize();
   const pointerWorldX = state.pointerNX * view.w * 0.5;
@@ -76,7 +71,9 @@ export function updateScene(dt) {
     }
   }
 
-  updatePlanes(planesWeight, dt);
+  if (sceneState.planeGroup) {
+    sceneState.planeGroup.visible = planesWeight > 0.008;
+  }
 
   if (sceneState.monolithGroup) {
     const visible = planesWeight > 0.008;
@@ -178,7 +175,7 @@ export function updateScene(dt) {
       if (gridGate > 0.004) {
         sceneState.gridUniforms.uTime.value = state.time;
         sceneState.gridUniforms.uOpacity.value = gridGate;
-        sceneState.gridUniforms.uPointer.value.set(state.pointerSmoothX * 1.615, state.pointerSmoothY);
+        sceneState.gridUniforms.uPointer.value.set(state.pointerSX * 1.615, state.pointerSY);
         if (sceneState.gridUniforms.uRipple) {
           sceneState.gridUniforms.uRipple.value = clamp(state.burst + Math.abs(state.velocitySmooth) * 0.4, 0, 1.5);
         }

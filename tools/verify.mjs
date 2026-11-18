@@ -15,7 +15,7 @@ try {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const CHROME_PATH = '/root/.cache/ms-playwright/chromium-1254/chrome-linux-arm64/chrome';
+const CHROME_PATH = process.env.CHROME_PATH || '/root/.cache/ms-playwright/chromium-1254/chrome-linux-arm64/chrome';
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -180,13 +180,19 @@ async function verifyEdition(browser, baseUrl, route, label) {
     dir: document.documentElement.dir,
     hudName: document.getElementById('hud-name')?.textContent?.trim(),
     nameA: document.getElementById('name-a')?.textContent?.trim(),
-    nameB: document.getElementById('name-b')?.textContent?.trim()
+    nameB: document.getElementById('name-b')?.textContent?.trim(),
+    submitText: document.getElementById('submit-btn-text')?.textContent?.trim() || '',
+    waText: document.getElementById('wa-btn-text')?.textContent?.trim() || '',
+    domainOpt0: document.querySelector('#form-domain option')?.textContent?.trim() || ''
   }));
   assert.equal(arCheck.lang, 'ar', `${label}: #lang-toggle should switch to Arabic`);
   assert.equal(arCheck.dir, 'rtl', `${label}: #lang-toggle should set dir=rtl`);
   assert.equal(arCheck.hudName, 'أرقم راشد', `${label}: #hud-name should be 'أرقم راشد' in Arabic`);
   assert.equal(arCheck.nameA, 'أرقم', `${label}: #name-a should be 'أرقم' in Arabic`);
   assert.equal(arCheck.nameB, 'راشد', `${label}: #name-b should be 'راشد' in Arabic`);
+  assert.equal(arCheck.submitText.includes('↗'), false, `${label}: Arabic submit text must not duplicate arrow`);
+  assert.equal(arCheck.waText.includes('↗'), false, `${label}: Arabic WhatsApp text must not duplicate arrow`);
+  assert.ok(/[\u0600-\u06FF]/.test(arCheck.domainOpt0) && !/Tourism/i.test(arCheck.domainOpt0), `${label}: Arabic select options must be cleanly localized`);
   await page.click('#lang-toggle');
   await page.waitForTimeout(200);
   console.log('  [PASS] Bidirectional language switch (EN <-> AR RTL) + Arabic name verified');
@@ -496,7 +502,7 @@ async function verifySeo(browser, baseUrl) {
 async function main() {
   const { server, baseUrl } = await startStaticServer();
   const browser = await chromium.launch({
-    executablePath: CHROME_PATH,
+    ...(fs.existsSync(CHROME_PATH) ? { executablePath: CHROME_PATH } : {}),
     headless: true,
     args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist']
   });

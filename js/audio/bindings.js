@@ -1,6 +1,7 @@
 import { sound } from './engine.js';
 import { ACT_BUTTON_SFX } from './manifest.js';
 import { haptic } from '../core/env.js';
+import { t } from '../i18n/i18n.js';
 
 /**
  * Connects DOM events (clicks, hovers, typing, pointer pan, physical mouse/touch sweeps)
@@ -10,8 +11,15 @@ import { haptic } from '../core/env.js';
 const INTERACTIVE = 'a, button, [role="button"], select, [data-cursor], .cluster';
 
 function actOfElement(el) {
-  const sec = el.closest('[data-act]');
-  if (sec) return Math.max(0, Math.min(4, parseInt(sec.getAttribute('data-act'), 10) || 0));
+  const sec = el.closest('[data-act], .act');
+  if (sec) {
+    if (sec.hasAttribute('data-act')) {
+      return Math.max(0, Math.min(4, parseInt(sec.getAttribute('data-act'), 10) || 0));
+    }
+    for (let i = 1; i <= 5; i++) {
+      if (sec.classList.contains(`act-${i}`)) return i - 1;
+    }
+  }
   if (el.closest('.site-footer')) return 3;
   return sound.currentAct;
 }
@@ -28,7 +36,7 @@ export function initSoundUI() {
     const ar = document.documentElement.lang === 'ar';
     btn.setAttribute('title', on ? (ar ? 'إيقاف الصوت المحيطي' : 'Mute ambient sound') : (ar ? 'تشغيل الصوت المحيطي' : 'Enable ambient sound'));
     if (label) {
-      label.textContent = on ? (ar ? 'الصوت: يعمل' : 'SOUND: ON') : (ar ? 'الصوت: صامت' : 'SOUND: OFF');
+      label.textContent = t(on ? 'soundLabelOn' : 'soundLabel');
     }
   }
 

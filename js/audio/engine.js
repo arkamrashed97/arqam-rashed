@@ -1,4 +1,5 @@
-import { AMBIENT, SFX } from './manifest.js';
+import { AMBIENT, FISHING_SFX_KEYS, SFX } from './manifest.js';
+import { CONFIG } from '../config.js';
 import { assetPath } from '../core/utils.js';
 
 /**
@@ -311,11 +312,7 @@ class SoundEngine {
     });
     this.enqueuePreload([
       SFX['gate-hover-en']?.url,
-      SFX['gate-hover-ar']?.url,
-      SFX['gate-touch']?.url,
-      SFX['gate-telemetry']?.url,
-      SFX['gate-monolith']?.url,
-      SFX['gate-coords']?.url
+      SFX['gate-hover-ar']?.url
     ], 220);
   }
 
@@ -483,7 +480,9 @@ class SoundEngine {
       'copy-success'
     ];
     const priorityUrls = priorityKeys.map((k) => SFX[k]?.url).filter(Boolean);
-    const restUrls = Object.values(SFX).map((d) => d.url);
+    const restUrls = Object.entries(SFX)
+      .filter(([key]) => CONFIG.enableFishingGame || !FISHING_SFX_KEYS.has(key))
+      .map(([, d]) => d.url);
     this.enqueuePreload([...priorityUrls, ...restUrls], 260);
   }
 

@@ -1,5 +1,5 @@
 /**
- * Audio manifest (44 mastered MP3 files in assets/audio/).
+ * Audio manifest (mastered MP3 files in assets/audio/).
  *
  * Every file is EBU R128 loudness-matched and ear-comfort EQ'd on disk, and further
  * normalized in-place on decode in engine.js so all cues share a calm, uniform,
@@ -21,22 +21,11 @@ export const SFX = {
   'btn-act4': { url: 'assets/audio/btn-act4.mp3', gain: 0.30, reverb: 0.07, cooldown: 150 },
   'btn-act5': { url: 'assets/audio/btn-act5.mp3', gain: 0.30, reverb: 0.06, cooldown: 150 },
 
-  // Physical pointer / touch interactions per act
-  'touch-act1': { url: 'assets/audio/touch-act1.mp3', gain: 0.25, reverb: 0.08, cooldown: 500 },
-  'touch-act2': { url: 'assets/audio/touch-act2.mp3', gain: 0.25, reverb: 0.08, cooldown: 500 },
-  'touch-act3': { url: 'assets/audio/touch-act3.mp3', gain: 0.24, reverb: 0.10, cooldown: 500 },
-  'touch-act4': { url: 'assets/audio/touch-act4.mp3', gain: 0.26, reverb: 0.10, cooldown: 500 },
-
-  // Core UI interactions & Onboarding Gate (#lang-gate) distinct vocabulary
-  'gate-open': { url: 'assets/audio/gate-open.mp3', gain: 0.32, reverb: 0.12, cooldown: 500 },
+  // Core UI interactions & Onboarding Gate (#lang-gate) vocabulary
   'gate-hover-en': { url: 'assets/audio/gate-hover-en.mp3', gain: 0.22, reverb: 0.08, cooldown: 260 },
   'gate-hover-ar': { url: 'assets/audio/gate-hover-ar.mp3', gain: 0.22, reverb: 0.08, cooldown: 260 },
   'gate-select-en': { url: 'assets/audio/gate-select-en.mp3', gain: 0.34, reverb: 0.14, cooldown: 500 },
   'gate-select-ar': { url: 'assets/audio/gate-select-ar.mp3', gain: 0.34, reverb: 0.14, cooldown: 500 },
-  'gate-telemetry': { url: 'assets/audio/gate-telemetry.mp3', gain: 0.22, reverb: 0.06, cooldown: 320 },
-  'gate-monolith': { url: 'assets/audio/gate-monolith.mp3', gain: 0.24, reverb: 0.08, cooldown: 360 },
-  'gate-coords': { url: 'assets/audio/gate-coords.mp3', gain: 0.22, reverb: 0.06, cooldown: 320 },
-  'gate-touch': { url: 'assets/audio/gate-touch.mp3', gain: 0.24, reverb: 0.08, cooldown: 280 },
   'toggle-on': { url: 'assets/audio/toggle-on.mp3', gain: 0.32, reverb: 0.06, cooldown: 200 },
   'toggle-off': { url: 'assets/audio/toggle-off.mp3', gain: 0.28, reverb: 0.05, cooldown: 200 },
   'hover-soft': { url: 'assets/audio/hover-soft.mp3', gain: 0.14, reverb: 0.03, cooldown: 220 },
@@ -58,7 +47,7 @@ export const SFX = {
   'download-ok': { url: 'assets/audio/download-ok.mp3', gain: 0.32, reverb: 0.10, cooldown: 400 },
   'type-tick': { url: 'assets/audio/type-tick.mp3', gain: 0.14, reverb: 0.02, cooldown: 85 },
 
-  // Act V Fishing mini-game cues
+  // Optional Act V Fishing mini-game cues (loaded only when CONFIG.enableFishingGame is true)
   'cast-line': { url: 'assets/audio/cast-line.mp3', gain: 0.30, reverb: 0.10, cooldown: 280 },
   'water-plop': { url: 'assets/audio/water-plop.mp3', gain: 0.28, reverb: 0.12, cooldown: 260 },
   'fish-bite': { url: 'assets/audio/fish-bite.mp3', gain: 0.34, reverb: 0.12, cooldown: 300 },
@@ -66,7 +55,8 @@ export const SFX = {
   'fish-catch': { url: 'assets/audio/fish-catch.mp3', gain: 0.36, reverb: 0.14, cooldown: 400 }
 };
 
+export const FISHING_SFX_KEYS = new Set(['cast-line', 'water-plop', 'fish-bite', 'reel-in', 'fish-catch']);
+
 /** Button sound per act index (0..4). */
 export const ACT_BUTTON_SFX = ['btn-act1', 'btn-act2', 'btn-act3', 'btn-act4', 'btn-act5'];
-export const ACT_TOUCH_SFX = ['touch-act1', 'touch-act2', 'touch-act3', 'touch-act4', 'water-plop'];
 export const ACT_ENTER_SFX = ['enter-act1', 'enter-act2', 'enter-act3', 'enter-act4', 'enter-act5'];

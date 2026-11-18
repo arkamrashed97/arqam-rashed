@@ -9,7 +9,7 @@ export const sceneState = {
   fx: null,
   fermGroup: null,
   fermMat: null,
-  planes: [],
+  planeGroup: null,
   monolithGroup: null,
   pointsGroup: null,
   pointMat: null,
@@ -23,4 +23,3 @@ export const sceneState = {
   pointerWorld: new THREE.Vector3(),
   act4Blend: false
 };
-sceneState.textures = [];

@@ -45,6 +45,7 @@ body{
   text-rendering:optimizeLegibility;
 }
 body.is-booting{overflow:hidden}
+html.i18n-hydrating body{visibility:hidden}
 ::selection{background:var(--accent);color:var(--bg)}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;padding:0}

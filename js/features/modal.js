@@ -100,6 +100,25 @@ export function initModal() {
   parts.close.addEventListener('click', close);
   parts.backdrop.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') close();
+    if (modal.hidden) return;
+    if (e.key === 'Escape') {
+      close();
+      return;
+    }
+    if (e.key === 'Tab') {
+      const focusable = Array.from(
+        modal.querySelectorAll('button:not([disabled]):not([hidden]), a[href]:not([hidden]), [tabindex]:not([tabindex="-1"])')
+      ).filter((node) => node.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !modal.contains(document.activeElement))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   });
 }

@@ -112,6 +112,7 @@
   }
   .project__body{
     border-right:0;
+    border-left:0;
     border-bottom:1px solid var(--line);
     padding:16px;
     flex:none;
@@ -120,6 +121,7 @@
     justify-content:space-between;
     gap:12px;
   }
+  html[dir="rtl"] .project__body{border-left:0;border-right:0}
   .project__media{
     flex:none;
     height:auto;
