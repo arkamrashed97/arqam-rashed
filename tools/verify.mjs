@@ -419,6 +419,7 @@ async function verifySeo(browser, baseUrl) {
       );
       const nodes = ld.flatMap((d) => d['@graph'] || [d]);
       const person = nodes.find((n) => n['@type'] === 'Person');
+      const profile = nodes.find((n) => n['@type'] === 'ProfilePage');
       return {
         lang: document.documentElement.lang,
         h1Count: document.querySelectorAll('h1').length,
@@ -429,7 +430,8 @@ async function verifySeo(browser, baseUrl) {
         alternates,
         sameAs: person?.sameAs || [],
         hasFooterLinkedIn: Boolean(document.querySelector('.footer-links a[href*="linkedin.com/in/arqam-m-aa5327ba"]')),
-        ldTypes: nodes.map((n) => n['@type'])
+        ldTypes: nodes.map((n) => n['@type']),
+        dateModified: profile?.dateModified || ''
       };
     });
     await page.close();
@@ -445,6 +447,7 @@ async function verifySeo(browser, baseUrl) {
     assert.equal(seo.hasFooterLinkedIn, true, `${route}: Footer must include LinkedIn channel link`);
     assert.ok(seo.ogImage && seo.ogImage.endsWith('og-image.jpg'), `${route}: og:image must be set`);
     assert.ok(seo.ldTypes.includes('Person') && seo.ldTypes.includes('ProfilePage'), `${route}: JSON-LD must include Person + ProfilePage`);
+    assert.match(seo.dateModified, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/, `${route}: ProfilePage.dateModified must be full ISO 8601 datetime with timezone`);
   }
 
   // Runtime interactive check on /ar/ (mobile + desktop): 0 404s, case study modal, RTL 0px overflow

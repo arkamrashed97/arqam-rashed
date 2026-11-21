@@ -137,7 +137,7 @@ export function buildArabicPage(rootDir = DEFAULT_ROOT) {
         inLanguage: 'ar',
         isPartOf: { '@id': 'https://arqamrashed.com/#website' },
         mainEntity: { '@id': 'https://arqamrashed.com/#person' },
-        dateModified: '2026-04-18'
+        dateModified: '2026-11-21T11:18:00+02:00'
       },
       {
         '@type': 'ItemList',
